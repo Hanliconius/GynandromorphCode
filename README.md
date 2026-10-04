@@ -2,7 +2,7 @@
 
 Reproducibility repository for genomic analyses of a *Heliconius* gynandromorph, with emphasis on left/right tissue differences, reciprocal read mixing, founder-state models, chromosome-scale coverage, and k-mer-pair (Smudgeplot) diagnostics.
 
-This repository is intended to preserve both the **final analysis path** and the **reasoning that led to it**. Exploratory branches and failed parameterizations are documented when they changed how the final analysis was interpreted.
+This repository preserves both the final analysis path and the reasoning that led to it. Exploratory branches and failed parameterizations are documented when they changed how the final analysis was interpreted.
 
 ## Biological question
 
@@ -10,7 +10,7 @@ The focal individual was sequenced from left and right tissue, with T2 and T3 li
 
 1. Do the left and right sides differ genetically?
 2. Can those differences be explained by reciprocal mixing of reads between sides?
-3. Are the autosomal allele-frequency patterns more consistent with two, three, or four founder chromosomes?
+3. Are the autosomal allele-frequency patterns compatible with a constrained three-founder model, or do they require additional four-founder-like structure?
 4. Do chromosome-scale depth and k-mer-pair patterns support the same interpretation?
 5. Which apparent Smudgeplot classes are biological, and which are artifacts of cutoff or coverage-harmonic choice?
 
@@ -22,32 +22,47 @@ The focal individual was sequenced from left and right tissue, with T2 and T3 li
 | Right T2 | SRR39053776 / TN_Right_T2 |
 | Left T3 | SRR39053775 / TN_Left_T3 |
 | Right T3 | SRR39053774 / TN_Right_T3 |
-| current diploid Smudgeplot control | ERR1051012 |
+| diploid Smudgeplot control | ERR1051012 |
 | pseudo-tetraploid benchmark | ERR1307111 + ERR1307112 |
 
 ## Analysis map
 
 The current workflow is:
 
-1. **Prepare and QC the four focal libraries.**
-2. **Measure left/right allele-frequency differences** using read counts rather than treating hard genotype calls as truth.
-3. **Estimate reciprocal mixing** between the two sides.
-4. **Compare founder models** (especially three-founder versus four-founder models) using simulations and fitted allele-frequency distributions.
-5. **Use reciprocal-mixture genotype calls** for focal display only when posterior probability is at least 0.95; there is no fallback to lower-confidence calls.
-6. **Inspect chromosome-scale relative coverage**, including autosomes and sex chromosomes.
-7. **Run Smudgeplot arrangements** for Left, Right, T2-merged, T3-merged, all four legs, a diploid control, and a pseudo-tetraploid benchmark.
-8. **Calibrate Smudgeplot cutoff and 1n coverage explicitly** rather than assuming one cutoff or trusting an automatically chosen harmonic.
-9. **Generate vector figures** (PDF/SVG preferred) and retain diagnostic reports alongside publication-style summaries.
+1. Prepare and QC the four focal libraries.
+2. Measure paired Left/Right allele frequencies from read counts.
+3. Estimate reciprocal mixing between the two sides.
+4. Compare three-founder and four-founder generative models with simulation calibration rather than relying on raw likelihood alone.
+5. Use reciprocal-mixture genotype calls for focal display only when posterior probability is at least 0.95; there is no fallback to lower-confidence calls.
+6. Inspect chromosome-scale relative coverage, including the Z chromosome as a held-out diagnostic.
+7. Run Smudgeplot arrangements for Left, Right, T2-merged, T3-merged, all four legs, a diploid control, and a pseudo-tetraploid benchmark.
+8. Calibrate Smudgeplot lower cutoff and 1n coverage explicitly rather than assuming one cutoff or trusting an automatically chosen harmonic.
+9. Generate vector PDF/SVG figures and retain diagnostic reports alongside publication-style summaries.
 
-See [docs/WORKFLOW.md](docs/WORKFLOW.md) for the stepwise analysis and [docs/SMUDGEPLOT.md](docs/SMUDGEPLOT.md) for the k-mer workflow.
+See:
 
-## Current high-confidence Smudgeplot comparison
+- [docs/WORKFLOW.md](docs/WORKFLOW.md) for the stepwise analysis;
+- [docs/AF_AND_FOUNDER_MODELS.md](docs/AF_AND_FOUNDER_MODELS.md) for the founder-model logic and calibration;
+- [docs/SMUDGEPLOT.md](docs/SMUDGEPLOT.md) for the k-mer workflow and cutoff calibration;
+- [docs/RESULTS_SNAPSHOT.md](docs/RESULTS_SNAPSHOT.md) for the current working results;
+- [docs/UPSTREAM_KRISTA.md](docs/UPSTREAM_KRISTA.md) for the relationship to Krista Pipho's original pipeline;
+- [docs/PEGASUS_IMPORT_MANIFEST.md](docs/PEGASUS_IMPORT_MANIFEST.md) for scripts still to migrate from Pegasus.
 
-The final comparison should not use one universal lower cutoff. The current preferred settings are:
+## Current scientific picture
 
-| dataset | role | lower cutoff |
+The final founder-model story is deliberately more nuanced than a raw three-versus-four winner.
+
+The raw genome-wide likelihood favored the constrained three-founder model. Simulation calibration, however, showed that the strict three-founder generative model does not reproduce the observed statistic well. Broad four-founder simulations can contain the observation, while focused unrelated-four-founder simulations can overshoot it. Empirical full-sibling structure explains much of the intermediate signal but not all of it.
+
+Genome-wide reciprocal mixing is approximately 18% in each direction. Chromosomes 1-20 are used for founder/mixing inference, while chromosome 21/Z is retained as an independent sex-ploidy diagnostic.
+
+## Current Smudgeplot comparison
+
+One universal lower cutoff is not appropriate for every dataset. The current preferred comparison is:
+
+| dataset | role | preferred lower cutoff |
 |---|---|---:|
-| ERR1051012 | diploid control | L=6 |
+| ERR1051012 | empirical diploid control | L=6 |
 | ERR1307111 + ERR1307112 | pseudo-tetraploid benchmark | L=6 |
 | TN Left | focal side | L=12 |
 | TN Right | focal side | L=12 |
@@ -55,7 +70,24 @@ The final comparison should not use one universal lower cutoff. The current pref
 | TN T3 merge | left + right T3 | L=6 |
 | all four TN legs | combined focal sample | L=12 |
 
-The earlier ERR1051012 L=4 / manual 1n=8.01 run was useful diagnostically because it demonstrated that Smudgeplot can choose a half-coverage harmonic and relabel a balanced cloud from AB to AABB. A subsequent cutoff sweep showed that L=6 with automatic coverage is the cleaner final diploid-control setting.
+Two calibration lessons are central:
+
+1. ERR1051012 demonstrated that automatic 1n selection can choose a half-coverage harmonic and relabel the same balanced cloud from AB to AABB.
+2. L=12 can preferentially remove the low-count arm of imbalanced k-mer pairs, particularly in merged/pseudo samples.
+
+The later cutoff sweep therefore preferred L=6 for the diploid, pseudo-tetraploid, and cross-side merge comparisons where the lower arm must be retained.
+
+## Upstream lineage
+
+This work extends the earlier public repository:
+
+Krista-Pipho/gynandromorph_2024
+
+The provenance snapshot used here is commit:
+
+65f4313299097fafed0df9e44654ddb98b6dcd61
+
+GynandromorphCode is a separate private repository, not a literal GitHub fork. The exact relationship and inherited pipeline decisions are documented in [docs/UPSTREAM_KRISTA.md](docs/UPSTREAM_KRISTA.md).
 
 ## Repository layout
 
@@ -64,9 +96,10 @@ The earlier ERR1051012 L=4 / manual 1n=8.01 run was useful diagnostically becaus
 ├── README.md
 ├── docs/
 │   ├── WORKFLOW.md
-│   ├── SMUDGEPLOT.md
 │   ├── AF_AND_FOUNDER_MODELS.md
+│   ├── SMUDGEPLOT.md
 │   ├── RESULTS_SNAPSHOT.md
+│   ├── UPSTREAM_KRISTA.md
 │   └── PEGASUS_IMPORT_MANIFEST.md
 ├── scripts/
 │   ├── README.md
@@ -78,27 +111,28 @@ The earlier ERR1051012 L=4 / manual 1n=8.01 run was useful diagnostically becaus
 
 ## Reproducibility policy
 
-This repository deliberately avoids embedding Pegasus-specific absolute paths into reusable code. Cluster paths, job IDs, large intermediate files, FASTQs, BAMs, VCFs, FastK tables, and figure products are not intended to be versioned.
+This repository deliberately avoids making reusable code depend on Pegasus-specific absolute paths. Cluster paths, job IDs, FASTQs, BAMs, VCFs, FastK tables, .smu files, and large generated figures are not intended to be versioned.
 
-For scripts imported from the working Pegasus project:
+For scripts imported from the working project:
 
-- replace hard-coded paths with command-line arguments or environment variables;
-- replace numbered script dependencies with descriptive filenames;
-- keep exact analysis parameters in the documentation;
+- keep the original Pegasus path in a provenance header;
+- replace numbered-script dependencies with descriptive filenames;
+- keep exact scientific parameters documented;
 - make reruns idempotent where practical;
-- do not silently re-extract VCFs or overwrite completed intermediates;
-- prefer vector PDF/SVG output for figures.
+- do not silently recompute expensive intermediates;
+- prefer vector PDF/SVG output for figures;
+- keep direct observations, fitted nuisance parameters, model predictions, and biological interpretation distinct.
 
-## Working project location on Pegasus
-
-The historical working tree is:
+## Historical Pegasus root
 
 ~~~text
 /gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling
 ~~~
 
-That path is recorded for provenance only; repository scripts should not depend on it.
+This path is recorded for provenance only.
 
 ## Status
 
-This repository currently contains the analysis narrative, parameter decisions, result snapshot, and a portable viridis Smudgeplot renderer. The remaining Pegasus scripts are listed in [docs/PEGASUS_IMPORT_MANIFEST.md](docs/PEGASUS_IMPORT_MANIFEST.md) so they can be copied in and cleaned without losing provenance.
+The repository now contains the analysis narrative, current parameter decisions, upstream provenance, result snapshot, migration manifest, and a portable viridis Smudgeplot renderer.
+
+The next code-migration priority is the founder-model fitting/calibration scripts, followed by the reciprocal-mixing AF figure scripts and the final lower-L Smudgeplot rerun scripts.
