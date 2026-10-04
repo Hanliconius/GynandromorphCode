@@ -45,6 +45,7 @@ See:
 - [docs/AF_AND_FOUNDER_MODELS.md](docs/AF_AND_FOUNDER_MODELS.md) for the founder-model logic and calibration;
 - [docs/SMUDGEPLOT.md](docs/SMUDGEPLOT.md) for the k-mer workflow and cutoff calibration;
 - [docs/RESULTS_SNAPSHOT.md](docs/RESULTS_SNAPSHOT.md) for the current working results;
+- [docs/DECISION_LOG.md](docs/DECISION_LOG.md) for the reasoning behind major methodological changes;
 - [docs/UPSTREAM_KRISTA.md](docs/UPSTREAM_KRISTA.md) for the relationship to Krista Pipho's original pipeline;
 - [docs/PEGASUS_IMPORT_MANIFEST.md](docs/PEGASUS_IMPORT_MANIFEST.md) for scripts still to migrate from Pegasus.
 
