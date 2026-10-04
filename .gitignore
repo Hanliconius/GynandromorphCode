@@ -1,0 +1,45 @@
+# Sequencing data
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.bai
+*.cram
+*.crai
+
+# Variant data
+*.vcf
+*.vcf.gz
+*.bcf
+*.tbi
+*.csi
+
+# FastK / Smudgeplot large intermediates
+*.ktab
+*.hist
+*.smu
+*.sma
+
+# Generated figures and reports
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.svg
+
+# Scheduler / logs
+logs/
+*.out
+*.err
+slurm-*.out
+
+# Python / R temporary files
+__pycache__/
+*.pyc
+.Rhistory
+.RData
+.Rproj.user/
+
+# OS
+.DS_Store
