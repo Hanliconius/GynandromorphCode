@@ -64,6 +64,7 @@ def main():
     parser.add_argument("--gridsize", type=int, default=40)
     parser.add_argument("--density-quantile", type=float, default=0.995)
     parser.add_argument("--origin-exclude", type=float, default=0.05)
+    parser.add_argument("--density-blend", type=float, default=0.50, help="0 = fully compressed informative scale; 1 = original raw-max scale")
     args = parser.parse_args()
 
     root = project_root(args.project_root)
@@ -113,13 +114,22 @@ def main():
     scale_counts = np.concatenate(scale_counts)
     scale_x = np.concatenate(scale_x)
     scale_y = np.concatenate(scale_y)
-    display_vmax = informative_density_vmax(
+    compressed_vmax = informative_density_vmax(
         scale_counts,
         scale_x,
         scale_y,
         origin_exclude=args.origin_exclude,
         quantile=args.density_quantile,
     )
+    if not (0.0 <= args.density_blend <= 1.0):
+        raise ValueError("--density-blend must be between 0 and 1")
+    # Interpolate in log space because the colour normalization itself is log.
+    # 0.0 reproduces the aggressively compressed scale; 1.0 reproduces the
+    # original raw-maximum scale. 0.5 is the exact visual midpoint in log space.
+    display_vmax = float(np.exp(
+        (1.0 - args.density_blend) * np.log(compressed_vmax)
+        + args.density_blend * np.log(maximum)
+    ))
     norm = LogNorm(vmin=1, vmax=display_vmax, clip=True)
 
     plt.rcParams.update({
@@ -236,8 +246,9 @@ def main():
     print("HISTORICAL_OVERLAY\tbeta-binomial depth=40 concentration=22 mass=0.50")
     print(f"SITES_PER_MODEL\t{n}")
     print(f"RAW_MAX_SITES_PER_HEX\t{maximum}")
+    print(f"COMPRESSED_VMAX_SITES_PER_HEX\t{compressed_vmax}")
     print(f"DISPLAY_VMAX_SITES_PER_HEX\t{display_vmax}")
-    print(f"DENSITY_SCALE\tLogNorm capped at q={args.density_quantile}; origin_exclude={args.origin_exclude}")
+    print(f"DENSITY_SCALE\tLogNorm log-space blend={args.density_blend}; compressed_q={args.density_quantile}; origin_exclude={args.origin_exclude}")
     print(f"WROTE\t{output}")
 
 
