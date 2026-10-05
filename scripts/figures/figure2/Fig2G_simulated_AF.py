@@ -17,7 +17,7 @@ HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
-from common import MODEL_COLOUR, add_historical_predictive_region, expected_mixed_af, load_simulation_pair, panel_output, project_root, validate_fraction_arrays
+from common import MODEL_COLOUR, add_historical_predictive_region, expected_mixed_af, informative_density_vmax, load_simulation_pair, panel_output, project_root, validate_fraction_arrays
 
 NARRATIVE = Path("analysis/figures/pairwise_AF_cli/AF_narrative_frames")
 SCENARIOS = [
@@ -62,6 +62,8 @@ def main():
     parser.add_argument("--project-root", default=None)
     parser.add_argument("--output", default=None)
     parser.add_argument("--gridsize", type=int, default=40)
+    parser.add_argument("--density-quantile", type=float, default=0.995)
+    parser.add_argument("--origin-exclude", type=float, default=0.05)
     args = parser.parse_args()
 
     root = project_root(args.project_root)
@@ -89,6 +91,9 @@ def main():
 
     temporary, temporary_ax = plt.subplots()
     maximum = 1.0
+    scale_counts = []
+    scale_x = []
+    scale_y = []
     for _, _, left, right in loaded:
         artist = temporary_ax.hexbin(
             left, right,
@@ -96,10 +101,26 @@ def main():
             extent=(0, 1, 0, 1),
             mincnt=1,
         )
-        maximum = max(maximum, float(artist.get_array().max()))
+        counts = np.asarray(artist.get_array(), dtype=float)
+        offsets = np.asarray(artist.get_offsets(), dtype=float)
+        maximum = max(maximum, float(counts.max()))
+        scale_counts.append(counts)
+        scale_x.append(offsets[:, 0])
+        scale_y.append(offsets[:, 1])
         artist.remove()
     plt.close(temporary)
-    norm = LogNorm(vmin=1, vmax=maximum)
+
+    scale_counts = np.concatenate(scale_counts)
+    scale_x = np.concatenate(scale_x)
+    scale_y = np.concatenate(scale_y)
+    display_vmax = informative_density_vmax(
+        scale_counts,
+        scale_x,
+        scale_y,
+        origin_exclude=args.origin_exclude,
+        quantile=args.density_quantile,
+    )
+    norm = LogNorm(vmin=1, vmax=display_vmax, clip=True)
 
     plt.rcParams.update({
         "font.family": "DejaVu Sans",
@@ -108,6 +129,7 @@ def main():
         "pdf.fonttype": 42,
         "ps.fonttype": 42,
         "svg.fonttype": "none",
+        "text.usetex": False,
         "savefig.facecolor": "white",
     })
 
@@ -193,6 +215,7 @@ def main():
         orientation="vertical",
         fraction=0.025,
         pad=0.025,
+        extend="max",
     )
     cbar.ax.tick_params(labelsize=8, length=2)
     cbar.set_label("Sites / hexagon", fontsize=9)
@@ -212,7 +235,9 @@ def main():
 
     print("HISTORICAL_OVERLAY\tbeta-binomial depth=40 concentration=22 mass=0.50")
     print(f"SITES_PER_MODEL\t{n}")
-    print(f"SHARED_MAX_SITES_PER_HEX\t{maximum}")
+    print(f"RAW_MAX_SITES_PER_HEX\t{maximum}")
+    print(f"DISPLAY_VMAX_SITES_PER_HEX\t{display_vmax}")
+    print(f"DENSITY_SCALE\tLogNorm capped at q={args.density_quantile}; origin_exclude={args.origin_exclude}")
     print(f"WROTE\t{output}")
 
 
