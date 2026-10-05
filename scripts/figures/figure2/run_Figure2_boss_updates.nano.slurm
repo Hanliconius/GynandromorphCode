@@ -159,11 +159,15 @@ else
 
     rm -f "$dest"
 
-    "$PYTHON" "$script"         --project-root "$PROJECT_ROOT"         --density-quantile 0.995         --origin-exclude 0.05
+    "$PYTHON" "$script" \
+        --project-root "$PROJECT_ROOT" \
+        --density-quantile 0.995 \
+        --origin-exclude 0.05 \
+        --density-blend 0.50
 
     validate_pdf_text "$dest"
 
-    echo "AF_DENSITY_SCALE=LogNorm with upper saturation chosen from q=0.995 outside 0,0 corner"
+    echo "AF_DENSITY_SCALE=LogNorm; exact log-space midpoint between compressed informative scale and original raw-max scale"
     echo "WROTE=$dest"
 fi
 
