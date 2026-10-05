@@ -374,8 +374,13 @@ def add_historical_predictive_region(
         alpha=alpha,
         zorder=8,
     )
-    for collection in contour.collections:
-        collection.set_path_effects(halo)
+    # Matplotlib >=3.10 exposes path effects directly on the
+    # QuadContourSet; older releases exposed the child collections.
+    if hasattr(contour, "set_path_effects"):
+        contour.set_path_effects(halo)
+    else:
+        for collection in getattr(contour, "collections", []):
+            collection.set_path_effects(halo)
 
 def read_smu(path: Path) -> dict[str, np.ndarray | int]:
     if not path.is_file():
