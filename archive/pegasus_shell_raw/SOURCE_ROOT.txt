@@ -1,0 +1,14 @@
+Original Pegasus root:
+/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling
+
+Imported:
+Mon Oct  5 13:10:07 EDT 2026
+
+Host:
+log001
+
+Purpose:
+Raw provenance-preserving shell/Slurm snapshot for later
+organization into cleaned canonical GynandromorphCode scripts.
+
+These files are not automatically considered final analysis code.
