@@ -187,6 +187,7 @@ def main():
     parser.add_argument("--output", default=None)
     parser.add_argument("--density-quantile", type=float, default=0.995)
     parser.add_argument("--origin-exclude", type=float, default=0.05)
+    parser.add_argument("--density-blend", type=float, default=0.50, help="0 = fully compressed informative scale; 1 = original raw-max scale")
     args = parser.parse_args()
 
     root = project_root(args.project_root)
@@ -269,7 +270,7 @@ def main():
     vertices = centres[:, None, :] + unit_hex[None, :, :] * sizes[:, None, :]
 
     counts = occupied["count"].to_numpy(dtype=float)
-    display_vmax = informative_density_vmax(
+    compressed_vmax = informative_density_vmax(
         counts,
         occupied["left_centre"].to_numpy(dtype=float),
         occupied["right_centre"].to_numpy(dtype=float),
@@ -277,6 +278,15 @@ def main():
         quantile=args.density_quantile,
     )
     raw_max = float(counts.max())
+    if not (0.0 <= args.density_blend <= 1.0):
+        raise ValueError("--density-blend must be between 0 and 1")
+    # Interpolate in log space because the colour normalization itself is log.
+    # 0.0 reproduces the aggressively compressed scale; 1.0 reproduces the
+    # original raw-maximum scale. 0.5 is the exact visual midpoint in log space.
+    display_vmax = float(np.exp(
+        (1.0 - args.density_blend) * np.log(compressed_vmax)
+        + args.density_blend * np.log(raw_max)
+    ))
 
     collection = PolyCollection(
         vertices,
@@ -360,8 +370,9 @@ def main():
     print("HISTORICAL_OVERLAY\tbeta-binomial depth=40 concentration=22 mass=0.50")
     print(f"SITES\t{n}")
     print(f"RAW_MAX_SITES_PER_HEX\t{raw_max}")
+    print(f"COMPRESSED_VMAX_SITES_PER_HEX\t{compressed_vmax}")
     print(f"DISPLAY_VMAX_SITES_PER_HEX\t{display_vmax}")
-    print(f"DENSITY_SCALE\tLogNorm capped at q={args.density_quantile}; origin_exclude={args.origin_exclude}")
+    print(f"DENSITY_SCALE\tLogNorm log-space blend={args.density_blend}; compressed_q={args.density_quantile}; origin_exclude={args.origin_exclude}")
     print(f"WROTE\t{output}")
 
 
