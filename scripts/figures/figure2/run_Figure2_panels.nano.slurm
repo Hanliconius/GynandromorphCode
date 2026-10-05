@@ -8,12 +8,22 @@
 
 set -euo pipefail
 
-HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 PROJECT_ROOT=${GYNANDRO_ROOT:-/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling}
+
+# Slurm copies the submitted batch script into /var/spool/slurm before
+# execution, so BASH_SOURCE[0] points at the spool copy on compute nodes.
+# The submission helper therefore exports the real repository code path.
+CODE_DIR=${FIGURE2_CODE_DIR:-${SLURM_SUBMIT_DIR}/scripts/figures/figure2}
+
 PYTHON=${PYTHON:-$HOME/.local/share/mamba/envs/gynandrocalling/bin/python}
 
 if [[ ! -x "${PYTHON}" ]]; then
     echo "ERROR: expected Python not executable: ${PYTHON}" >&2
+    exit 1
+fi
+
+if [[ ! -d "${CODE_DIR}" ]]; then
+    echo "ERROR: Figure 2 code directory not found: ${CODE_DIR}" >&2
     exit 1
 fi
 
@@ -29,7 +39,17 @@ panels=(
 )
 
 script=${panels[${SLURM_ARRAY_TASK_ID}]}
+script_path="${CODE_DIR}/${script}"
+
+if [[ ! -s "${script_path}" ]]; then
+    echo "ERROR: Figure 2 panel script not found: ${script_path}" >&2
+    exit 1
+fi
 
 echo "FIGURE2_PANEL_START panel=${SLURM_ARRAY_TASK_ID} script=${script} host=$(hostname)"
-"${PYTHON}" "${HERE}/${script}" --project-root "${PROJECT_ROOT}"
+echo "FIGURE2_CODE_DIR=${CODE_DIR}"
+echo "GYNANDRO_ROOT=${PROJECT_ROOT}"
+
+"${PYTHON}" "${script_path}" --project-root "${PROJECT_ROOT}"
+
 echo "FIGURE2_PANEL_COMPLETE panel=${SLURM_ARRAY_TASK_ID} script=${script}"
