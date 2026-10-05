@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Figure 2D — gynandromorph Smudgeplots using the established six-panel aesthetic."""
+"""Figure 2D — gynandromorph Smudgeplots in the approved standardized viridis style."""
 
 from __future__ import annotations
 import argparse
@@ -35,20 +35,23 @@ def prepare(root: Path):
     for key, rel in ALL_INPUTS.items():
         path = root / rel
         data = read_smu(path)
-        density, x_edges, y_edges = smudge_density(data, ymax=YMAX, x_bins=180, y_bins=220, sigma=1.15)
+        density, x_edges, y_edges = smudge_density(
+            data, ymax=YMAX, x_bins=180, y_bins=220, sigma=1.15
+        )
         prepared[key] = (path, data, density, x_edges, y_edges)
         densities.append(density)
     vmin, vmax, levels = shared_smudge_scale(densities)
     return prepared, vmin, vmax, levels
 
 
-def draw(ax, density, x_edges, y_edges, *, vmin, vmax, levels, title, subtitle):
+def draw_standard_panel(ax, density, x_edges, y_edges, *, vmin, vmax, levels, title, subtitle):
     cmap = plt.get_cmap("viridis").copy()
     cmap.set_under("white")
     x_centres = (x_edges[:-1] + x_edges[1:]) / 2
     y_centres = (y_edges[:-1] + y_edges[1:]) / 2
     masked = np.ma.masked_less_equal(density, 0)
-    artist = ax.contourf(
+
+    filled = ax.contourf(
         x_centres,
         y_centres,
         masked,
@@ -58,16 +61,30 @@ def draw(ax, density, x_edges, y_edges, *, vmin, vmax, levels, title, subtitle):
         extend="max",
         antialiased=True,
     )
+
     ax.set_xlim(0, 0.5)
     ax.set_ylim(0, YMAX)
+    ax.set_xlabel("Normalised minor k-mer coverage: B / (A + B)", fontsize=9.5)
+    ax.set_ylabel("Total coverage of the k-mer pair: A + B", fontsize=9.5)
+    ax.set_title(title, fontsize=11, fontweight="bold", pad=7)
+    ax.text(
+        0.5, 1.005, subtitle,
+        transform=ax.transAxes,
+        fontsize=7.4,
+        ha="center",
+        va="bottom",
+    )
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.tick_params(labelsize=8, length=3)
-    ax.text(0.5, 1.055, title, transform=ax.transAxes, fontsize=10.5,
-            fontweight="bold", ha="center", va="bottom")
-    ax.text(0.5, 1.005, subtitle, transform=ax.transAxes, fontsize=7.4,
-            ha="center", va="bottom")
-    return artist
+    ax.tick_params(labelsize=8.5, length=3)
+
+    cax = ax.inset_axes([0.06, 0.15, 0.050, 0.27])
+    cbar = plt.colorbar(filled, cax=cax)
+    cbar.set_label("k-mer pairs", fontsize=7.0)
+    cbar.ax.tick_params(labelsize=6.5, length=2)
+    cbar.outline.set_linewidth(0.6)
+
+    return filled
 
 
 def main():
@@ -82,7 +99,7 @@ def main():
 
     plt.rcParams.update({
         "font.family": "DejaVu Sans",
-        "font.size": 8.5,
+        "font.size": 9,
         "axes.linewidth": 0.8,
         "pdf.fonttype": 42,
         "ps.fonttype": 42,
@@ -90,8 +107,10 @@ def main():
         "savefig.facecolor": "white",
     })
 
-    fig, axes = plt.subplots(2, 2, figsize=(7.2, 6.3), sharex=True, sharey=True)
-    fig.text(0.015, 0.99, "D", fontsize=15, fontweight="bold", ha="left", va="top")
+    # Keep each of the four cells at the same proportions as the previously
+    # approved standalone Smudgeplot renderer.
+    fig, axes = plt.subplots(2, 2, figsize=(9.0, 8.4), sharex=True, sharey=True)
+    fig.text(0.012, 0.992, "D", fontsize=15, fontweight="bold", ha="left", va="top")
 
     specs = [
         ("left", "Left", "TN Left: T2 + T3  •  L=12"),
@@ -100,25 +119,17 @@ def main():
         ("t3", "T3 merge", "TN Left T3 + Right T3  •  L=6"),
     ]
 
-    artist = None
     for ax, (key, title, subtitle) in zip(axes.ravel(), specs):
         path, data, density, x_edges, y_edges = prepared[key]
-        artist = draw(
+        draw_standard_panel(
             ax, density, x_edges, y_edges,
             vmin=vmin, vmax=vmax, levels=levels,
             title=title, subtitle=subtitle,
         )
         print("PANEL", key, path, data["rows"], data["total_pairs"], sep="\t")
 
-    fig.supxlabel("Normalised minor k-mer coverage: B / (A + B)", fontsize=9.5, y=0.045)
-    fig.supylabel("Total coverage of the k-mer pair: A + B", fontsize=9.5, x=0.035)
-
-    cbar = fig.colorbar(artist, ax=axes.ravel().tolist(), orientation="vertical", fraction=0.025, pad=0.025)
-    cbar.set_label("k-mer pairs", fontsize=8.5)
-    cbar.ax.tick_params(labelsize=7.5, length=2)
-
-    fig.subplots_adjust(left=0.11, right=0.88, bottom=0.10, top=0.94, hspace=0.30, wspace=0.13)
-    fig.savefig(output, bbox_inches="tight")
+    fig.subplots_adjust(left=0.09, right=0.98, bottom=0.08, top=0.96, hspace=0.34, wspace=0.26)
+    fig.savefig(output)
     plt.close(fig)
 
     print(f"SHARED_DENSITY_SCALE\t{vmin}\t{vmax}")
