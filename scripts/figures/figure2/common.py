@@ -290,11 +290,11 @@ def add_historical_predictive_region(
     grid = k / float(depth)
 
     def pmf(q: float) -> np.ndarray:
-        if q <= 1e-12:
+        if q <= 0.002:
             out = np.zeros(depth + 1, dtype=float)
             out[0] = 1.0
             return out
-        if q >= 1.0 - 1e-12:
+        if q >= 1.0 - 0.002:
             out = np.zeros(depth + 1, dtype=float)
             out[-1] = 1.0
             return out
@@ -309,8 +309,8 @@ def add_historical_predictive_region(
     p_left = pmf(ql)
     p_right = pmf(qr)
 
-    fixed_left = ql <= 1e-12 or ql >= 1.0 - 1e-12
-    fixed_right = qr <= 1e-12 or qr >= 1.0 - 1e-12
+    fixed_left = ql <= 0.002 or ql >= 1.0 - 0.002
+    fixed_right = qr <= 0.002 or qr >= 1.0 - 0.002
 
     # No spread at the two fully fixed diagonal corners.
     if fixed_left and fixed_right:
