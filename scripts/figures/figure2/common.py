@@ -63,6 +63,7 @@ def set_publication_style(font_size: float = 8.0) -> None:
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
             "svg.fonttype": "none",
+            "text.usetex": False,
             "savefig.facecolor": "white",
             "figure.facecolor": "white",
         }
@@ -122,6 +123,46 @@ def load_luka_bleute(root: Path) -> ListedColormap:
     return mcolors.LinearSegmentedColormap.from_list(
         "luka_bleute_fallback", fallback, N=256
     )
+
+
+
+def informative_density_vmax(
+    counts: np.ndarray,
+    x: np.ndarray,
+    y: np.ndarray,
+    *,
+    origin_exclude: float = 0.05,
+    quantile: float = 0.995,
+) -> float:
+    """
+    Upper display limit for AF density plots.
+
+    The very dense (0,0) corner is excluded when choosing the colour-scale
+    ceiling, then the requested upper quantile of the remaining occupied
+    bins is used. Values above the ceiling are intentionally saturated.
+    Coordinates and raw counts themselves are never transformed.
+    """
+    counts = np.asarray(counts, dtype=float)
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+    if counts.shape != x.shape or counts.shape != y.shape:
+        raise ValueError("counts, x and y must have the same shape")
+    if not (0.0 < quantile <= 1.0):
+        raise ValueError("quantile must be in (0, 1]")
+    valid = (
+        np.isfinite(counts)
+        & np.isfinite(x)
+        & np.isfinite(y)
+        & (counts > 0)
+        & ~((x <= origin_exclude) & (y <= origin_exclude))
+    )
+    if not np.any(valid):
+        valid = np.isfinite(counts) & (counts > 0)
+    values = counts[valid]
+    if not len(values):
+        raise RuntimeError("No positive AF-density bins available for scaling")
+    vmax = float(np.quantile(values, quantile))
+    return max(1.0, vmax)
 
 
 def loess_like(x: np.ndarray, y: np.ndarray, span: float = 0.20) -> np.ndarray:
