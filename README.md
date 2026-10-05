@@ -47,7 +47,8 @@ See:
 - [docs/RESULTS_SNAPSHOT.md](docs/RESULTS_SNAPSHOT.md) for the current working results;
 - [docs/DECISION_LOG.md](docs/DECISION_LOG.md) for the reasoning behind major methodological changes;
 - [docs/UPSTREAM_KRISTA.md](docs/UPSTREAM_KRISTA.md) for the relationship to Krista Pipho's original pipeline;
-- [docs/PEGASUS_IMPORT_MANIFEST.md](docs/PEGASUS_IMPORT_MANIFEST.md) for scripts still to migrate from Pegasus.
+- [docs/PEGASUS_IMPORT_MANIFEST.md](docs/PEGASUS_IMPORT_MANIFEST.md) for scripts still to migrate from Pegasus;
+- [docs/FIGURE_2.md](docs/FIGURE_2.md) for the canonical Figure 2 panel map and plotting choices.
 
 ## Current scientific picture
 
@@ -101,9 +102,15 @@ GynandromorphCode is a separate private repository, not a literal GitHub fork. T
 │   ├── SMUDGEPLOT.md
 │   ├── RESULTS_SNAPSHOT.md
 │   ├── UPSTREAM_KRISTA.md
-│   └── PEGASUS_IMPORT_MANIFEST.md
+│   ├── PEGASUS_IMPORT_MANIFEST.md
+│   └── FIGURE_2.md
 ├── scripts/
 │   ├── README.md
+│   ├── figures/
+│   │   └── figure2/
+│   │       ├── Fig2A_...py ... Fig2H_...py
+│   │       ├── common.py
+│   │       └── run_Figure2_panels.sh
 │   └── smudgeplot/
 │       ├── README.md
 │       └── plot_smudge_smu_viridis.py
@@ -134,6 +141,6 @@ This path is recorded for provenance only.
 
 ## Status
 
-The repository now contains the analysis narrative, current parameter decisions, upstream provenance, result snapshot, migration manifest, and a portable viridis Smudgeplot renderer.
+The repository now contains the analysis narrative, current parameter decisions, upstream provenance, result snapshot, migration manifest, a portable viridis Smudgeplot renderer, and canonical panel-labelled code for manuscript Figure 2.
 
 The next code-migration priority is the founder-model fitting/calibration scripts, followed by the reciprocal-mixing AF figure scripts and the final lower-L Smudgeplot rerun scripts.
