@@ -20,7 +20,7 @@ HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
-from common import add_historical_predictive_region, panel_output, project_root
+from common import add_historical_predictive_region, informative_density_vmax, panel_output, project_root
 
 BASE = Path("analysis/figures/pairwise_AF_cli")
 DEFAULT_BINS = BASE / "TN_merged_control_sites_hex40_batlowW.AF_bins.tsv.gz"
@@ -185,6 +185,8 @@ def main():
     parser.add_argument("--counts", default=str(DEFAULT_COUNTS))
     parser.add_argument("--audit", default=str(DEFAULT_AUDIT))
     parser.add_argument("--output", default=None)
+    parser.add_argument("--density-quantile", type=float, default=0.995)
+    parser.add_argument("--origin-exclude", type=float, default=0.05)
     args = parser.parse_args()
 
     root = project_root(args.project_root)
@@ -241,6 +243,8 @@ def main():
         "ytick.major.width": 0.6,
         "pdf.fonttype": 42,
         "ps.fonttype": 42,
+        "svg.fonttype": "none",
+        "text.usetex": False,
         "savefig.facecolor": "white",
     })
 
@@ -264,11 +268,21 @@ def main():
     sizes = occupied[["width", "height"]].to_numpy()
     vertices = centres[:, None, :] + unit_hex[None, :, :] * sizes[:, None, :]
 
+    counts = occupied["count"].to_numpy(dtype=float)
+    display_vmax = informative_density_vmax(
+        counts,
+        occupied["left_centre"].to_numpy(dtype=float),
+        occupied["right_centre"].to_numpy(dtype=float),
+        origin_exclude=args.origin_exclude,
+        quantile=args.density_quantile,
+    )
+    raw_max = float(counts.max())
+
     collection = PolyCollection(
         vertices,
-        array=occupied["count"].to_numpy(dtype=float),
+        array=counts,
         cmap=cmap,
-        norm=LogNorm(vmin=1, vmax=float(occupied["count"].max())),
+        norm=LogNorm(vmin=1, vmax=display_vmax, clip=True),
         edgecolors="none",
         linewidths=0,
         rasterized=False,
@@ -322,7 +336,7 @@ def main():
     for spine in ("top", "right"):
         ax.spines[spine].set_visible(False)
 
-    cb = fig.colorbar(collection, cax=cax)
+    cb = fig.colorbar(collection, cax=cax, extend="max")
     cb.set_label("Sites per hexagon", fontsize=7, labelpad=5)
     cb.ax.tick_params(labelsize=6, length=2)
     cb.outline.set_linewidth(0.5)
@@ -345,6 +359,9 @@ def main():
     print(f"COUNTS\t{counts_path}")
     print("HISTORICAL_OVERLAY\tbeta-binomial depth=40 concentration=22 mass=0.50")
     print(f"SITES\t{n}")
+    print(f"RAW_MAX_SITES_PER_HEX\t{raw_max}")
+    print(f"DISPLAY_VMAX_SITES_PER_HEX\t{display_vmax}")
+    print(f"DENSITY_SCALE\tLogNorm capped at q={args.density_quantile}; origin_exclude={args.origin_exclude}")
     print(f"WROTE\t{output}")
 
 
