@@ -12,12 +12,14 @@ from typing import Iterable, Sequence
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.colors as mcolors
+import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap, LogNorm
 from matplotlib.patches import Ellipse
 import numpy as np
 import pandas as pd
 from scipy.ndimage import gaussian_filter
+from scipy.stats import betabinom
 
 DEFAULT_PROJECT_ROOT = Path(
     os.environ.get(
@@ -260,6 +262,120 @@ def add_predictive_region(
     )
     ax.add_patch(ellipse)
 
+
+
+def add_historical_predictive_region(
+    ax,
+    q_left: float,
+    q_right: float,
+    *,
+    depth: int = 40,
+    concentration: float = 22.0,
+    mass: float = 0.50,
+    colour: str = MODEL_COLOUR,
+    linewidth: float = 0.70,
+    alpha: float = 0.80,
+) -> None:
+    """
+    Reproduce the established outline-only 50% predictive overlay.
+
+    This uses the beta-binomial probability surface at 40 reads/side and
+    concentration 22 used in the earlier approved founder-model figures.
+    Diagonal fixed corners have no spread; if only one axis is fixed, the
+    predictive region is drawn as a one-dimensional interval.
+    """
+    ql = float(np.clip(q_left, 0.0, 1.0))
+    qr = float(np.clip(q_right, 0.0, 1.0))
+    k = np.arange(depth + 1, dtype=float)
+    grid = k / float(depth)
+
+    def pmf(q: float) -> np.ndarray:
+        if q <= 1e-12:
+            out = np.zeros(depth + 1, dtype=float)
+            out[0] = 1.0
+            return out
+        if q >= 1.0 - 1e-12:
+            out = np.zeros(depth + 1, dtype=float)
+            out[-1] = 1.0
+            return out
+        a = q * concentration
+        b = (1.0 - q) * concentration
+        out = np.asarray(betabinom.pmf(k, depth, a, b), dtype=float)
+        total = float(out.sum())
+        if not np.isfinite(total) or total <= 0:
+            raise RuntimeError("Invalid beta-binomial predictive probabilities")
+        return out / total
+
+    p_left = pmf(ql)
+    p_right = pmf(qr)
+
+    fixed_left = ql <= 1e-12 or ql >= 1.0 - 1e-12
+    fixed_right = qr <= 1e-12 or qr >= 1.0 - 1e-12
+
+    # No spread at the two fully fixed diagonal corners.
+    if fixed_left and fixed_right:
+        return
+
+    halo = [
+        pe.Stroke(linewidth=1.8, foreground=(1.0, 1.0, 1.0, 0.70)),
+        pe.Normal(),
+    ]
+
+    def hdr_mask_1d(prob: np.ndarray) -> np.ndarray:
+        order = np.argsort(prob)[::-1]
+        cumulative = np.cumsum(prob[order])
+        stop = int(np.searchsorted(cumulative, mass, side="left"))
+        threshold = float(prob[order[min(stop, len(order) - 1)]])
+        return prob >= threshold - 1e-15
+
+    if fixed_left:
+        keep = hdr_mask_1d(p_right)
+        ys = grid[keep]
+        if len(ys):
+            line, = ax.plot(
+                [ql, ql],
+                [float(ys.min()), float(ys.max())],
+                color=colour,
+                linewidth=linewidth,
+                alpha=alpha,
+                zorder=8,
+            )
+            line.set_path_effects(halo)
+        return
+
+    if fixed_right:
+        keep = hdr_mask_1d(p_left)
+        xs = grid[keep]
+        if len(xs):
+            line, = ax.plot(
+                [float(xs.min()), float(xs.max())],
+                [qr, qr],
+                color=colour,
+                linewidth=linewidth,
+                alpha=alpha,
+                zorder=8,
+            )
+            line.set_path_effects(halo)
+        return
+
+    density = np.outer(p_right, p_left)
+    flat = np.sort(density.ravel())[::-1]
+    cumulative = np.cumsum(flat)
+    stop = int(np.searchsorted(cumulative, mass, side="left"))
+    threshold = float(flat[min(stop, len(flat) - 1)])
+
+    contour = ax.contour(
+        grid,
+        grid,
+        density,
+        levels=[threshold],
+        colors=[colour],
+        linewidths=[linewidth],
+        alpha=alpha,
+        zorder=8,
+    )
+    for collection in contour.collections:
+        collection.set_path_effects(halo)
 
 def read_smu(path: Path) -> dict[str, np.ndarray | int]:
     if not path.is_file():
