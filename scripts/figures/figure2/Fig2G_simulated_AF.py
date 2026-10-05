@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 import argparse
-import ast
 import json
 from pathlib import Path
 import sys
@@ -18,7 +17,7 @@ HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
-from common import load_simulation_pair, panel_output, project_root, validate_fraction_arrays
+from common import MODEL_COLOUR, add_historical_predictive_region, expected_mixed_af, load_simulation_pair, panel_output, project_root, validate_fraction_arrays
 
 NARRATIVE = Path("analysis/figures/pairwise_AF_cli/AF_narrative_frames")
 SCENARIOS = [
@@ -58,68 +57,6 @@ SCENARIOS = [
 ]
 
 
-def load_historical_model_namespace(root: Path):
-    """Load the exact established expected()/predictive_region() definitions."""
-    original_script = root / "scripts/plot_simulated_founder_slides.py"
-    corrected_script = root / "scripts/plot_founder_slides_empirical_depth.py"
-    for path in (original_script, corrected_script):
-        if not path.is_file():
-            raise FileNotFoundError(path)
-
-    original_source = original_script.read_text()
-    original_tree = ast.parse(original_source)
-    nodes = []
-    for node in original_tree.body:
-        if isinstance(node, ast.Assign) and any(
-            isinstance(target, ast.Name) and target.id == "rng"
-            for target in node.targets
-        ):
-            break
-        if isinstance(node, (ast.Import, ast.ImportFrom, ast.Assign)):
-            nodes.append(node)
-    nodes.extend(node for node in original_tree.body if isinstance(node, ast.FunctionDef))
-
-    ns = {"__name__": "figure2_model_overlay", "__file__": str(original_script)}
-    exec(
-        compile(ast.Module(body=nodes, type_ignores=[]), str(original_script), "exec"),
-        ns,
-    )
-
-    corrected_source = corrected_script.read_text()
-    corrected_tree = ast.parse(corrected_source)
-    functions = [node for node in corrected_tree.body if isinstance(node, ast.FunctionDef)]
-    predictive = [node for node in functions if node.name == "predictive_region"]
-    if len(predictive) != 1:
-        raise RuntimeError("Expected exactly one corrected predictive_region function")
-    predictive_text = ast.get_source_segment(corrected_source, predictive[0]) or ""
-    if "histogram2d" in predictive_text or "region_cache" in predictive_text:
-        raise RuntimeError("Historical predictive_region is the obsolete binned implementation")
-
-    safe_nodes = [
-        node for node in corrected_tree.body
-        if isinstance(node, (ast.Import, ast.ImportFrom))
-    ]
-    for node in corrected_tree.body:
-        if isinstance(node, ast.Assign):
-            try:
-                ast.literal_eval(node.value)
-            except (ValueError, TypeError, SyntaxError):
-                continue
-            safe_nodes.append(node)
-    safe_nodes.extend(functions)
-    exec(
-        compile(ast.Module(body=safe_nodes, type_ignores=[]), str(corrected_script), "exec"),
-        ns,
-    )
-
-    if "expected" not in ns or "predictive_region" not in ns:
-        raise RuntimeError("Historical founder-model drawing functions were not recovered")
-
-    ns["MODEL_COLOUR"] = "#F000B8"
-    ns["ns"] = ns
-    return ns, corrected_script
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-root", default=None)
@@ -137,8 +74,6 @@ def main():
     if not isinstance(palette, list) or len(palette) < 2:
         raise RuntimeError(f"Invalid Luka-Bleute palette: {palette_path}")
     cmap = ListedColormap(palette, name="luka_bleute")
-
-    model_ns, corrected_model = load_historical_model_namespace(root)
 
     loaded = []
     sizes = set()
@@ -219,13 +154,25 @@ def main():
         )
 
         for p_left, p_right in scenario["states"]:
-            q_left, q_right = model_ns["expected"](p_left, p_right, 0.20)
-            model_ns["predictive_region"](ax, q_left, q_right)
+            q_left, q_right = expected_mixed_af(
+                p_left, p_right, c_left=0.20, c_right=0.20, error=0.001
+            )
+            add_historical_predictive_region(
+                ax,
+                q_left,
+                q_right,
+                depth=40,
+                concentration=22.0,
+                mass=0.50,
+                colour=MODEL_COLOUR,
+                linewidth=0.70,
+                alpha=0.80,
+            )
             ax.plot(
                 q_left,
                 q_right,
                 "o",
-                color="#F000B8",
+                color=MODEL_COLOUR,
                 markersize=4,
                 markeredgecolor="white",
                 markeredgewidth=.6,
@@ -263,7 +210,7 @@ def main():
     fig.savefig(output, bbox_inches="tight")
     plt.close(fig)
 
-    print(f"HISTORICAL_OVERLAY_SOURCE\t{corrected_model}")
+    print("HISTORICAL_OVERLAY\tbeta-binomial depth=40 concentration=22 mass=0.50")
     print(f"SITES_PER_MODEL\t{n}")
     print(f"SHARED_MAX_SITES_PER_HEX\t{maximum}")
     print(f"WROTE\t{output}")
