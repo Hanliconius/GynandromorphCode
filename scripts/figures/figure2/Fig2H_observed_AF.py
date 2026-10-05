@@ -3,15 +3,12 @@
 
 from __future__ import annotations
 import argparse
-import ast
 import json
 from pathlib import Path
 import sys
 
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.colors as mcolors
-import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection
 from matplotlib.colors import ListedColormap, LogNorm
@@ -23,7 +20,7 @@ HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
-from common import panel_output, project_root
+from common import add_historical_predictive_region, panel_output, project_root
 
 BASE = Path("analysis/figures/pairwise_AF_cli")
 DEFAULT_BINS = BASE / "TN_merged_control_sites_hex40_batlowW.AF_bins.tsv.gz"
@@ -53,47 +50,6 @@ def loess(x, y, span=0.20):
         )[0]
         fitted[index] = coefficients[0]
     return np.maximum(fitted, 0.0)
-
-
-def load_historical_model_namespace(root: Path):
-    original_script = root / "scripts/plot_simulated_founder_slides.py"
-    corrected_script = root / "scripts/plot_founder_slides_empirical_depth.py"
-    for path in (original_script, corrected_script):
-        if not path.is_file():
-            raise FileNotFoundError(path)
-
-    model_ns = {
-        "__name__": "figure2_model_overlay_definitions",
-        "__file__": str(original_script),
-    }
-
-    for path in (original_script, corrected_script):
-        tree = ast.parse(path.read_text())
-        for node in tree.body:
-            if isinstance(node, (ast.Import, ast.ImportFrom, ast.FunctionDef)):
-                exec(
-                    compile(ast.Module(body=[node], type_ignores=[]), str(path), "exec"),
-                    model_ns,
-                )
-            elif isinstance(node, ast.Assign):
-                try:
-                    value = ast.literal_eval(node.value)
-                except (ValueError, TypeError, SyntaxError):
-                    continue
-                for target in node.targets:
-                    if isinstance(target, ast.Name):
-                        model_ns[target.id] = value
-
-    if "predictive_region" not in model_ns:
-        raise RuntimeError("Historical predictive_region function not found")
-
-    model_ns["MODEL_COLOUR"] = mcolors.to_rgba(MODEL_COLOUR, 0.42)
-    model_ns["HALO"] = [
-        pe.Stroke(linewidth=1.8, foreground=(1.0, 1.0, 1.0, 0.70)),
-        pe.Normal(),
-    ]
-    model_ns["ns"] = model_ns
-    return model_ns, corrected_script
 
 
 def marginal(axis, counts, x, limits, vertical=False):
@@ -248,8 +204,6 @@ def main():
         raise RuntimeError(f"Invalid Luka-Bleute palette: {palette_path}")
     cmap = ListedColormap(colours)
 
-    model_ns, corrected_model = load_historical_model_namespace(root)
-
     bins = pd.read_csv(bins_path, sep="\t")
     required = {"left_centre", "right_centre", "width", "height", "count"}
     missing = required - set(bins.columns)
@@ -337,14 +291,17 @@ def main():
                 mixing * p_left + (1 - mixing) * p_right
             )
 
-            previous_artists = {id(artist) for artist in ax.get_children()}
-            model_ns["predictive_region"](ax, q_left, q_right)
-            for artist in ax.get_children():
-                if id(artist) not in previous_artists:
-                    if hasattr(artist, "set_alpha"):
-                        artist.set_alpha(0.80)
-                    if hasattr(artist, "set_linewidth"):
-                        artist.set_linewidth(0.70)
+            add_historical_predictive_region(
+                ax,
+                q_left,
+                q_right,
+                depth=40,
+                concentration=22.0,
+                mass=0.50,
+                colour=MODEL_COLOUR,
+                linewidth=0.70,
+                alpha=0.80,
+            )
 
             ax.scatter(
                 [q_left], [q_right],
@@ -386,7 +343,7 @@ def main():
 
     print(f"BINS\t{bins_path}")
     print(f"COUNTS\t{counts_path}")
-    print(f"HISTORICAL_OVERLAY_SOURCE\t{corrected_model}")
+    print("HISTORICAL_OVERLAY\tbeta-binomial depth=40 concentration=22 mass=0.50")
     print(f"SITES\t{n}")
     print(f"WROTE\t{output}")
 
