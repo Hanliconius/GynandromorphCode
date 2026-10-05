@@ -1,36 +1,23 @@
-# Scripts
+# Maintained scripts
 
-Scripts are organized by scientific task rather than historical analysis number.
+This directory is the curated execution layer for the gynandromorph project. Historical Pegasus scripts remain on branch `pegasus-shell-import-2026-10-05` under `archive/pegasus_shell_raw/`; AF/founder-model provenance is retained separately under `archive/AF_sitecount_provenance_raw/`.
 
-Planned layout:
+## Workflow lanes
 
-scripts/
-  allele_frequency/
-  founder_models/
-  reciprocal_mixing/
-  coverage/
-  optix/
-  smudgeplot/
+| Directory | Scope | Status |
+|---|---|---|
+| `allele_frequency/` | observed AF summaries, original-GT histograms, site-count audits, depth-aware AF displays | candidates selected; promotion pending |
+| `founder_models/` | founder-state fitting, simulation, posterior summaries, narrative figures | candidates selected; promotion pending |
+| `reciprocal_mixing/` | reciprocal L/R mixing inference and posterior-supported pair calls | candidates selected; promotion pending |
+| `coverage/` | relative coverage summaries and chromosome-level panels | candidates selected; Z held out pending validation |
+| `optix/` | optix-region extraction, comparative panels, and unbiased sample selection | candidates selected; promotion pending |
+| `smudgeplot/` | k-mer-pair diagnostics and figure rendering | renderer active; upstream jobs pending cleanup |
+| `ndj/` | nondisjunction and L/R difference scans | exploratory; promotion pending |
 
-See ../docs/PEGASUS_IMPORT_MANIFEST.md for the historical-to-cleaned mapping.
+See [the curation index](../docs/CURATION_INDEX.md) for source candidates and scientific rules.
 
-## Conventions
+## Promotion standard
 
-Cleaned scripts should:
+A promoted script must have explicit inputs and outputs, configurable project paths, environment/resource notes, a validation command, and a clear relationship to the narrative methods. Numbered retries and cluster repairs remain archival unless they encode a distinct method.
 
-- accept inputs and output roots as arguments;
-- avoid hard-coded Pegasus paths;
-- avoid silently recomputing expensive intermediates;
-- remove partial outputs before a clean rerun when needed;
-- use descriptive output names;
-- write vector PDF/SVG where practical;
-- record critical parameters in stdout/logs;
-- preserve biological defaults explicitly.
-
-For Slurm:
-
-- use project-relative paths where possible;
-- request explicit resources;
-- use one log pair per job or array task;
-- give FastK concurrent jobs unique temporary directories;
-- prefer direct environment binary paths when concurrent micromamba calls would contend for locks.
+No historical directory is merged wholesale into `scripts/`. The goal is one maintained implementation per step, with source provenance documented.
