@@ -2,7 +2,7 @@
 #SBATCH --job-name=YbHm25
 #SBATCH --partition=nano
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=8G
+#SBATCH --mem=2G
 #SBATCH --time=00:25:00
 #SBATCH --output=/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/logs/Yb_Hmel2_5_normalized.%j.out
 #SBATCH --error=/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/logs/Yb_Hmel2_5_normalized.%j.err
