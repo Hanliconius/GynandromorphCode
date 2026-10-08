@@ -35,10 +35,46 @@ for x in \
 do
   [[ -x "$x" ]] && MINIMAP2="$x" && break
 done
+
 if [[ -z "$MINIMAP2" ]] && command -v minimap2 >/dev/null 2>&1; then
   MINIMAP2=$(command -v minimap2)
 fi
-[[ -x "$MINIMAP2" ]] || { echo "ERROR: minimap2 unavailable" >&2; exit 1; }
+
+if [[ -z "$MINIMAP2" ]]; then
+  MMROOT="$ROOT/tools/minimap2-2.28"
+  MINIMAP2="$MMROOT/minimap2"
+
+  if [[ ! -x "$MINIMAP2" ]]; then
+    echo "INSTALLING_LOCAL_MINIMAP2=2.28"
+    mkdir -p "$ROOT/tools"
+    rm -rf "$MMROOT.tmp" "$ROOT/tools/minimap2-2.28.tar.gz"
+
+    /usr/bin/curl \
+      --fail \
+      --location \
+      --retry 5 \
+      --output "$ROOT/tools/minimap2-2.28.tar.gz" \
+      "https://github.com/lh3/minimap2/archive/refs/tags/v2.28.tar.gz"
+
+    mkdir -p "$MMROOT.tmp"
+    tar -xzf "$ROOT/tools/minimap2-2.28.tar.gz" \
+      -C "$MMROOT.tmp" \
+      --strip-components=1
+
+    make -C "$MMROOT.tmp" -j1
+
+    rm -rf "$MMROOT"
+    mv "$MMROOT.tmp" "$MMROOT"
+  fi
+fi
+
+[[ -x "$MINIMAP2" ]] || {
+  echo "ERROR: minimap2 unavailable after local fallback" >&2
+  exit 1
+}
+
+echo "MINIMAP2=$MINIMAP2"
+"$MINIMAP2" --version
 
 HM25="$REFDIR/hmel2_5.chromosomes.fa"
 if [[ ! -s "$HM25" ]]; then
