@@ -184,6 +184,16 @@ def main():
                 "HmRos_start": hmros_start,
                 "HmRos_end": hmros_end,
                 "orientation": orientation,
+                "start_shift_bp": (
+                    mapped_start - start
+                    if mapped_start is not None
+                    else None
+                ),
+                "end_shift_bp": (
+                    mapped_end - end
+                    if mapped_end is not None
+                    else None
+                ),
                 "start_nearest_offset_bp": delta_start,
                 "end_nearest_offset_bp": delta_end,
                 "alignment_mapq": best["mapq"],
@@ -216,6 +226,29 @@ def main():
     gap_path = args.output_dir / "Hmel2.5_to_HmRos_structural_gaps_ge20bp.tsv"
     gap_table.to_csv(gap_path, sep="\t", index=False)
 
+    sample_rows = []
+    old_min = min(q_to_t)
+    old_max = max(q_to_t)
+    for old_pos in range(
+        ((old_min + 999) // 1000) * 1000,
+        old_max + 1,
+        1000,
+    ):
+        if old_pos not in q_to_t:
+            continue
+        new_pos = q_to_t[old_pos]
+        sample_rows.append(
+            {
+                "Hmel2_5_position": old_pos,
+                "HmRos_position": new_pos,
+                "shift_bp": new_pos - old_pos,
+            }
+        )
+
+    shift_table = pd.DataFrame(sample_rows)
+    shift_path = args.output_dir / "Hmel2.5_to_HmRos_shift_by_1kb.tsv"
+    shift_table.to_csv(shift_path, sep="\t", index=False)
+
     aln_table = pd.DataFrame(alignments)
     aln_path = args.output_dir / "Hmel2.5_to_HmRos_all_alignments.tsv"
     aln_table.to_csv(aln_path, sep="\t", index=False)
@@ -235,6 +268,7 @@ def main():
     print()
     print(f"FEATURES\t{feature_path.resolve()}")
     print(f"GAPS\t{gap_path.resolve()}")
+    print(f"SHIFTS\t{shift_path.resolve()}")
     print(f"ALIGNMENTS\t{aln_path.resolve()}")
 
 
