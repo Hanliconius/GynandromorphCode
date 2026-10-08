@@ -702,8 +702,16 @@ def draw_panel(
     width = max(7.5, min(15.0, 6.0 + len(sites) / 15.0))
 
     fig, ax = plt.subplots(
-        figsize=(width, 4.0),
-        constrained_layout=True,
+        figsize=(width, 4.4),
+    )
+
+    # Explicit margins are more reliable than constrained_layout for
+    # these very sparse 4-row panels with a colourbar and long labels.
+    fig.subplots_adjust(
+        left=0.20,
+        right=0.88,
+        bottom=0.22,
+        top=0.78,
     )
 
     im = ax.imshow(
@@ -884,7 +892,10 @@ def main():
 
             all_values.append(values)
             all_sites.append(
-                sites.assign(panel=module)
+                sites.assign(
+                    panel=module,
+                    module=config["BA_pattern"],
+                )
             )
 
             details[module] = {
