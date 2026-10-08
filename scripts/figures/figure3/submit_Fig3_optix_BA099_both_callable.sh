@@ -19,7 +19,7 @@ for f in "$BAND_BA" "$DR_BA" "$LR"; do
     ls -lh "$f"
 done
 
-"$PYTHON" -m py_compile "$HERE/Fig3_optix_BA099_both_callable.py"
+"$PYTHON" -m py_compile "$HERE/Fig3_optix_BA099_union_both_callable.py"
 bash -n "$HERE/run_Fig3_optix_BA099_both_callable.nano.slurm"
 
 echo "PREFLIGHT=PASS"
@@ -33,7 +33,7 @@ echo
 echo "JOBID=$job"
 echo "OUT=$PROJECT_ROOT/logs/Fig3_BA099_callable.$job.out"
 echo "ERR=$PROJECT_ROOT/logs/Fig3_BA099_callable.$job.err"
-echo "PDF=$PROJECT_ROOT/analysis/figure3/optix_BA099_callable_pattern_dosage/optix_BAgt099_both_recalled_callable_five_loci.pdf"
-echo "SITES=$PROJECT_ROOT/analysis/figure3/optix_BA099_callable_pattern_dosage/BAgt099_both_recalled_callable_sites.tsv"
+echo "PDF=$PROJECT_ROOT/analysis/figure3/optix_BA099_callable_pattern_dosage/optix_BAgt099_union_both_recalled_callable_five_loci.pdf"
+echo "SITES=$PROJECT_ROOT/analysis/figure3/optix_BA099_callable_pattern_dosage/BAgt099_union_both_recalled_callable_sites.tsv"
 echo
 squeue -j "$job"
