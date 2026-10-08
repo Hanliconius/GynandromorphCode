@@ -50,7 +50,7 @@ if [[ ! -s "$HM25" ]]; then
       break
     fi
   done < <(
-    find "$PROJECT_ROOT" -type f \
+    find "$PROJECT_ROOT" -maxdepth 7 -type f \
       \( -iname '*Hmel2.5*.fa' -o -iname '*Hmel2.5*.fasta' -o \
          -iname '*Hmel2_5*.fa' -o -iname '*Hmel2_5*.fasta' \) \
       -print 2>/dev/null
