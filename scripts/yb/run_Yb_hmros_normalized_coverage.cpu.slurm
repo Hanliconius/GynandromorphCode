@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=YbHmRos
 #SBATCH --partition=nano
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=16G
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
 #SBATCH --time=00:25:00
 #SBATCH --output=/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/logs/Yb_hmros_normalized.%j.out
 #SBATCH --error=/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/logs/Yb_hmros_normalized.%j.err
