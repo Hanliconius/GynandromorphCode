@@ -91,71 +91,47 @@ echo "MINIMAP2=$MINIMAP2"
 "$MINIMAP2" --version
 
 HM25="$REFDIR/hmel2_5.chromosomes.fa"
+KNOWN_HM25_GZ="$PROJECT_ROOT/../Hmel2.5_PLUS_MITO_GENOME/Heliconius_melpomene_melpomene_Hmel2.5.scaffolds.fa.gz"
+
 if [[ ! -s "$HM25" ]]; then
-  LOCAL=""
-  while IFS= read -r f; do
-    case "$f" in *.gz) continue ;; esac
-    if grep -m1 -q '^>Hmel215003o\([[:space:]]\|$\)' "$f"; then
-      LOCAL="$f"
-      break
-    fi
-  done < <(
-    find "$PROJECT_ROOT" -maxdepth 7 -type f \
-      \( -iname '*Hmel2.5*.fa' -o -iname '*Hmel2.5*.fasta' -o \
-         -iname '*Hmel2_5*.fa' -o -iname '*Hmel2_5*.fasta' -o \
-         -name 'hmr_masked.fasta' -o -name 'Hmr.fa' -o \
-         -name 'Hmr.fasta' \) \
-      -print 2>/dev/null
-  )
+  if [[ -s "$KNOWN_HM25_GZ" ]]; then
+    echo "USING_LOCAL_HMEL2_5_GZ=$KNOWN_HM25_GZ"
+    gzip -t "$KNOWN_HM25_GZ"
 
-  if [[ -n "$LOCAL" ]]; then
-    echo "REUSING_LOCAL_HMEL2_5=$LOCAL"
-    ln -sfn "$LOCAL" "$HM25"
+    gzip -dc "$KNOWN_HM25_GZ" > "$HM25.tmp"
+    mv "$HM25.tmp" "$HM25"
   else
-    echo "NO_LOCAL_HMEL2_5_FASTA_FOUND"
-    echo "DOWNLOADING_VERIFIED_HMEL2_5_FROM_DRYAD"
+    LOCAL=""
 
-    # Dryad dataset DOI 10.5061/dryad.4j0zpc8jc contains
-    # hmel2_5.chromosomes.fa (Hmel2.5 sensu Davey et al.).
-    HM25_URLS=(
-      "https://datadryad.org/downloads/file_stream/2562400"
-      "https://datadryad.org/stash/downloads/file_stream/2562400"
+    while IFS= read -r f; do
+      case "$f" in *.gz) continue ;; esac
+
+      if grep -m1 -q '^>Hmel215003o\([[:space:]]\|$\)' "$f"; then
+        LOCAL="$f"
+        break
+      fi
+    done < <(
+      find "$PROJECT_ROOT/.." -maxdepth 8 -type f \
+        \( -iname '*Hmel2.5*.fa' -o -iname '*Hmel2.5*.fasta' -o \
+           -iname '*Hmel2_5*.fa' -o -iname '*Hmel2_5*.fasta' -o \
+           -name 'hmr_masked.fasta' -o -name 'Hmr.fa' -o \
+           -name 'Hmr.fasta' \) \
+        -print 2>/dev/null
     )
 
-    downloaded=0
-
-    for url in "${HM25_URLS[@]}"
-    do
-      echo "TRY_HMEL2_5_URL=$url"
-      rm -f "$HM25.part"
-
-      if /usr/bin/curl \
-        --fail \
-        --location \
-        --retry 5 \
-        --connect-timeout 60 \
-        --user-agent 'Mozilla/5.0' \
-        --output "$HM25.part" \
-        "$url"
-      then
-        if [[ -s "$HM25.part" ]] && \
-           grep -m1 -q '^>Hmel215003o\([[:space:]]\|$\)' "$HM25.part"
-        then
-          mv "$HM25.part" "$HM25"
-          downloaded=1
-          break
-        fi
-      fi
-    done
-
-    if [[ "$downloaded" -ne 1 ]]
-    then
-      rm -f "$HM25.part"
-      echo "ERROR: verified Hmel2.5 Dryad download failed" >&2
+    if [[ -n "$LOCAL" ]]; then
+      echo "REUSING_LOCAL_HMEL2_5=$LOCAL"
+      cp -p "$LOCAL" "$HM25.tmp"
+      mv "$HM25.tmp" "$HM25"
+    else
+      echo "ERROR: no local Hmel2.5 FASTA found." >&2
+      echo "Expected compressed source: $KNOWN_HM25_GZ" >&2
       exit 2
     fi
   fi
 fi
+
+sha256sum "$HM25" > "$REFDIR/hmel2_5.chromosomes.fa.sha256"
 
 rm -f "$HM25.fai"
 "$SAMTOOLS" faidx "$HM25"
