@@ -41,30 +41,44 @@ if [[ -z "$MINIMAP2" ]] && command -v minimap2 >/dev/null 2>&1; then
 fi
 
 if [[ -z "$MINIMAP2" ]]; then
-  MMROOT="$ROOT/tools/minimap2-2.28"
-  MINIMAP2="$MMROOT/minimap2"
+  MMENV="$ROOT/tools/minimap2_env"
+  MINIMAP2="$MMENV/bin/minimap2"
 
   if [[ ! -x "$MINIMAP2" ]]; then
-    echo "INSTALLING_LOCAL_MINIMAP2=2.28"
+    echo "INSTALLING_LOCAL_MINIMAP2_ENV=2.28"
     mkdir -p "$ROOT/tools"
-    rm -rf "$MMROOT.tmp" "$ROOT/tools/minimap2-2.28.tar.gz"
 
-    /usr/bin/curl \
-      --fail \
-      --location \
-      --retry 5 \
-      --output "$ROOT/tools/minimap2-2.28.tar.gz" \
-      "https://github.com/lh3/minimap2/archive/refs/tags/v2.28.tar.gz"
+    # Do not compile against the Pegasus host: its development headers are
+    # incomplete (the previous source build failed at zlib.h). Create a
+    # self-contained local micromamba prefix instead.
+    MAMBA=""
+    for x in \
+      "$HOME/.local/bin/micromamba" \
+      "$HOME/bin/micromamba"
+    do
+      [[ -x "$x" ]] && MAMBA="$x" && break
+    done
 
-    mkdir -p "$MMROOT.tmp"
-    tar -xzf "$ROOT/tools/minimap2-2.28.tar.gz" \
-      -C "$MMROOT.tmp" \
-      --strip-components=1
+    if [[ -z "$MAMBA" ]] && command -v micromamba >/dev/null 2>&1; then
+      MAMBA=$(command -v micromamba)
+    fi
 
-    make -C "$MMROOT.tmp" -j1
+    [[ -x "$MAMBA" ]] || {
+      echo "ERROR: micromamba unavailable for local minimap2 install" >&2
+      exit 1
+    }
 
-    rm -rf "$MMROOT"
-    mv "$MMROOT.tmp" "$MMROOT"
+    rm -rf "$MMENV.tmp"
+
+    "$MAMBA" create \
+      -y \
+      -p "$MMENV.tmp" \
+      -c conda-forge \
+      -c bioconda \
+      "minimap2=2.28"
+
+    rm -rf "$MMENV"
+    mv "$MMENV.tmp" "$MMENV"
   fi
 fi
 
@@ -88,7 +102,9 @@ if [[ ! -s "$HM25" ]]; then
   done < <(
     find "$PROJECT_ROOT" -maxdepth 7 -type f \
       \( -iname '*Hmel2.5*.fa' -o -iname '*Hmel2.5*.fasta' -o \
-         -iname '*Hmel2_5*.fa' -o -iname '*Hmel2_5*.fasta' \) \
+         -iname '*Hmel2_5*.fa' -o -iname '*Hmel2_5*.fasta' -o \
+         -name 'hmr_masked.fasta' -o -name 'Hmr.fa' -o \
+         -name 'Hmr.fasta' \) \
       -print 2>/dev/null
   )
 
