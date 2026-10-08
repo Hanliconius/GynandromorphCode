@@ -7,7 +7,7 @@ PYTHON="$HOME/.local/share/mamba/envs/gynandrocalling/bin/python"
 
 echo "===== Hmel2.5 Yb FIGURE-8 NORMALIZATION PREFLIGHT ====="
 
-"$PYTHON" -m py_compile     "$HERE/plot_Yb_Hmel2_5_Figure8_normalized.py"
+"$PYTHON" -m py_compile     "$HERE/extract_Hmel2_5_bigwig_scaffold.py"     "$HERE/plot_Yb_Hmel2_5_Figure8_normalized.py"
 
 bash -n     "$HERE/run_Yb_Hmel2_5_Figure8_normalized.nano.slurm"
 
