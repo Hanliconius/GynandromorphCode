@@ -49,6 +49,7 @@ See:
 - [docs/UPSTREAM_KRISTA.md](docs/UPSTREAM_KRISTA.md) for the relationship to Krista Pipho's original pipeline;
 - [docs/PEGASUS_IMPORT_MANIFEST.md](docs/PEGASUS_IMPORT_MANIFEST.md) for scripts still to migrate from Pegasus;
 - [docs/FIGURE_2.md](docs/FIGURE_2.md) for the canonical Figure 2 panel map and plotting choices.
+- [docs/YB_COVERAGE.md](docs/YB_COVERAGE.md) for the normalized replication of the historical Yb/cortex coverage analysis.
 
 ## Current scientific picture
 
