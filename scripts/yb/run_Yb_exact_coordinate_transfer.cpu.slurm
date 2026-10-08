@@ -112,9 +112,48 @@ if [[ ! -s "$HM25" ]]; then
     echo "REUSING_LOCAL_HMEL2_5=$LOCAL"
     ln -sfn "$LOCAL" "$HM25"
   else
-    echo "ERROR: no Hmel2.5 FASTA found under $PROJECT_ROOT" >&2
-    echo "TROUGH_ANALYSIS_IS_COMPLETE; coordinate transfer still needs the Hmel2.5 FASTA." >&2
-    exit 2
+    echo "NO_LOCAL_HMEL2_5_FASTA_FOUND"
+    echo "DOWNLOADING_VERIFIED_HMEL2_5_FROM_DRYAD"
+
+    # Dryad dataset DOI 10.5061/dryad.4j0zpc8jc contains
+    # hmel2_5.chromosomes.fa (Hmel2.5 sensu Davey et al.).
+    HM25_URLS=(
+      "https://datadryad.org/downloads/file_stream/2562400"
+      "https://datadryad.org/stash/downloads/file_stream/2562400"
+    )
+
+    downloaded=0
+
+    for url in "${HM25_URLS[@]}"
+    do
+      echo "TRY_HMEL2_5_URL=$url"
+      rm -f "$HM25.part"
+
+      if /usr/bin/curl \
+        --fail \
+        --location \
+        --retry 5 \
+        --connect-timeout 60 \
+        --user-agent 'Mozilla/5.0' \
+        --output "$HM25.part" \
+        "$url"
+      then
+        if [[ -s "$HM25.part" ]] && \
+           grep -m1 -q '^>Hmel215003o\([[:space:]]\|$\)' "$HM25.part"
+        then
+          mv "$HM25.part" "$HM25"
+          downloaded=1
+          break
+        fi
+      fi
+    done
+
+    if [[ "$downloaded" -ne 1 ]]
+    then
+      rm -f "$HM25.part"
+      echo "ERROR: verified Hmel2.5 Dryad download failed" >&2
+      exit 2
+    fi
   fi
 fi
 
