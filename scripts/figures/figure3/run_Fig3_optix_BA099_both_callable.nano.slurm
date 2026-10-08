@@ -20,6 +20,6 @@ echo "job=${SLURM_JOB_ID}"
 echo "host=$(hostname)"
 echo "PROJECT_ROOT=$PROJECT_ROOT"
 
-"$PYTHON" "$CODE_DIR/Fig3_optix_BA099_both_callable.py"
+"$PYTHON" "$CODE_DIR/Fig3_optix_BA099_union_both_callable.py"
 
 echo "FIG3_BA099_CALLABLE_COMPLETE"
