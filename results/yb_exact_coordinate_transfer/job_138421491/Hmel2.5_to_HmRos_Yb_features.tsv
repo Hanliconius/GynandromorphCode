@@ -1,0 +1,6 @@
+feature	Hmel2_5_start	Hmel2_5_end	HmRos_seqid	HmRos_start	HmRos_end	orientation	start_shift_bp	end_shift_bp	start_nearest_offset_bp	end_nearest_offset_bp	alignment_mapq
+Yb_d	1403500	1405500	NC_140403.1			+					60
+Krista_2024_color_region	1408879	1429719	NC_140403.1			+		228580.0		0.0	60
+cortex_proximal_TSS	1424680	1424680	NC_140403.1	1653288.0	1653288.0	+	228608.0	228608.0	0.0	0.0	60
+Yb_v	1429500	1430500	NC_140403.1	1658079.0	1659072.0	+	228579.0	228572.0	0.0	0.0	60
+ivory_delta78k	1494902	1573177	NC_140403.1			+					60

@@ -1,0 +1,6 @@
+type	length	old_anchor	new_start	new_end	old_start	old_end	new_anchor
+sequence_present_in_HmRos_not_Hmel2.5	67	1424095.0	1652649.0	1652715.0			
+sequence_present_in_HmRos_not_Hmel2.5	21	1429366.0	1657924.0	1657944.0			
+sequence_present_in_HmRos_not_Hmel2.5	137	1434919.0	1663515.0	1663651.0			
+sequence_present_in_HmRos_not_Hmel2.5	145	1444712.0	1673457.0	1673601.0			
+sequence_present_in_Hmel2.5_not_HmRos	30				1425517.0	1425546.0	1654108.0
