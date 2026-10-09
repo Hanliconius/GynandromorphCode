@@ -158,3 +158,26 @@ Outputs:
 The earlier `scripts/yb/plot_Yb_normalized_coverage.py` workflow used the
 historical Hmel2.5 bigWigs. It is preserved only as a historical replication
 path and is not the current analysis.
+
+
+## Legacy-style HmRos companion view
+
+A four-track HmRos companion to the historical Hmel2.5 Yb plot can be generated
+from the existing normalized HmRos table, without realigning reads:
+
+- code: `scripts/yb/plot_Yb_HmRos_legacy_replication.py`
+- input: `analysis/yb_hmros_normalized_coverage/results/Yb_hmros_panel_normalized_250bp.long.tsv.gz`
+- outputs: `analysis/yb_legacy_replication/HmRos/`
+- submit on Pegasus: `bash scripts/yb/submit_Yb_HmRos_legacy_replication.sh`
+
+The tracks preserve the historical order and colors on the native HmRos
+`NC_140403.1:1,620,000-1,670,000` axis. Yb(d), Yb(v), and the cortex TSS use
+exact transferred coordinates. The start of the historical Krista color
+interval is only bracketed at `1,638,549-1,640,834`; the plot shows that
+uncertainty rather than assigning a false exact boundary.
+
+This is a visual companion, not a direct numerical replication of the Hmel2.5
+figure. HmRos uses 250-bp bins normalized to the local median of 18 controls
+(MAPQ/baseQ >=20), while the historical Hmel2.5 tracks use 50-bp bins divided
+by each sample's full-scaffold mean. The y-values should not be compared as if
+they shared a normalization.
