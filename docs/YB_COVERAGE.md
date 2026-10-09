@@ -162,22 +162,24 @@ path and is not the current analysis.
 
 ## Legacy-style HmRos companion view
 
-A four-track HmRos companion to the historical Hmel2.5 Yb plot can be generated
-from the existing normalized HmRos table, without realigning reads:
+A four-track HmRos companion to the historical Hmel2.5 Yb plot uses the
+existing 250-bp focal depth table and does not realign reads:
 
 - code: `scripts/yb/plot_Yb_HmRos_legacy_replication.py`
 - input: `analysis/yb_hmros_normalized_coverage/results/Yb_hmros_panel_normalized_250bp.long.tsv.gz`
+- full-chromosome mean-depth calculation: existing focal BAMs, MAPQ>=20 and baseQ>=20
 - outputs: `analysis/yb_legacy_replication/HmRos/`
 - submit on Pegasus: `bash scripts/yb/submit_Yb_HmRos_legacy_replication.sh`
 
 The tracks preserve the historical order and colors on the native HmRos
-`NC_140403.1:1,620,000-1,670,000` axis. Yb(d), Yb(v), and the cortex TSS use
-exact transferred coordinates. The start of the historical Krista color
-interval is only bracketed at `1,638,549-1,640,834`; the plot shows that
-uncertainty rather than assigning a false exact boundary.
+`NC_140403.1:1,620,000-1,670,000` axis. Each bin is divided by its sample's
+mean depth across the full HmRos chromosome. HmRos uses 250-bp bins from the
+existing MAPQ/baseQ-filtered focal alignments; Hmel2.5 uses historical 50-bp
+bigWig tracks divided by the Hmel scaffold mean. This makes the baselines more
+comparable, but differing assemblies, alignments, and bin sizes still affect
+the traces.
 
-This is a visual companion, not a direct numerical replication of the Hmel2.5
-figure. HmRos uses 250-bp bins normalized to the local median of 18 controls
-(MAPQ/baseQ >=20), while the historical Hmel2.5 tracks use 50-bp bins divided
-by each sample's full-scaffold mean. The y-values should not be compared as if
-they shared a normalization.
+Yb(d), Yb(v), and the cortex TSS use transferred HmRos coordinates. The start
+of the historical Krista color interval is only bracketed at
+`1,638,549-1,640,834`; the plot marks that uncertainty rather than assigning
+an exact boundary.
