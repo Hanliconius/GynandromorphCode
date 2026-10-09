@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Map exact Hmel2.5 Yb feature coordinates onto HmRos from minimap2 PAF."""
+"""Map Hmel2.5 Yb coordinates onto HmRos from a fragmented minimap2 PAF.
+
+Important: this locus is repeat-rich and minimap2 returns many collinear
+alignment blocks.  Coordinate transfer must therefore combine all compatible
+blocks rather than use only the single longest alignment.
+"""
 
 from __future__ import annotations
 
 import argparse
+import bisect
 import re
 from pathlib import Path
 
@@ -28,6 +34,7 @@ def parse_paf(path: Path):
             fields = line.rstrip("\n").split("\t")
             if len(fields) < 12:
                 continue
+
             tags = {}
             for tag in fields[12:]:
                 parts = tag.split(":", 2)
@@ -58,21 +65,16 @@ def parse_paf(path: Path):
     if not rows:
         raise RuntimeError(f"No PAF alignments with cg tag in {path}")
 
-    rows.sort(
-        key=lambda x: (x["mapq"], x["matches"], x["alnlen"]),
-        reverse=True,
-    )
     return rows
 
 
-def build_map(
+def alignment_map_and_indels(
     aln,
     old_region_start: int,
     new_region_start: int,
 ):
-    q_to_t = {}
-    target_insertions = []
-    query_insertions = []
+    mapping = {}
+    events = []
 
     t = aln["tstart"]
 
@@ -88,34 +90,50 @@ def build_map(
 
         if op in ("M", "=", "X"):
             for _ in range(n):
-                old_pos = old_region_start + q
-                new_pos = new_region_start + t
-                q_to_t[old_pos] = new_pos
+                mapping[old_region_start + q] = new_region_start + t
                 q += q_step
                 t += 1
 
         elif op == "I":
             q_first = q
             q_last = q + q_step * (n - 1)
-            query_insertions.append(
-                {
-                    "length": n,
-                    "old_start": old_region_start + min(q_first, q_last),
-                    "old_end": old_region_start + max(q_first, q_last),
-                    "new_anchor": new_region_start + t,
-                }
-            )
+            if n >= 20:
+                events.append(
+                    {
+                        "event_basis": "within_alignment",
+                        "type": "sequence_present_in_Hmel2.5_not_HmRos",
+                        "length_bp": n,
+                        "Hmel2_5_start": old_region_start
+                        + min(q_first, q_last),
+                        "Hmel2_5_end": old_region_start
+                        + max(q_first, q_last),
+                        "HmRos_start": None,
+                        "HmRos_end": None,
+                        "HmRos_anchor": new_region_start + t,
+                        "alignment_qstart": aln["qstart"],
+                        "alignment_qend": aln["qend"],
+                        "alignment_mapq": aln["mapq"],
+                    }
+                )
             q += q_step * n
 
         elif op in ("D", "N"):
-            target_insertions.append(
-                {
-                    "length": n,
-                    "old_anchor": old_region_start + q,
-                    "new_start": new_region_start + t,
-                    "new_end": new_region_start + t + n - 1,
-                }
-            )
+            if n >= 20:
+                events.append(
+                    {
+                        "event_basis": "within_alignment",
+                        "type": "sequence_present_in_HmRos_not_Hmel2.5",
+                        "length_bp": n,
+                        "Hmel2_5_start": None,
+                        "Hmel2_5_end": None,
+                        "Hmel2_5_anchor": old_region_start + q,
+                        "HmRos_start": new_region_start + t,
+                        "HmRos_end": new_region_start + t + n - 1,
+                        "alignment_qstart": aln["qstart"],
+                        "alignment_qend": aln["qend"],
+                        "alignment_mapq": aln["mapq"],
+                    }
+                )
             t += n
 
         elif op == "S":
@@ -127,19 +145,140 @@ def build_map(
         else:
             raise RuntimeError(f"Unhandled CIGAR op {op}")
 
-    return q_to_t, target_insertions, query_insertions
+    return mapping, events
 
 
-def nearest_map(mapping, position, max_distance=1000):
+def merge_alignment_maps(
+    alignments,
+    old_region_start: int,
+    new_region_start: int,
+):
+    # Higher MAPQ / more matching sequence gets first claim on any query base
+    # represented by overlapping alignment blocks.
+    ranked = sorted(
+        alignments,
+        key=lambda x: (x["mapq"], x["matches"], x["alnlen"]),
+        reverse=True,
+    )
+
+    merged = {}
+    events = []
+
+    for aln in ranked:
+        local_map, local_events = alignment_map_and_indels(
+            aln,
+            old_region_start,
+            new_region_start,
+        )
+
+        for old_pos, new_pos in local_map.items():
+            merged.setdefault(old_pos, new_pos)
+
+        events.extend(local_events)
+
+    return merged, events
+
+
+def endpoint_mapping(mapping, sorted_old, position):
     if position in mapping:
-        return mapping[position], 0
+        new_pos = mapping[position]
+        return {
+            "status": "exact",
+            "mapped": new_pos,
+            "shift": new_pos - position,
+            "lower_old": position,
+            "lower_new": new_pos,
+            "upper_old": position,
+            "upper_new": new_pos,
+        }
 
-    for distance in range(1, max_distance + 1):
-        for candidate in (position - distance, position + distance):
-            if candidate in mapping:
-                return mapping[candidate], candidate - position
+    i = bisect.bisect_left(sorted_old, position)
+    lower_old = sorted_old[i - 1] if i > 0 else None
+    upper_old = sorted_old[i] if i < len(sorted_old) else None
 
-    return None, None
+    return {
+        "status": "bracketed",
+        "mapped": None,
+        "shift": None,
+        "lower_old": lower_old,
+        "lower_new": mapping[lower_old] if lower_old is not None else None,
+        "upper_old": upper_old,
+        "upper_new": mapping[upper_old] if upper_old is not None else None,
+    }
+
+
+def collinear_block_gaps(
+    alignments,
+    old_region_start: int,
+    new_region_start: int,
+):
+    # The current Yb comparison is collinear and plus-strand.  Keep the
+    # dominant strand and report sequence between adjacent non-overlapping
+    # blocks as unresolved inter-block gaps rather than pretending they are
+    # exact insertion/deletion calls.
+    strand_score = {}
+    for aln in alignments:
+        strand_score[aln["strand"]] = (
+            strand_score.get(aln["strand"], 0) + aln["matches"]
+        )
+
+    dominant = max(strand_score, key=strand_score.get)
+    blocks = sorted(
+        [x for x in alignments if x["strand"] == dominant],
+        key=lambda x: (x["qstart"], x["qend"]),
+    )
+
+    # Resolve any query-overlapping blocks by retaining the one with the
+    # strongest evidence before constructing the collinear chain.
+    chain = []
+    for aln in blocks:
+        if not chain or aln["qstart"] >= chain[-1]["qend"]:
+            chain.append(aln)
+            continue
+
+        prev = chain[-1]
+        prev_score = (prev["mapq"], prev["matches"], prev["alnlen"])
+        new_score = (aln["mapq"], aln["matches"], aln["alnlen"])
+        if new_score > prev_score:
+            chain[-1] = aln
+
+    rows = []
+    for left, right in zip(chain, chain[1:]):
+        q_gap = right["qstart"] - left["qend"]
+
+        if dominant == "+":
+            t_gap = right["tstart"] - left["tend"]
+        else:
+            # Not expected for this locus, but preserve a usable diagnostic.
+            t_gap = left["tstart"] - right["tend"]
+
+        if q_gap < 0 or t_gap < 0:
+            continue
+
+        rows.append(
+            {
+                "strand": dominant,
+                "left_Hmel2_5_last_aligned": (
+                    old_region_start + left["qend"] - 1
+                ),
+                "right_Hmel2_5_first_aligned": (
+                    old_region_start + right["qstart"]
+                ),
+                "Hmel2_5_unaligned_gap_bp": q_gap,
+                "left_HmRos_last_aligned": (
+                    new_region_start + left["tend"] - 1
+                ),
+                "right_HmRos_first_aligned": (
+                    new_region_start + right["tstart"]
+                ),
+                "HmRos_unaligned_gap_bp": t_gap,
+                "HmRos_minus_Hmel2_5_gap_bp": t_gap - q_gap,
+                "left_mapq": left["mapq"],
+                "right_mapq": right["mapq"],
+            }
+        )
+
+    return rows
 
 
 def main():
@@ -153,27 +292,29 @@ def main():
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     alignments = parse_paf(args.paf)
-    best = alignments[0]
-
-    q_to_t, target_insertions, query_insertions = build_map(
-        best,
+    q_to_t, within_events = merge_alignment_maps(
+        alignments,
         args.old_region_start,
         args.new_region_start,
     )
 
+    if not q_to_t:
+        raise RuntimeError("PAF contained no aligned query bases")
+
+    sorted_old = sorted(q_to_t)
+
     feature_rows = []
     for name, start, end in FEATURES:
-        mapped_start, delta_start = nearest_map(q_to_t, start)
-        mapped_end, delta_end = nearest_map(q_to_t, end)
+        s = endpoint_mapping(q_to_t, sorted_old, start)
+        e = endpoint_mapping(q_to_t, sorted_old, end)
 
-        if mapped_start is not None and mapped_end is not None:
-            hmros_start = min(mapped_start, mapped_end)
-            hmros_end = max(mapped_start, mapped_end)
-            orientation = "+" if mapped_end >= mapped_start else "-"
+        exact_start = s["mapped"]
+        exact_end = e["mapped"]
+
+        if exact_start is not None and exact_end is not None:
+            orientation = "+" if exact_end >= exact_start else "-"
         else:
-            hmros_start = None
-            hmros_end = None
-            orientation = best["strand"]
+            orientation = None
 
         feature_rows.append(
             {
@@ -181,22 +322,21 @@ def main():
                 "Hmel2_5_start": start,
                 "Hmel2_5_end": end,
                 "HmRos_seqid": "NC_140403.1",
-                "HmRos_start": hmros_start,
-                "HmRos_end": hmros_end,
-                "orientation": orientation,
-                "start_shift_bp": (
-                    mapped_start - start
-                    if mapped_start is not None
-                    else None
-                ),
-                "end_shift_bp": (
-                    mapped_end - end
-                    if mapped_end is not None
-                    else None
-                ),
-                "start_nearest_offset_bp": delta_start,
-                "end_nearest_offset_bp": delta_end,
-                "alignment_mapq": best["mapq"],
+                "HmRos_start_exact": exact_start,
+                "HmRos_end_exact": exact_end,
+                "orientation_if_both_exact": orientation,
+                "start_status": s["status"],
+                "end_status": e["status"],
+                "start_shift_bp": s["shift"],
+                "end_shift_bp": e["shift"],
+                "start_lower_Hmel2_5": s["lower_old"],
+                "start_lower_HmRos": s["lower_new"],
+                "start_upper_Hmel2_5": s["upper_old"],
+                "start_upper_HmRos": s["upper_new"],
+                "end_lower_Hmel2_5": e["lower_old"],
+                "end_lower_HmRos": e["lower_new"],
+                "end_upper_Hmel2_5": e["upper_old"],
+                "end_upper_HmRos": e["upper_new"],
             }
         )
 
@@ -204,31 +344,30 @@ def main():
     feature_path = args.output_dir / "Hmel2.5_to_HmRos_Yb_features.tsv"
     feature_table.to_csv(feature_path, sep="\t", index=False)
 
-    gaps = []
-    for row in target_insertions:
-        if row["length"] >= 20:
-            gaps.append(
-                {
-                    "type": "sequence_present_in_HmRos_not_Hmel2.5",
-                    **row,
-                }
-            )
-    for row in query_insertions:
-        if row["length"] >= 20:
-            gaps.append(
-                {
-                    "type": "sequence_present_in_Hmel2.5_not_HmRos",
-                    **row,
-                }
-            )
+    event_table = pd.DataFrame(within_events)
+    event_path = (
+        args.output_dir
+        / "Hmel2.5_to_HmRos_structural_gaps_ge20bp.tsv"
+    )
+    event_table.to_csv(event_path, sep="\t", index=False)
 
-    gap_table = pd.DataFrame(gaps)
-    gap_path = args.output_dir / "Hmel2.5_to_HmRos_structural_gaps_ge20bp.tsv"
-    gap_table.to_csv(gap_path, sep="\t", index=False)
+    block_gap_table = pd.DataFrame(
+        collinear_block_gaps(
+            alignments,
+            args.old_region_start,
+            args.new_region_start,
+        )
+    )
+    block_gap_path = (
+        args.output_dir
+        / "Hmel2.5_to_HmRos_interblock_gaps.tsv"
+    )
+    block_gap_table.to_csv(block_gap_path, sep="\t", index=False)
 
     sample_rows = []
-    old_min = min(q_to_t)
-    old_max = max(q_to_t)
+    old_min = min(sorted_old)
+    old_max = max(sorted_old)
+
     for old_pos in range(
         ((old_min + 999) // 1000) * 1000,
         old_max + 1,
@@ -236,6 +375,7 @@ def main():
     ):
         if old_pos not in q_to_t:
             continue
+
         new_pos = q_to_t[old_pos]
         sample_rows.append(
             {
@@ -249,25 +389,43 @@ def main():
     shift_path = args.output_dir / "Hmel2.5_to_HmRos_shift_by_1kb.tsv"
     shift_table.to_csv(shift_path, sep="\t", index=False)
 
-    aln_table = pd.DataFrame(alignments)
+    aln_table = pd.DataFrame(
+        sorted(
+            alignments,
+            key=lambda x: (x["qstart"], x["qend"]),
+        )
+    )
     aln_path = args.output_dir / "Hmel2.5_to_HmRos_all_alignments.tsv"
     aln_table.to_csv(aln_path, sep="\t", index=False)
 
     print("YB_EXACT_COORDINATE_TRANSFER_COMPLETE")
-    print("BEST_ALIGNMENT")
-    print(pd.DataFrame([best]).to_string(index=False))
+    print(
+        "alignment_blocks="
+        f"{len(alignments)} merged_aligned_bases={len(q_to_t)}"
+    )
     print()
+
     print("FEATURE_MAPPING")
     print(feature_table.to_string(index=False))
     print()
-    print("STRUCTURAL_GAPS_GE20BP")
-    if gap_table.empty:
+
+    print("WITHIN_ALIGNMENT_STRUCTURAL_GAPS_GE20BP")
+    if event_table.empty:
         print("none")
     else:
-        print(gap_table.to_string(index=False))
+        print(event_table.to_string(index=False))
     print()
+
+    print("INTERBLOCK_GAPS")
+    if block_gap_table.empty:
+        print("none")
+    else:
+        print(block_gap_table.to_string(index=False))
+    print()
+
     print(f"FEATURES\t{feature_path.resolve()}")
-    print(f"GAPS\t{gap_path.resolve()}")
+    print(f"GAPS\t{event_path.resolve()}")
+    print(f"INTERBLOCK_GAPS\t{block_gap_path.resolve()}")
     print(f"SHIFTS\t{shift_path.resolve()}")
     print(f"ALIGNMENTS\t{aln_path.resolve()}")
 
