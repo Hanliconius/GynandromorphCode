@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Render a legacy-style HmRos view of the Yb coverage tracks.
 
-This is a visual companion to the historical Hmel2.5 figure, not a strict
-normalization-level replication. The HmRos input is the existing 250-bp,
-MAPQ>=20/baseQ>=20 panel-normalized coverage table. Each focal track is shown
-relative to the median of the 18-control panel at the same bin. The plot uses
-native HmRos coordinates and marks the uncertain start boundary of Krista's
-historical Hmel2.5 color interval as a bracket.
+This is a visual companion to the historical Hmel2.5 figure. The HmRos input
+is the existing 250-bp focal depth table, filtered at MAPQ>=20/baseQ>=20.
+Each focal track is normalized by its mean depth across the full HmRos
+chromosome, matching the historical full-reference-mean baseline as closely
+as possible. The plot uses native HmRos coordinates and marks the uncertain
+start boundary of Krista's historical Hmel2.5 color interval as a bracket.
 """
 
 from __future__ import annotations
@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import subprocess
 
 import matplotlib
 matplotlib.use("Agg")
@@ -43,23 +44,76 @@ KRISTA_END_EXACT = 1_658_299
 CORTEX_TSS = 1_653_288
 
 
-def load_profiles(path: Path) -> dict[str, pd.DataFrame]:
+def chromosome_mean_depth(
+    bam: Path,
+    samtools: Path,
+    seqid: str,
+    chromosome_length: int,
+) -> float:
+    region = f"{seqid}:1-{chromosome_length}"
+    result = subprocess.run(
+        [
+            str(samtools),
+            "coverage",
+            "-q", "20",
+            "-Q", "20",
+            "-r", region,
+            str(bam),
+        ],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    lines = [line for line in result.stdout.splitlines() if line.strip()]
+    if len(lines) < 2:
+        raise RuntimeError(f"No samtools coverage row for {bam} on {region}")
+    header = [field.lstrip("#") for field in lines[0].split("\t")]
+    values = lines[1].split("\t")
+    fields = dict(zip(header, values))
+    if fields.get("rname") != seqid:
+        raise RuntimeError(
+            f"samtools coverage returned {fields.get('rname')!r}, expected {seqid!r}"
+        )
+    mean_depth = float(fields["meandepth"])
+    if not np.isfinite(mean_depth) or mean_depth <= 0:
+        raise RuntimeError(f"Invalid chromosome mean depth for {bam}: {mean_depth}")
+    return mean_depth
+
+
+def load_profiles(
+    path: Path,
+    samples_path: Path,
+    coordinates_path: Path,
+    samtools: Path,
+) -> tuple[dict[str, pd.DataFrame], dict[str, float]]:
     table = pd.read_csv(path, sep="\t", compression="infer")
-    required = {"sample", "seqid", "midpoint", "panel_normalized_depth"}
+    required = {"sample", "seqid", "midpoint", "mean_depth"}
     missing = required - set(table.columns)
     if missing:
         raise RuntimeError(f"Input table lacks columns: {sorted(missing)}")
 
     table["midpoint"] = pd.to_numeric(table["midpoint"], errors="raise")
-    table["panel_normalized_depth"] = pd.to_numeric(
-        table["panel_normalized_depth"], errors="coerce"
-    )
+    table["mean_depth"] = pd.to_numeric(table["mean_depth"], errors="raise")
     table = table.loc[
         table["seqid"].astype(str).eq(SEQID)
         & table["midpoint"].between(START, END)
     ].copy()
 
+    sample_table = pd.read_csv(samples_path, sep="\t")
+    if not {"sample", "bam"}.issubset(sample_table.columns):
+        raise RuntimeError("HmRos sample metadata must contain sample and bam columns")
+    coordinates = pd.read_csv(coordinates_path, sep="\t")
+    if not {"seqid", "chromosome_length"}.issubset(coordinates.columns):
+        raise RuntimeError("HmRos coordinates must contain seqid and chromosome_length")
+    coordinate_rows = coordinates.loc[
+        coordinates["seqid"].astype(str).eq(SEQID)
+    ]
+    if len(coordinate_rows) != 1:
+        raise RuntimeError(f"Expected one coordinate row for {SEQID}")
+    chromosome_length = int(coordinate_rows.iloc[0]["chromosome_length"])
+
     profiles: dict[str, pd.DataFrame] = {}
+    chromosome_means: dict[str, float] = {}
     for sample, _, _ in SAMPLES:
         profile = table.loc[table["sample"].astype(str).eq(sample)].copy()
         if profile.empty:
@@ -70,11 +124,27 @@ def load_profiles(path: Path) -> dict[str, pd.DataFrame]:
         steps = np.diff(profile["midpoint"].to_numpy(dtype=float))
         if steps.size and not np.allclose(steps, BIN_SIZE):
             raise RuntimeError(f"Expected {BIN_SIZE}-bp bins for {sample}")
-        if profile["panel_normalized_depth"].notna().sum() < 20:
-            raise RuntimeError(f"Too few stable control-panel bins for {sample}")
+        if not np.isfinite(profile["mean_depth"]).all():
+            raise RuntimeError(f"Non-finite raw depth values for {sample}")
+
+        sample_rows = sample_table.loc[
+            sample_table["sample"].astype(str).eq(sample)
+        ]
+        if len(sample_rows) != 1:
+            raise RuntimeError(f"Expected one BAM path for {sample}")
+        bam = Path(str(sample_rows.iloc[0]["bam"]))
+        if not bam.is_file():
+            raise RuntimeError(f"Missing focal BAM for {sample}: {bam}")
+        mean_depth = chromosome_mean_depth(
+            bam, samtools, SEQID, chromosome_length
+        )
+        chromosome_means[sample] = mean_depth
+        profile["coverage_over_chromosome_mean"] = (
+            profile["mean_depth"] / mean_depth
+        )
         profiles[sample] = profile
 
-    return profiles
+    return profiles, chromosome_means
 
 
 def add_features(axis: plt.Axes) -> None:
@@ -139,7 +209,7 @@ def render(
     for axis, (sample, label, color) in zip(axes, SAMPLES):
         data = profiles[sample]
         x = data["midpoint"].to_numpy(dtype=float) / 1e6
-        y = data["panel_normalized_depth"].to_numpy(dtype=float)
+        y = data["coverage_over_chromosome_mean"].to_numpy(dtype=float)
 
         add_features(axis)
         if scale == "log":
@@ -180,10 +250,10 @@ def render(
 
     axes[-1].set_xlabel(f"Genomic position on {SEQID} (Mb)", fontsize=8)
     if scale == "log":
-        fig.supylabel("ln(panel-normalized coverage)", x=0.035, fontsize=8)
+        fig.supylabel("ln(coverage / HmRos chromosome mean)", x=0.035, fontsize=8)
         fig.suptitle("Yb locus coverage on HmRos", x=0.16, ha="left", fontsize=10)
     else:
-        fig.supylabel("Coverage / HmRos control-panel median", x=0.035, fontsize=8)
+        fig.supylabel("Coverage / HmRos chromosome mean", x=0.035, fontsize=8)
         fig.suptitle("Yb locus coverage on HmRos", x=0.16, ha="left", fontsize=10)
 
     fig.text(
@@ -202,13 +272,21 @@ def render(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True, type=Path)
+    parser.add_argument("--samples", required=True, type=Path)
+    parser.add_argument("--coordinates", required=True, type=Path)
+    parser.add_argument("--samtools", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args()
 
     if not args.input.is_file() or args.input.stat().st_size == 0:
         raise RuntimeError(f"Missing/empty HmRos normalized input: {args.input}")
 
-    profiles = load_profiles(args.input)
+    profiles, chromosome_means = load_profiles(
+        args.input,
+        args.samples,
+        args.coordinates,
+        args.samtools,
+    )
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     linear_pdf = args.output_dir / "Yb_HmRos_Figure8_legacy_tracks_linear.pdf"
@@ -218,16 +296,14 @@ def main() -> None:
 
     summary_rows = []
     for sample, label, _ in SAMPLES:
-        values = profiles[sample]["panel_normalized_depth"].dropna()
+        values = profiles[sample]["coverage_over_chromosome_mean"]
         summary_rows.append(
             {
                 "sample": sample,
                 "display_label": label,
                 "bins_total": int(len(profiles[sample])),
-                "stable_bins": int(values.size),
-                "window_median_panel_normalized_coverage": (
-                    float(values.median()) if not values.empty else np.nan
-                ),
+                "chromosome_mean_depth": chromosome_means[sample],
+                "window_median_coverage_over_chromosome_mean": float(values.median()),
             }
         )
 
@@ -240,13 +316,16 @@ def main() -> None:
         "region_1based_inclusive_for_display": [START, END],
         "bin_size_bp": BIN_SIZE,
         "source_signal": (
-            "Existing HmRos focal tracks from the MAPQ>=20/baseQ>=20 250-bp "
-            "panel-normalized coverage analysis; no realignment performed."
+            "Existing HmRos focal per-bin mean_depth values from MAPQ>=20 and "
+            "baseQ>=20 samtools depth; no realignment performed."
         ),
         "normalization": (
-            "Each focal library is scaled by mapped bases, then divided by "
-            "the median library-normalized depth of 18 controls at each bin. "
-            "This differs from the historical Hmel2.5 full-scaffold-mean normalization."
+            "Each 250-bp focal-bin mean_depth is divided by the same sample's "
+            "mean depth across the full HmRos chromosome, computed from its "
+            "deduplicated BAM with samtools coverage -q 20 -Q 20. Bins are not "
+            "masked using control-panel stability. This matches the historical "
+            "full-reference-mean normalization more closely, though resolution "
+            "and alignments differ from the Hmel2.5 plot."
         ),
         "track_order_and_colors": [
             {"sample": sample, "legacy_label": label, "color": color}
@@ -266,6 +345,7 @@ def main() -> None:
             "summary_tsv": str(summary_path.resolve()),
         },
     }
+    audit["chromosome_mean_depths"] = chromosome_means
     audit_path = args.output_dir / "Yb_HmRos_Figure8_legacy_tracks.audit.json"
     audit_path.write_text(json.dumps(audit, indent=2) + "\n")
 
