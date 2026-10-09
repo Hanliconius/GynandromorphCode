@@ -1,6 +1,57 @@
-type	length	old_anchor	new_start	new_end	old_start	old_end	new_anchor
-sequence_present_in_HmRos_not_Hmel2.5	67	1424095.0	1652649.0	1652715.0			
-sequence_present_in_HmRos_not_Hmel2.5	21	1429366.0	1657924.0	1657944.0			
-sequence_present_in_HmRos_not_Hmel2.5	137	1434919.0	1663515.0	1663651.0			
-sequence_present_in_HmRos_not_Hmel2.5	145	1444712.0	1673457.0	1673601.0			
-sequence_present_in_Hmel2.5_not_HmRos	30				1425517.0	1425546.0	1654108.0
+event_basis	type	length_bp	Hmel2_5_start	Hmel2_5_end	Hmel2_5_anchor	HmRos_start	HmRos_end	alignment_qstart	alignment_qend	alignment_mapq	HmRos_anchor
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	67			1424095.0	1652649.0	1652715.0	73979	95707	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	30	1425517.0	1425546.0				73979	95707	60	1654108.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	21			1429366.0	1657924.0	1657944.0	73979	95707	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	137			1434919.0	1663515.0	1663651.0	73979	95707	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	145			1444712.0	1673457.0	1673601.0	73979	95707	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	44			1447587.0	1676469.0	1676512.0	95778	108002	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	23	1454600.0	1454622.0				95778	108002	60	1683542.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	3281			1456624.0	1685543.0	1688823.0	95778	108002	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	60			1462391.0	1694593.0	1694652.0	111989	123515	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	29			1470398.0	1702687.0	1702715.0	111989	123515	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	294	1470972.0	1471265.0				111989	123515	60	1703283.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	321	1520972.0	1521292.0				170162	182011	60	1758250.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	224	1522672.0	1522895.0				170162	182011	60	1759635.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	1348	1522924.0	1524271.0				170162	182011	60	1759663.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	21	1524496.0	1524516.0				170162	182011	60	1759887.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	67	1529455.0	1529521.0				170162	182011	60	1764863.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	28			1531352.0	1766693.0	1766720.0	170162	182011	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	30			1355763.0	1577134.0	1577163.0	4473	14333	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	104			1356269.0	1577672.0	1577775.0	4473	14333	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	42			1356394.0	1577880.0	1577921.0	4473	14333	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	205			1361459.0	1582993.0	1583197.0	4473	14333	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	34	1489903.0	1489936.0				134631	141484	60	1721551.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	731			1379967.0	1608510.0	1609240.0	29426	35359	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	3315			1598408.0	1846048.0	1849362.0	245158	249990	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	31	1599106.0	1599136.0				245158	249990	60	1850060.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	494	1419886.0	1420379.0				69471	73906	60	1648481.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	42			1421425.0	1649524.0	1649565.0	69471	73906	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	74	1421901.0	1421974.0				69471	73906	60	1650029.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	31			1422565.0	1650613.0	1650643.0	69471	73906	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	28	1422973.0	1423000.0				69471	73906	60	1651050.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	76			1423001.0	1651050.0	1651125.0	69471	73906	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	30			1479058.0	1710606.0	1710635.0	128847	132565	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	21			1482505.0	1714091.0	1714111.0	128847	132565	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	35			1553734.0	1796937.0	1796971.0	201954	205708	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	47	1554686.0	1554732.0				201954	205708	60	1797925.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	27	1555457.0	1555483.0				201954	205708	60	1798651.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	25			1586477.0	1834484.0	1834508.0	234823	237694	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	124			1369154.0	1591541.0	1591664.0	16940	19275	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	22			1371927.0	1600705.0	1600726.0	19976	22056	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	27			1574907.0	1823093.0	1823119.0	224703	226753	60	
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	21			1575775.0	1823979.0	1823999.0	224703	226753	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	61	1576316.0	1576376.0				224703	226753	60	1824550.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	27	1546949.0	1546975.0				195733	197612	60	1781546.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	28	1593291.0	1593318.0				242412	243980	60	1841127.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	48	1593340.0	1593387.0				242412	243980	60	1841148.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	28			1351125.0	1571823.0	1571850.0	632	1957	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	25	1562131.0	1562155.0				211556	212772	60	1810070.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	28	1352928.0	1352955.0				2638	3741	60	1574927.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	20	1491578.0	1491597.0				141520	142595	60	1723601.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	187	1474061.0	1474247.0				123941	125101	60	1705662.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	55	1478290.0	1478344.0				127788	128760	60	1709904.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	28	1534956.0	1534983.0				184688	185485	60	1769957.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	42			1584037.0	1832005.0	1832046.0	234011	234754	60	
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	22	1391644.0	1391665.0				41613	42258	60	1619696.0
+within_alignment	sequence_present_in_Hmel2.5_not_HmRos	33	1556272.0	1556304.0				206114	206584	60	1799423.0
+within_alignment	sequence_present_in_HmRos_not_Hmel2.5	62			1475976.0	1707402.0	1707463.0	125802	126225	60	

@@ -1,6 +1,6 @@
-feature	Hmel2_5_start	Hmel2_5_end	HmRos_seqid	HmRos_start	HmRos_end	orientation	start_shift_bp	end_shift_bp	start_nearest_offset_bp	end_nearest_offset_bp	alignment_mapq
-Yb_d	1403500	1405500	NC_140403.1			+					60
-Krista_2024_color_region	1408879	1429719	NC_140403.1			+		228580.0		0.0	60
-cortex_proximal_TSS	1424680	1424680	NC_140403.1	1653288.0	1653288.0	+	228608.0	228608.0	0.0	0.0	60
-Yb_v	1429500	1430500	NC_140403.1	1658079.0	1659072.0	+	228579.0	228572.0	0.0	0.0	60
-ivory_delta78k	1494902	1573177	NC_140403.1			+					60
+feature	Hmel2_5_start	Hmel2_5_end	HmRos_seqid	HmRos_start_exact	HmRos_end_exact	orientation_if_both_exact	start_status	end_status	start_shift_bp	end_shift_bp	start_lower_Hmel2_5	start_lower_HmRos	start_upper_Hmel2_5	start_upper_HmRos	end_lower_Hmel2_5	end_lower_HmRos	end_upper_Hmel2_5	end_upper_HmRos
+Yb_d	1403500	1405500	NC_140403.1	1633041.0	1635646	+	exact	exact	229541.0	230146	1403500	1633041	1403500	1633041	1405500	1635646	1405500	1635646
+Krista_2024_color_region	1408879	1429719	NC_140403.1		1658299		bracketed	exact		228580	1408417	1638549	1411130	1640834	1429719	1658299	1429719	1658299
+cortex_proximal_TSS	1424680	1424680	NC_140403.1	1653288.0	1653288	+	exact	exact	228608.0	228608	1424680	1653288	1424680	1653288	1424680	1653288	1424680	1653288
+Yb_v	1429500	1430500	NC_140403.1	1658079.0	1659072	+	exact	exact	228579.0	228572	1429500	1658079	1429500	1658079	1430500	1659072	1430500	1659072
+ivory_delta78k	1494902	1573177	NC_140403.1		1821285		bracketed	exact		248108	1492594	1724580	1496543	1728940	1573177	1821285	1573177	1821285
