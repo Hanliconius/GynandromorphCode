@@ -183,3 +183,21 @@ Yb(d), Yb(v), and the cortex TSS use transferred HmRos coordinates. The start
 of the historical Krista color interval is only bracketed at
 `1,638,549-1,640,834`; the plot marks that uncertainty rather than assigning
 an exact boundary.
+
+
+## Broad historical Hmel2.5 plot window
+
+The current 45-kb Hmel2.5 Yb zoom is useful for the transferred locus markers,
+but it is narrower than the broader historical plotting window discussed for
+Krista's figure. A separate four-track rendering uses the existing full-scaffold
+historical bigWig bedGraphs across `Hmel215003o:1,380,000-1,600,000`, rebinned to
+50 bp, with linear and logarithmic-y PDF views and no additional per-library
+normalization:
+
+- code: `scripts/yb/plot_Yb_Hmel2_5_Krista_window.py`
+- input: `analysis/yb_Hmel2_5_normalized_coverage/Hmel215003o_bedgraph/`
+- submit on Pegasus: `bash scripts/yb/submit_Yb_Hmel2_5_Krista_window.sh`
+- outputs: `analysis/yb_legacy_replication/Hmel2.5_Krista_window/`
+
+These are historical bigWig values. They cannot recreate BAM-level filtering
+that was applied before the bigWigs were made.
