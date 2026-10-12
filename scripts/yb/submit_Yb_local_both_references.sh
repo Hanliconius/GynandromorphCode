@@ -13,4 +13,7 @@ LOG="$ROOT/analysis/yb_local_both_references/tool_setup.log"
         module load picard || module load Picard || true
     fi
 } > "$LOG" 2>&1
-exec micromamba run -n gynandrocalling python "$CODE/rebuild_Yb_local_both_references.py" --submit
+printf 'YB_CHECK_START\\n'
+MODE=${1:---submit}
+[[ "$MODE" == "--submit" || "$MODE" == "--check-tools" ]] || { echo "Use --submit or --check-tools" >&2; exit 2; }
+exec micromamba run -n gynandrocalling python "$CODE/rebuild_Yb_local_both_references.py" "$MODE"
