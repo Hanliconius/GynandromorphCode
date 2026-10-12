@@ -41,9 +41,72 @@ def tool(name):
 def run(command):
     subprocess.run([str(x) for x in command], check=True)
 
+def check_dependencies():
+    """Collect every missing/broken dependency before reporting failure."""
+    errors, tools, checks = [], {}, []
+    directory = ROOT / "analysis/yb_local_both_references"
+    directory.mkdir(parents=True, exist_ok=True)
+    logpath = directory / "dependency_check.log"
+    with logpath.open("w") as log:
+        for package in ("matplotlib", "numpy", "pandas", "pyBigWig"):
+            try:
+                imported = importlib.import_module(package)
+                checks.append((package, "OK", str(getattr(imported, "__version__", "importable"))))
+            except Exception as error:
+                errors.append(package)
+                checks.append((package, "FAIL", str(error)))
+        for name in ("bwa", "samtools", "bamCoverage", "bash", "sbatch", "scancel"):
+            try:
+                tools[name] = tool(name)
+                command = [tools[name]] if name == "bwa" else [tools[name], "--version"]
+                result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                        text=True, timeout=20)
+                log.write(shlex.join(command) + "\n" + result.stdout + "\n")
+                expected = (0, 1) if name == "bwa" else (0,)
+                if result.returncode not in expected:
+                    raise RuntimeError(f"exit {result.returncode}; see {logpath}")
+                if name == "bwa" and "bwa" not in result.stdout.lower():
+                    raise RuntimeError(f"BWA help not detected; see {logpath}")
+                checks.append((name, "OK", tools[name]))
+            except Exception as error:
+                errors.append(name)
+                checks.append((name, "FAIL", str(error)))
+        try:
+            picard = shutil.which("picard")
+            if picard:
+                tools["picard"] = str(Path(picard).absolute())
+                command = [tools["picard"], "MarkDuplicates", "--help"]
+                detail = tools["picard"]
+            else:
+                candidates = [os.environ.get("YB_PICARD_JAR", ""), os.environ.get("PICARD_JAR", ""),
+                              str(ROOT / "picard.jar"), str(HERE.parent.parent / "picard.jar")]
+                candidates += [str(p) for p in (Path.home() / ".local/share/mamba/envs")
+                               .glob("*/share/picard*/picard.jar")]
+                jar = next((p for p in candidates if p and Path(p).is_file()), None)
+                if not jar:
+                    raise RuntimeError("No picard command/jar; set YB_PICARD_JAR to an existing jar")
+                tools["java"], tools["picard_jar"] = tool("java"), require(jar)
+                command = [tools["java"], "-jar", tools["picard_jar"], "MarkDuplicates", "--help"]
+                detail = tools["picard_jar"]
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                    text=True, timeout=30)
+            log.write(shlex.join(command) + "\n" + result.stdout + "\n")
+            if result.returncode != 0 or "MarkDuplicates" not in result.stdout:
+                raise RuntimeError(f"MarkDuplicates help failed (exit {result.returncode}); see {logpath}")
+            checks.append(("Picard/Java", "OK", detail))
+        except Exception as error:
+            errors.append("Picard/Java")
+            checks.append(("Picard/Java", "FAIL", str(error)))
+    print(f"PYTHON\t{sys.executable}", flush=True)
+    for name, status, detail in checks:
+        print(f"{status}\t{name}\t{detail}", flush=True)
+    print(f"DETAIL_LOG\t{logpath}", flush=True)
+    if errors:
+        raise RuntimeError("Missing or broken dependencies: " + ", ".join(errors))
+    print("ALL_DEPENDENCIES_OK", flush=True)
+    return tools
+
 def submit():
-    for package in ("matplotlib", "numpy", "pandas", "pyBigWig"):
-        importlib.import_module(package)
     source = ROOT / "analysis/genomewide_mixing_input/metadata/resolved_download_manifest.tsv"
     inputs = {}
     with source.open() as handle:
@@ -65,19 +128,7 @@ def submit():
         fai = require(fasta + ".fai")
         if not any(line.split("\t")[0] == contig for line in Path(fai).read_text().splitlines()):
             raise RuntimeError(f"{contig} absent from {fai}")
-    tools = {name: tool(name) for name in ("bwa", "samtools", "bamCoverage")}
-    picard = shutil.which("picard")
-    if picard:
-        tools["picard"] = str(Path(picard).absolute())
-    else:
-        candidates = [os.environ.get("YB_PICARD_JAR", ""), os.environ.get("PICARD_JAR", ""),
-                      str(ROOT / "picard.jar"), str(HERE.parent.parent / "picard.jar")]
-        candidates += [str(p) for p in (Path.home() / ".local/share/mamba/envs")
-                       .glob("*/share/picard*/picard.jar")]
-        jar = next((p for p in candidates if p and Path(p).is_file()), None)
-        if not jar:
-            raise RuntimeError("Picard unavailable; set YB_PICARD_JAR to the existing picard.jar")
-        tools["java"], tools["picard_jar"] = tool("java"), require(jar)
+    tools = check_dependencies()
     runid = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "_" + uuid.uuid4().hex[:8]
     base = ROOT / "analysis/yb_local_both_references" / runid
     base.mkdir(parents=True)
@@ -184,12 +235,15 @@ def execute(configpath, stage, task):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--check-tools", action="store_true")
     parser.add_argument("--submit", action="store_true")
     parser.add_argument("--config", type=Path)
     parser.add_argument("--stage", choices=("prepare", "align", "plot"))
     parser.add_argument("--task", type=int)
     args = parser.parse_args()
-    if args.submit:
+    if args.check_tools:
+        check_dependencies()
+    elif args.submit:
         submit()
     elif args.config and args.stage and args.task is not None:
         execute(args.config, args.stage, args.task)
