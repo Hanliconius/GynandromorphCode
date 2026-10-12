@@ -51,8 +51,8 @@ for sample in TN_Left_T2 TN_Right_T2 TN_Left_T3 TN_Right_T3; do
     printf '%s\t%s\t%s\t%s\t%s\n' "$sample" "$bam" "$count" "$has_target" "$dictionary" \
       >> "$OUT_DIR/existing_BAM_reference_dictionary_summary.tsv"
 
-    awk -F '\t' -v s="$sample" '$1 ~ /Hmel|215003|Yb|chr/i {print "REFERENCE_MATCH\t" s "\t" $1 "\t" $2}' "$dictionary"
-    if ! awk -F '\t' '$1 ~ /Hmel|215003|Yb|chr/i {found=1} END {exit !found}' "$dictionary"; then
+    awk -F '\t' -v s="$sample" 'tolower($1) ~ /hmel|215003|yb|chr/ {print "REFERENCE_MATCH\t" s "\t" $1 "\t" $2}' "$dictionary"
+    if ! awk -F '\t' 'tolower($1) ~ /hmel|215003|yb|chr/ {found=1} END {exit !found}' "$dictionary"; then
         head -n 8 "$dictionary" | awk -v s="$sample" '{print "REFERENCE_HEAD\t" s "\t" $0}'
     fi
 done
