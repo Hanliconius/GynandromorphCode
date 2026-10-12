@@ -54,23 +54,88 @@ def scale(counts, x, y):
     compressed = informative_density_vmax(counts, x, y)
     return LogNorm(1, float(np.sqrt(compressed * np.max(counts))), clip=True)
 
+def render_fitted_mixing(args, root, out):
+    fit_path = Path(args.fit_json)
+    if not fit_path.is_absolute(): fit_path = root / fit_path
+    fit = json.loads(fit_path.read_text())
+    def fitted_value(explicit, aliases):
+        if explicit:
+            value = fit
+            for key in explicit.split("."): value = value[key]
+            return float(value), explicit
+        matches = []
+        def visit(value, path=""):
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    here = (path + "." + key).strip(".")
+                    if key in aliases and isinstance(item, (int, float)):
+                        matches.append((float(item), here))
+                    visit(item, here)
+        visit(fit)
+        if len(matches) != 1:
+            raise ValueError(f"Need explicit fitted parameter JSON path; candidates={matches}")
+        return matches[0]
+    cl, kl = fitted_value(args.fit_left_key, {"cL", "c_left", "c_left_from_right", "estimated_c_left_from_right"})
+    cr, kr = fitted_value(args.fit_right_key, {"cR", "c_right", "c_right_from_left", "estimated_c_right_from_left"})
+    if not (0 <= cl < .5 and 0 <= cr < .5):
+        raise ValueError("Unexpected reciprocal mixing estimate; verify saved-fit parameter conventions")
+    fig = plt.figure(figsize=(8.4,4.5))
+    ax = fig.add_axes([.11,.19,.32,.64])
+    values = [100*cl,100*cr]
+    ax.bar([0,1],values,color=["#5A4FA3","#E56B00"],width=.55)
+    ax.set(xticks=[0,1],xticklabels=["Left\nreads from Right","Right\nreads from Left"],
+           ylabel="Fitted reciprocal read mixing (%)",ylim=(0,max(values)*1.3))
+    ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
+    for x,v in enumerate(values): ax.text(x,v+.6,f"{v:.8f}%",ha="center",fontsize=10)
+    fig.text(.50,.82,"Saved joint likelihood fit",weight="bold",fontsize=12)
+    fig.text(.50,.69,f"Left:  cL = {cl:.10f}\nRight: cR = {cr:.10f}",fontsize=10,linespacing=1.7)
+    fig.text(.50,.48,"Expected allele fractions before sequencing effects:",fontsize=9)
+    fig.text(.50,.36,rf"$m_L = {1-cl:.10f}p_L + {cl:.10f}p_R$",fontsize=11)
+    fig.text(.50,.25,rf"$m_R = {cr:.10f}p_L + {1-cr:.10f}p_R$",fontsize=11)
+    fig.text(.11,.055,"Values read from the saved model fit; no refitting. Display precision does not imply estimation precision.",fontsize=8)
+    fig.savefig(out / "03_fitted_left_right_mixing_calculation.pdf")
+    plt.close(fig)
+    (out / "fitted_mixing_values.json").write_text(json.dumps({"source":str(fit_path),
+        "source_sha256":hashlib.sha256(fit_path.read_bytes()).hexdigest(),
+        "left_parameter_path":kl,"right_parameter_path":kr,"c_left":cl,"c_right":cr},indent=2))
+    return fit_path
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--project-root", default="/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling")
-    ap.add_argument("--depth-pairs", required=True,
+    ap.add_argument("--depth-pairs", default=str(BASE / "AF_narrative_frames/simulated_founder_empirical_depth/paired_depth_sample.npz"),
                     help="Original empirical paired AD-depth NPZ or TSV; NOT FORMAT/DP")
-    ap.add_argument("--left-depth-key", required=True)
-    ap.add_argument("--right-depth-key", required=True)
+    ap.add_argument("--left-depth-key", default=None)
+    ap.add_argument("--right-depth-key", default=None)
+    ap.add_argument("--only-fitted-mixing", action="store_true", help="Plot only the saved directional mixing fit, without reading simulation inputs")
+    ap.add_argument("--fit-json", default="analysis/genomewide_mixing_corrected_v1/restored_pilot/observed.json")
+    ap.add_argument("--fit-left-key", default=None, help="Exact dotted JSON path for fitted Left mixing")
+    ap.add_argument("--fit-right-key", default=None, help="Exact dotted JSON path for fitted Right mixing")
+    ap.add_argument("--generate-missing", action="store_true", help="Explicitly permit simulations absent from existing caches")
     ap.add_argument("--sites", type=int, default=200000)
     ap.add_argument("--seed", type=int, default=20261012)
     ap.add_argument("--output-dir", default="analysis/arnaud_mixing_supplement")
     args = ap.parse_args()
     root = Path(args.project_root)
+    if args.only_fitted_mixing:
+        out = Path(args.output_dir)
+        if not out.is_absolute(): out = root / out
+        out.mkdir(parents=True, exist_ok=True)
+        set_publication_style(8)
+        render_fitted_mixing(args, root, out)
+        print(f"WROTE saved-fit calculation PDF: {out}")
+        return
     source = Path(args.depth_pairs)
     if not source.is_absolute(): source = root / source
     if source.suffix == ".npz":
         with np.load(source, allow_pickle=False) as d:
-            dl, dr = d[args.left_depth_key].copy(), d[args.right_depth_key].copy()
+            if args.left_depth_key is None and args.right_depth_key is None:
+                depths = d["depths"]
+                if depths.ndim != 2 or depths.shape[1] != 2:
+                    raise ValueError("Expected original depths cache with shape (N, 2)")
+                dl, dr = depths[:, 0].copy(), depths[:, 1].copy()
+            else:
+                dl, dr = d[args.left_depth_key].copy(), d[args.right_depth_key].copy()
     else:
         d = pd.read_csv(source, sep="\t")
         dl, dr = d[args.left_depth_key].to_numpy(), d[args.right_depth_key].to_numpy()
@@ -95,18 +160,60 @@ def main():
     rng = np.random.default_rng(args.seed)
     sampled = rng.integers(len(dl), size=args.sites)
     depths = (dl[sampled].astype(int), dr[sampled].astype(int))
+    # Load complete existing model panels without re-extracting VCFs or re-simulating.
+    narrative = root / BASE / "AF_narrative_frames"
+    sources = [
+        (narrative / "simulated_founder_empirical_depth/simulated_AF.npz", "model2", False),
+        (narrative / "AB_A_digametic/AB_A_simulated_AF.npz", "", False),
+        (narrative / "gyno_three_founder/gyno_simulated_AF.npz", "", True),
+        (narrative / "simulated_founder_empirical_depth/simulated_AF.npz", "model3", False),
+        (narrative / "simulated_founder_empirical_depth/simulated_AF.npz", "model4", False),
+    ]
     simulations = []
-    for label, left, right in MODELS:
+    panel_provenance = []
+    for (label, left, right), (cache_path, suffix, transpose) in zip(MODELS, sources):
         pairs = states(left, right)
         chosen = pairs[rng.integers(len(pairs), size=args.sites)]
         for mixing in (0., .1, .2):
-            means = .001 + .998 * np.column_stack([
-                (1-mixing)*chosen[:, 0] + mixing*chosen[:, 1],
-                mixing*chosen[:, 0] + (1-mixing)*chosen[:, 1]])
-            af = [rng.binomial(dep, rng.beta(means[:, i]*22,
-                                            (1-means[:, i])*22))/dep
-                  for i, dep in enumerate(depths)]
+            prefix = f"mix{round(mixing*100)}" + ("_" + suffix if suffix else "")
+            missing_path = out / ("missing_" + left + "_" + right + "_" + prefix + ".npz")
+            signature = json.dumps({"version":1,"seed":args.seed,"sites":args.sites,
+                "depth_sha256":hashlib.sha256(source.read_bytes()).hexdigest(),
+                "model":label,"mixing":mixing},sort_keys=True)
+            af = None
+            provenance = None
+            for candidate in (cache_path, missing_path):
+                if candidate.is_file():
+                    with np.load(candidate, allow_pickle=False) as cache:
+                        if candidate == missing_path and ("signature" not in cache or str(cache["signature"]) != signature):
+                            raise ValueError(f"Generated cache provenance differs: {candidate}")
+                        keys = (prefix + "_left", prefix + "_right")
+                        if all(k in cache for k in keys):
+                            af = [cache[k].copy() for k in keys]
+                            if transpose and candidate == cache_path: af = af[::-1]
+                            provenance = str(candidate)
+                            break
+            if af is None:
+                if not args.generate_missing:
+                    available = []
+                    if cache_path.is_file():
+                        with np.load(cache_path, allow_pickle=False) as cache: available = cache.files
+                    raise RuntimeError(f"Missing {label} {mixing:.0%} cache: {cache_path}; wanted {prefix}_left/right; available={available}. No simulations generated. Inspect caches before --generate-missing.")
+                means = .001 + .998 * np.column_stack([
+                    (1-mixing)*chosen[:, 0] + mixing*chosen[:, 1],
+                    mixing*chosen[:, 0] + (1-mixing)*chosen[:, 1]])
+                af = [rng.binomial(dep, rng.beta(means[:, i]*22,
+                                                (1-means[:, i])*22))/dep
+                      for i, dep in enumerate(depths)]
+                # The persisted missing-panel cache is already in requested axis orientation.
+                np.savez_compressed(missing_path, signature=np.array(signature), **{prefix+"_left":af[0], prefix+"_right":af[1]})
+                provenance = str(missing_path)
+            if af[0].ndim != 1 or af[0].shape != af[1].shape or len(af[0]) != args.sites:
+                raise ValueError(f"{label} {mixing:.0%}: expected {args.sites} matching sites; adjust --sites to existing cache count")
+            if any(not np.isfinite(a).all() or ((a<0)|(a>1)).any() for a in af):
+                raise ValueError("Invalid cached AF values")
             simulations.append((label, pairs, mixing, af))
+            panel_provenance.append({"model":label,"mixing":mixing,"source":provenance})
     temporary, ax = plt.subplots()
     counts, xs, ys = [], [], []
     for _, _, _, af in simulations:
@@ -152,13 +259,14 @@ def main():
     fig.text(.055,.035,"Same 31,126,758 observed sites in every panel; illustrative centroids and 50% predictive regions.",fontsize=8)
     fig.savefig(out / "02_mixing_sensitivity_centroid_heatmaps.pdf")
     plt.close(fig)
+    fit_path = render_fitted_mixing(args, root, out)
     (out / "figure_legends.txt").write_text(
         "Figure 1. Five founder-composition models at 0%, 10%, and 20% symmetric reciprocal read mixing. "
         "Row labels follow the requested shorthand; haplotype strings specify each side. "
         "AB/CC is plotted in the requested left/right orientation (the earlier AA/BC version is transposed). "
         f"Each panel contains {args.sites:,} simulated sites, independent founder ALT alleles at probability 0.5, "
         "empirical paired allele-assigned read depths, beta-binomial concentration 22, sequencing error 0.001, and no allelic bias. "
-        "Depth pairs and founder states are retained across mixing levels within each model. "
+        "Existing simulation arrays are reused; any missing panels are independently sampled under the same assumptions. "
         "All panels share hexagonal binning and a saturated logarithmic Luka-Bleute scale.\n\n"
         "Figure 2. Sensitivity of predicted centroid geometry to 0-40% symmetric reciprocal read mixing. "
         "The observed density is unchanged across panels, with no additional filtering. "
@@ -166,16 +274,16 @@ def main():
         "In both figures, dots indicate expected ALT-read fractions; outline-only 50% predictive regions "
         "use the established beta-binomial convention at 40 reads per side and concentration 22. "
         "Regions describe read-fraction variation, not confidence in centroid estimates. "
-        "Mixing refers to the fraction of reads contributed by the opposite lineage, not cell proportions. "
+        "Figure 3 reports the saved directional mixing estimates and substitutes them into the reciprocal mixing equations before sequencing error and allelic bias. No refitting is performed. Displayed decimal places are not a measure of uncertainty. Mixing refers to the fraction of reads contributed by the opposite lineage, not cell proportions. "
         "Text is embedded as TrueType; hexagons and overlays are vector graphics.\n")
     audit = vars(args) | {"depth_source":str(source),
         "depth_sha256":hashlib.sha256(source.read_bytes()).hexdigest(),
         "palette_sha256":hashlib.sha256(palette.read_bytes()).hexdigest(),
         "observed_bins":str(bins_path), "empirical_depth_pairs":len(dl),
         "simulation_display_vmax":norm.vmax, "observed_display_vmax":observed_norm.vmax,
-        "density_blend":.5, "density_quantile":.995, "origin_exclude":.05}
+        "panel_provenance":panel_provenance, "fit_source":str(fit_path), "density_blend":.5, "density_quantile":.995, "origin_exclude":.05}
     (out / "generation_audit.json").write_text(json.dumps(audit,indent=2))
-    print(f"WROTE two separate PDFs: {out}")
+    print(f"WROTE three separate PDFs: {out}")
 
 if __name__ == "__main__":
     main()
