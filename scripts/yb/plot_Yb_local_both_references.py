@@ -114,7 +114,7 @@ def render(profiles: dict[str, tuple[np.ndarray, np.ndarray]], output: Path) -> 
                  x=0.15, ha="left", fontsize=10)
     fig.text(0.985, 0.025,
              "Raw 50-bp bigWig scores; natural-log y transform. Shading marks Yb(d), "
-             ("the transferred interval-start envelope, and Yb(v)." if REFERENCE == "HmRos"
+             + ("the transferred interval-start envelope, and Yb(v)." if REFERENCE == "HmRos"
               else "the Krista color interval, and Yb(v)."),
              ha="right", va="bottom", fontsize=6.6)
     fig.savefig(output, format="pdf", bbox_inches="tight")
