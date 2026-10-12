@@ -79,6 +79,12 @@ def render_fitted_mixing(args, root, out):
     cr, kr = fitted_value(args.fit_right_key, {"cR", "c_right", "c_right_from_left", "estimated_c_right_from_left"})
     if not (0 <= cl < .5 and 0 <= cr < .5):
         raise ValueError("Unexpected reciprocal mixing estimate; verify saved-fit parameter conventions")
+    # Expanded fit JSON nests estimates, site count and emissions under full.
+    selected = fit
+    for component in kl.split(".")[:-2]:
+        selected = selected[component]
+    metadata = dict(fit)
+    metadata.update({key:selected[key] for key in ("sites", "emission") if key in selected})
     fig = plt.figure(figsize=(9.4,5.2))
     ax = fig.add_axes([.11,.19,.32,.64])
     values = [100*cl,100*cr]
@@ -88,22 +94,22 @@ def render_fitted_mixing(args, root, out):
     ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
     for x,v in enumerate(values): ax.text(x,v+.6,f"{v:.8f}%",ha="center",fontsize=10)
     fig.text(.50,.86,"Saved directional mixing fit",weight="bold",fontsize=12)
-    fig.text(.50,.79,f"{fit.get('sites', 'Unknown'):,} selected sites" if isinstance(fit.get('sites'), int) else "Saved fit",fontsize=9)
+    fig.text(.50,.79,f"{metadata.get('sites', 'Unknown'):,} selected sites" if isinstance(metadata.get('sites'), int) else "Saved fit",fontsize=9)
     fig.text(.50,.69,f"Left:  cL = {cl:.10f}\nRight: cR = {cr:.10f}",fontsize=10,linespacing=1.7)
     fig.text(.50,.48,"Expected allele fractions before sequencing effects:",fontsize=9)
     fig.text(.50,.36,rf"$m_L = {1-cl:.10f}p_L + {cl:.10f}p_R$",fontsize=11)
     fig.text(.50,.25,rf"$m_R = {cr:.10f}p_L + {1-cr:.10f}p_R$",fontsize=11)
-    emission = fit.get("emission", {})
+    emission = metadata.get("emission", {})
     if emission:
         fig.text(.50,.15, "Saved sequencing model: " +
             f"error={emission['error_rate']:.8f}\nbias log-odds={emission['bias_log_odds']:.8f}; concentration={emission['concentration']:.6f}",fontsize=8)
     fig.text(.11,.065,"Scope: " + fit.get("scope", "unspecified"),fontsize=8)
-    fig.text(.11,.025,"Saved pilot fit; no refitting. Display precision does not imply estimation precision.",fontsize=8)
+    fig.text(.11,.025,"Saved fit; no refitting. Display precision does not imply estimation precision.",fontsize=8)
     fig.savefig(out / "03_fitted_left_right_mixing_calculation.pdf")
     plt.close(fig)
     (out / "fitted_mixing_values.json").write_text(json.dumps({"source":str(fit_path),
         "source_sha256":hashlib.sha256(fit_path.read_bytes()).hexdigest(),
-        "left_parameter_path":kl,"right_parameter_path":kr,"c_left":cl,"c_right":cr, "sites":fit.get("sites"), "scope":fit.get("scope"), "emission":fit.get("emission")},indent=2))
+        "left_parameter_path":kl,"right_parameter_path":kr,"c_left":cl,"c_right":cr, "sites":metadata.get("sites"), "scope":metadata.get("scope"), "emission":metadata.get("emission")},indent=2))
     return fit_path
 
 def main():
@@ -287,7 +293,7 @@ def main():
         "In both figures, dots indicate expected ALT-read fractions; outline-only 50% predictive regions "
         "use the established beta-binomial convention at 40 reads per side and concentration 22. "
         "Regions describe read-fraction variation, not confidence in centroid estimates. "
-        "Figure 3 reports the saved pilot directional mixing estimates on the previous selected-site bridge scope (not calibrated founder support) and substitutes them into the reciprocal mixing equations before sequencing error and allelic bias. No refitting is performed. Displayed decimal places are not a measure of uncertainty. Mixing refers to the fraction of reads contributed by the opposite lineage, not cell proportions. "
+        "Figure 3 reports the saved directional mixing estimates; its source scope and site count are shown explicitly and substitutes them into the reciprocal mixing equations before sequencing error and allelic bias. No refitting is performed. Displayed decimal places are not a measure of uncertainty. Mixing refers to the fraction of reads contributed by the opposite lineage, not cell proportions. "
         "Text is embedded as TrueType; hexagons and overlays are vector graphics.\n")
     audit = vars(args) | {"depth_source":str(source),
         "depth_sha256":hashlib.sha256(source.read_bytes()).hexdigest(),
