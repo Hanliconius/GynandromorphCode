@@ -11,6 +11,43 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap, Normalize
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "figure2"))
 from common import set_publication_style
+from scipy.stats import betabinom
+
+def predictive_mass_mask(ql, qr, depth=40, concentration=22., mass=.5):
+    """Discrete conditional highest-density region, including threshold ties."""
+    k = np.arange(depth + 1)
+    def pmf(q):
+        if q <= 0 or q >= 1:
+            result = np.zeros(depth + 1)
+            result[0 if q <= 0 else depth] = 1
+            return result
+        result = betabinom.pmf(k, depth, q*concentration, (1-q)*concentration)
+        return result/result.sum()
+    density = np.outer(pmf(qr), pmf(ql))
+    ranked = np.sort(density.ravel())[::-1]
+    threshold = ranked[np.searchsorted(np.cumsum(ranked), mass)]
+    return density >= threshold
+
+
+def shade_predictive_unions(ax, grid, cmap):
+    """Union at each mean mixing level, rather than darkening duplicate regions."""
+    fractions = np.arange(41)/40
+    for total_step in range(21):
+        region = np.zeros((41,41),dtype=bool)
+        for li in range(11):
+            ri = total_step-li
+            if not 0 <= ri <= 10: continue
+            cl, cr = grid[li],grid[ri]
+            for left in (0.,.5,1.):
+                for right in (0.,.5,1.):
+                    if left == right: continue
+                    ql = (1-cl)*left+cl*right
+                    qr = cr*left+(1-cr)*right
+                    region |= predictive_mass_mask(ql,qr)
+        if region.any():
+            ax.contourf(fractions,fractions,region.astype(float),levels=[.5,1.5],
+                        colors=[cmap(total_step/20)],alpha=.12,
+                        antialiased=True,zorder=1)
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
@@ -24,10 +61,12 @@ def main():
     set_publication_style(9)
     fig, ax = plt.subplots(figsize=(7.6,7.6))
     fig.subplots_adjust(left=.12,right=.82,bottom=.17,top=.90)
-    grid = np.arange(10) * .05
+    grid = np.arange(11) * .05
     cl, cr = np.meshgrid(grid,grid)
     labels = ["0/0","0/1","1/1"]
-    norm = Normalize(0,45)
+    norm = Normalize(0,50)
+    shade_predictive_unions(ax, grid, cmap)
+    ax.plot([0,1],[0,1],color="#999999",lw=.7,ls=":",zorder=2)
     artist = None
     for i, left in enumerate([0.,.5,1.]):
         for j, right in enumerate([0.,.5,1.]):
@@ -50,22 +89,34 @@ def main():
     ax.set_title("Centroid shifts under reciprocal mixing",weight="bold",pad=14)
     cb = fig.colorbar(artist,cax=fig.add_axes([.87,.29,.025,.48]))
     cb.set_label("Mean of Left and Right mixing (%)")
-    fig.text(.12,.11,"Independent Left/Right mixing: 0-45%, in 5-percentage-point steps.",fontsize=9)
+    fig.text(.12,.11,"Independent Left/Right mixing: 0-50%, in 5-percentage-point steps.",fontsize=9)
     fig.text(.12,.075,"Arrow centre: candidate centroid; direction: shift from its unmixed origin.",fontsize=8)
-    fig.text(.12,.045,"Arrow length: displacement / 12. Circles: unmixed; squares: stationary.",fontsize=8)
-    fig.text(.12,.017,"Analytic geometry before sequencing error or bias; no simulations or refitting.",fontsize=8)
+    fig.text(.12,.045,"Pale shading: unions of conditional 50% predictive regions; 40 reads/side, concentration 22.",fontsize=7.5)
+    fig.text(.12,.017,"Regions may merge. Overlap is a visual guide, not a calibrated detection threshold.",fontsize=8)
     fig.savefig(out / "04_centroid_mixing_parameter_field.pdf")
     plt.close(fig)
     (out / "04_centroid_mixing_parameter_field.legend.txt").write_text(
         "Centroid positions for nine Left/Right diploid genotype pairs. "
-        "Left and Right reciprocal read mixing vary independently from 0 to 45% "
+        "Left and Right reciprocal read mixing vary independently from 0 to 50% "
         "in five-percentage-point steps. Colour gives their arithmetic mean. "
         "Arrow centres give candidate centroids, directions give displacement from "
         "the unmixed origin, and lengths are displacement divided by 12. "
         "Arrows are not optimizer trajectories or a local vector flow. "
         "Centroids are calculated before sequencing error and allelic bias. "
-        "The linear 0-45% colour scale uses the original Luka-Bleute palette; "
-        "it represents mixing parameters rather than site density.\n")
+        "The linear 0-50% colour scale uses the original Luka-Bleute palette; "
+        "it represents mixing parameters rather than site density. "
+        "Pale shading is the union of conditional 50% highest-density beta-binomial "
+        "read-fraction regions for moving genotype pairs at each mean mixing level. "
+        "All independent Left/Right parameter combinations on the grid are included. "
+        "Regions use 40 reads per side, concentration 22, independent side sampling, "
+        "and no sequencing error or bias; boundary dimensions are deterministic. "
+        "Threshold ties are included, so discrete mass can exceed 50%. "
+        "Unions are drawn once per level; overlap between levels may blend colours. "
+        "Fixed diagonal states are excluded from shading to avoid repeating stationary regions. "
+        "Shading indicates read variation, not centroid confidence or a detection threshold. "
+        "At symmetric 50% mixing all paired source fractions have identical expected "
+        "Left/Right values, although not all genotype pairs share the same centroid.\n")
     print(f"WROTE {out / '04_centroid_mixing_parameter_field.pdf'}")
 if __name__ == "__main__":
     main()
+
