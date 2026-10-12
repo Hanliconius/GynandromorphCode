@@ -2,7 +2,7 @@
 """Submit or execute a matched, local-only two-reference Yb rebuild."""
 import argparse
 import csv
-import hashlib
+import uuid
 import importlib
 import json
 import os
@@ -78,7 +78,7 @@ def submit():
         if not jar:
             raise RuntimeError("Picard unavailable; set YB_PICARD_JAR to the existing picard.jar")
         tools["java"], tools["picard_jar"] = tool("java"), require(jar)
-    runid = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "_" + str(os.getpid())
+    runid = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "_" + uuid.uuid4().hex[:8]
     base = ROOT / "analysis/yb_local_both_references" / runid
     base.mkdir(parents=True)
     (base / "logs").mkdir()
