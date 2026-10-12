@@ -91,7 +91,12 @@ def check_dependencies():
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                     text=True, timeout=30)
             log.write(shlex.join(command) + "\n" + result.stdout + "\n")
-            if result.returncode != 0 or "MarkDuplicates" not in result.stdout:
+            if (result.returncode not in (0, 1)
+                    or "MarkDuplicates" not in result.stdout
+                    or "--VALIDATION_STRINGENCY" not in result.stdout
+                    or any(token in result.stdout for token in (
+                        "UnsupportedClassVersionError", "Could not create the Java Virtual Machine",
+                        "Exception in thread", "Unable to access jarfile"))):
                 raise RuntimeError(f"MarkDuplicates help failed (exit {result.returncode}); see {logpath}")
             checks.append(("Picard/Java", "OK", detail))
         except Exception as error:
