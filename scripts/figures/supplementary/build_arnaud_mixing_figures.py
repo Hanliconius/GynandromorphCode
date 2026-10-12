@@ -79,7 +79,7 @@ def render_fitted_mixing(args, root, out):
     cr, kr = fitted_value(args.fit_right_key, {"cR", "c_right", "c_right_from_left", "estimated_c_right_from_left"})
     if not (0 <= cl < .5 and 0 <= cr < .5):
         raise ValueError("Unexpected reciprocal mixing estimate; verify saved-fit parameter conventions")
-    fig = plt.figure(figsize=(8.4,4.5))
+    fig = plt.figure(figsize=(9.4,5.2))
     ax = fig.add_axes([.11,.19,.32,.64])
     values = [100*cl,100*cr]
     ax.bar([0,1],values,color=["#5A4FA3","#E56B00"],width=.55)
@@ -87,17 +87,23 @@ def render_fitted_mixing(args, root, out):
            ylabel="Fitted reciprocal read mixing (%)",ylim=(0,max(values)*1.3))
     ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
     for x,v in enumerate(values): ax.text(x,v+.6,f"{v:.8f}%",ha="center",fontsize=10)
-    fig.text(.50,.82,"Saved joint likelihood fit",weight="bold",fontsize=12)
+    fig.text(.50,.86,"Saved directional mixing fit",weight="bold",fontsize=12)
+    fig.text(.50,.79,f"{fit.get('sites', 'Unknown'):,} selected sites" if isinstance(fit.get('sites'), int) else "Saved fit",fontsize=9)
     fig.text(.50,.69,f"Left:  cL = {cl:.10f}\nRight: cR = {cr:.10f}",fontsize=10,linespacing=1.7)
     fig.text(.50,.48,"Expected allele fractions before sequencing effects:",fontsize=9)
     fig.text(.50,.36,rf"$m_L = {1-cl:.10f}p_L + {cl:.10f}p_R$",fontsize=11)
     fig.text(.50,.25,rf"$m_R = {cr:.10f}p_L + {1-cr:.10f}p_R$",fontsize=11)
-    fig.text(.11,.055,"Values read from the saved model fit; no refitting. Display precision does not imply estimation precision.",fontsize=8)
+    emission = fit.get("emission", {})
+    if emission:
+        fig.text(.50,.15, "Saved sequencing model: " +
+            f"error={emission['error_rate']:.8f}\nbias log-odds={emission['bias_log_odds']:.8f}; concentration={emission['concentration']:.6f}",fontsize=8)
+    fig.text(.11,.065,"Scope: " + fit.get("scope", "unspecified"),fontsize=8)
+    fig.text(.11,.025,"Saved pilot fit; no refitting. Display precision does not imply estimation precision.",fontsize=8)
     fig.savefig(out / "03_fitted_left_right_mixing_calculation.pdf")
     plt.close(fig)
     (out / "fitted_mixing_values.json").write_text(json.dumps({"source":str(fit_path),
         "source_sha256":hashlib.sha256(fit_path.read_bytes()).hexdigest(),
-        "left_parameter_path":kl,"right_parameter_path":kr,"c_left":cl,"c_right":cr},indent=2))
+        "left_parameter_path":kl,"right_parameter_path":kr,"c_left":cl,"c_right":cr, "sites":fit.get("sites"), "scope":fit.get("scope"), "emission":fit.get("emission")},indent=2))
     return fit_path
 
 def main():
@@ -174,10 +180,17 @@ def main():
     for (label, left, right), (cache_path, suffix, transpose) in zip(MODELS, sources):
         pairs = states(left, right)
         chosen = pairs[rng.integers(len(pairs), size=args.sites)]
+        if cache_path.is_file():
+            with np.load(cache_path, allow_pickle=False) as cache:
+                if "true_left" in cache and "true_right" in cache:
+                    chosen = np.column_stack([cache["true_left"], cache["true_right"]])
+                    if transpose: chosen = chosen[:, ::-1]
+                    if chosen.shape != (args.sites, 2):
+                        raise ValueError("Saved founder-state count differs from --sites")
         for mixing in (0., .1, .2):
             prefix = f"mix{round(mixing*100)}" + ("_" + suffix if suffix else "")
             missing_path = out / ("missing_" + left + "_" + right + "_" + prefix + ".npz")
-            signature = json.dumps({"version":1,"seed":args.seed,"sites":args.sites,
+            signature = json.dumps({"version":2,"seed":args.seed,"sites":args.sites,
                 "depth_sha256":hashlib.sha256(source.read_bytes()).hexdigest(),
                 "model":label,"mixing":mixing},sort_keys=True)
             af = None
@@ -274,7 +287,7 @@ def main():
         "In both figures, dots indicate expected ALT-read fractions; outline-only 50% predictive regions "
         "use the established beta-binomial convention at 40 reads per side and concentration 22. "
         "Regions describe read-fraction variation, not confidence in centroid estimates. "
-        "Figure 3 reports the saved directional mixing estimates and substitutes them into the reciprocal mixing equations before sequencing error and allelic bias. No refitting is performed. Displayed decimal places are not a measure of uncertainty. Mixing refers to the fraction of reads contributed by the opposite lineage, not cell proportions. "
+        "Figure 3 reports the saved pilot directional mixing estimates on the previous selected-site bridge scope (not calibrated founder support) and substitutes them into the reciprocal mixing equations before sequencing error and allelic bias. No refitting is performed. Displayed decimal places are not a measure of uncertainty. Mixing refers to the fraction of reads contributed by the opposite lineage, not cell proportions. "
         "Text is embedded as TrueType; hexagons and overlays are vector graphics.\n")
     audit = vars(args) | {"depth_source":str(source),
         "depth_sha256":hashlib.sha256(source.read_bytes()).hexdigest(),
