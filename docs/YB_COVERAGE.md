@@ -1,4 +1,60 @@
-# Yb / cortex normalized coverage
+# Yb coverage workflows
+
+## Matched local-read rebuild on both references (2026-10-12)
+
+The current replication request is to rebuild four focal coverage tracks on
+**both Hmel2.5 and HmRos**, using the same local read pairs and processing settings.
+The panel-normalized analysis below is a separate earlier analysis, not the
+processing recipe for this raw-coverage replication.
+
+Submit from any directory on Pegasus:
+
+```bash
+bash /gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandromorphCode_repo/scripts/yb/submit_Yb_local_both_references.sh
+```
+
+The submitter reads the four focal records from
+`analysis/genomewide_mixing_input/metadata/resolved_download_manifest.tsv`.
+It uses the HmRos FASTA from `metadata/reference_fasta.path` and the existing
+`analysis/yb_exact_coordinate_transfer/reference/hmel2_5.chromosomes.fa`.
+All eight FASTQs and both references were confirmed present on Pegasus.
+No download stage is included.
+
+Before submitting any jobs it checks all read/reference paths, native Yb contigs,
+plotting packages, BWA, samtools, bamCoverage and Picard. Module setup messages
+are retained in `analysis/yb_local_both_references/tool_setup.log`.
+If needed, point `YB_PICARD_JAR` to an existing Picard jar.
+
+Stages: two independent reference-index tasks, eight alignment/coverage tasks
+(maximum four concurrently), then two plot tasks. All use the cpu partition;
+time limits are 6 hours, 2 days and 30 minutes respectively. Job IDs print
+immediately; a submission failure cancels jobs already submitted by that invocation.
+Run-specific worker/config/plot code is frozen before submission.
+
+Recipe follows upstream commit `65f4313299097fafed0df9e44654ddb98b6dcd61`:
+BWA-MEM `-M`, coordinate sorting, Picard MarkDuplicates without removing duplicates,
+and bamCoverage with 50-bp bins, no normalization, no MAPQ filter and no duplicate
+exclusion. Full genomes are used for alignment. Reads remain independent by leg.
+Fresh alignments are generated on both references for comparable processing.
+
+Plots use stacked T2L/T2R/T3L/T3R tracks in blue/red/green/orange, natural-log
+positive coverage, and native coordinates:
+Hmel215003o:1,395,000-1,440,000 and NC_140403.1:1,620,000-1,670,000.
+These are locus zooms; different window lengths do not imply identical basewise
+homology. Hmel2.5 feature coordinates and transferred HmRos coordinates are kept
+separate. The uncertain HmRos color-interval start remains an envelope.
+
+Outputs are under `analysis/yb_local_both_references/<run>/`, with separate
+`Hmel2.5` and `HmRos` directories containing deduplicated BAMs, 50-bp bigWigs,
+metrics, vector PDFs, PNGs and audit summaries. The latest run path is recorded
+in `analysis/yb_local_both_references/latest_run.path`. Unique run directories
+avoid reusing or overwriting historical analyses. Temporary raw BAMs are removed
+after successful processing; existing source files are unchanged.
+
+The older `submit_Yb_raw_Krista_replication.sh` includes downloads and covers
+only HmRos. Do not use it for this two-reference local rebuild.
+
+## Earlier Yb / cortex normalized coverage
 
 ## Current analysis reference
 
