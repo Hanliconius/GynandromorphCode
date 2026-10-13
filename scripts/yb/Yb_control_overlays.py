@@ -137,34 +137,45 @@ def plot(config,task,bundle=None):
     outdir=base/'plots';outdir.mkdir(exist_ok=True)
     for column,suffix,ylabel in [('normalized_depth','normalized','50-bp median / scaffold mean'),
                                 ('raw_bigwig','raw_log1p','ln(1 + raw bigWig coverage)')]:
-        fig,axes=plt.subplots(len(groups),1,figsize=(10,9),sharex=True,sharey=True)
-        fig.subplots_adjust(left=.13,right=.98,top=.90,bottom=.12,hspace=.15)
-        for ax,((species,race,phenotype),samples) in zip(axes,groups.items()):
+        fig,axes=plt.subplots(len(groups),3,figsize=(16,10),sharex='col',sharey=True,
+            gridspec_kw={'width_ratios':[2.4,1,1]},squeeze=False)
+        fig.subplots_adjust(left=.08,right=.98,top=.88,bottom=.13,hspace=.32,wspace=.12)
+        for row_axes,((species,race,phenotype),samples) in zip(axes,groups.items()):
             values=np.vstack([profiles[s][column].to_numpy() for s in samples])
             # Normalize each individual first, then average, giving equal weights.
             avg=values.mean(axis=0)
             transform=np.log1p if column=='raw_bigwig' else lambda a:a
-            ax.plot(x,transform(avg),color='black',lw=1.1,label=f'{race}: n={len(samples)}')
-            for e in focal:
-                side=e['side'];leg=e['leg']
-                color='#1764AB' if side.lower()=='left' else '#D04B35'
-                ax.plot(x,transform(profiles[e['sample']][column].to_numpy()),color=color,
-                    ls='--' if str(leg)=='T3' else '-',lw=.8,alpha=.8,label=f'{side} {leg}')
-            for lo,hi in LEGACY[ref]:ax.axvspan(lo/1e6,hi/1e6,color='#999999',alpha=.12,lw=0)
-            ax.set_title(f'H. {species} {race} | yellow bar {phenotype} | n={len(samples)}',loc='left',fontsize=9)
-            ax.spines[['top','right']].set_visible(False)
-            if column=='normalized_depth':
-                ax.set_ylim(1,2)
-                ax.set_yticks([1,1.25,1.5,1.75,2])
-                ax.axhline(1,color='#999999',ls=':',lw=.6)
-        handles,labels=axes[0].get_legend_handles_labels()
+            row_axes[0].set_title(f'H. {species} {race} | yellow bar {phenotype} | n={len(samples)}',loc='left',fontsize=9)
+            for ax in row_axes:
+                ax.plot(x,transform(avg),color='black',lw=1.1,label=f'{race}: n={len(samples)}')
+                for e in focal:
+                    side=e['side'];leg=e['leg']
+                    color='#1764AB' if side.lower()=='left' else '#D04B35'
+                    ax.plot(x,transform(profiles[e['sample']][column].to_numpy()),color=color,
+                        ls='--' if str(leg)=='T3' else '-',lw=.8,alpha=.8,label=f'{side} {leg}')
+                for lo,hi in LEGACY[ref]:ax.axvspan(lo/1e6,hi/1e6,color='#999999',alpha=.12,lw=0)
+                ax.spines[['top','right']].set_visible(False)
+                if column=='normalized_depth':
+                    ax.set_ylim(0,2)
+                    ax.set_yticks([0,.5,1,1.5,2])
+                    ax.axhline(1,color='#999999',ls=':',lw=.6)
+        handles,labels=axes[0,0].get_legend_handles_labels()
         labels[0]='Race mean (n=2)'
         fig.legend(handles,labels,ncol=5,fontsize=8,loc='upper center',bbox_to_anchor=(.55,.955))
-        axes[-1].set_xlim(start/1e6,end/1e6);axes[-1].set_xlabel(f'{contig} position (Mb)')
+        ranges=[(start,end)]+[(lo-1000,hi+1000) for lo,hi in LEGACY[ref]]
+        for col,(lo,hi) in enumerate(ranges):
+            axes[-1,col].set_xlim(lo/1e6,hi/1e6)
+            axes[-1,col].set_xlabel(f'{contig} position (Mb)')
+            if col:
+                name='Yb(d)' if col==1 else 'Yb(v)'
+                axes[0,col].set_title(f'{name} interval zoom\n1 kb flanks',fontsize=10)
+            else:
+                axes[0,col].set_title(axes[0,col].get_title()+'\nFull locus',loc='left',fontsize=9)
+            axes[-1,col].ticklabel_format(axis='x',style='plain',useOffset=False)
         fig.supylabel(ylabel,x=.02)
         fig.suptitle(f'Yb coverage on {ref}: focal Left/Right overlaid with paper controls',fontsize=11)
         note=('MAPQ >=30; duplicate/secondary/QC-failed/unmapped reads excluded; paired overlaps counted once.\n'
-              'Each individual normalized by its full-contig mean, then averaged within race (n=2). Samtools implementation; 50-bp nonoverlapping bins. Display clipped to 1–2; values outside this range are hidden.'
+              'Each individual normalized by its full-contig mean, then averaged within race (n=2). Samtools implementation; 50-bp nonoverlapping bins. Display clipped to 0–2; values outside this range are hidden.'
               if column=='normalized_depth' else
               'Existing unfiltered 50-bp bamCoverage tracks; raw control values averaged within race, then transformed with ln(1 + coverage).')
         fig.text(.13,.035,note+'\nIndividual control curves omitted for clarity. Grey shading: legacy Yb(d)/Yb(v) intervals; Luca functional CRE boundaries remain unverified. Focal legs are libraries from one individual.',fontsize=7)
@@ -178,12 +189,12 @@ def plot(config,task,bundle=None):
         'focal_individuals':1,'focal_libraries':4,'luca_CRE_verified':False},indent=2)+'\n')
 def bundle_plots(config):
     from matplotlib.backends.backend_pdf import PdfPages
-    out=Path(config['run_dir'])/'Yb_both_references_controls_LR_normalized_1to2_and_raw_log1p.pdf'
+    out=Path(config['run_dir'])/'Yb_both_references_controls_LR_normalized_0to2_with_interval_zooms_and_raw_log1p.pdf'
     tmp=out.with_name(out.stem+'.tmp.pdf')
     with PdfPages(tmp) as bundle:
         for task in range(2):plot(config,task,bundle=bundle)
         bundle.infodict().update(Title='Yb control overlays: Hmel2.5 and HmRos',
-            Subject='Race means n=2 with focal Left/Right legs; normalized 1–2 and raw log coverage')
+            Subject='Race means n=2 with focal Left/Right legs; normalized 0–2 and raw log coverage')
     tmp.replace(out)
     print(f'BUNDLE_PDF\\t{out}')
 def replot(base):
@@ -196,7 +207,7 @@ def replot(base):
         '--job-name=YbBundle',f'--chdir={base}',f'--output={base}/logs/bundle.%j.out',
         f'--error={base}/logs/bundle.%j.err','--wrap',command],text=True).strip().split(';')[0]
     print(f'REPLOT_JOB\\t{job}')
-    print(f'BUNDLE_PDF\\t{base}/Yb_both_references_controls_LR_normalized_1to2_and_raw_log1p.pdf')
+    print(f'BUNDLE_PDF\\t{base}/Yb_both_references_controls_LR_normalized_0to2_with_interval_zooms_and_raw_log1p.pdf')
 def main():
     p=argparse.ArgumentParser();p.add_argument('--control-run',type=Path);p.add_argument('--replot-run',type=Path)
     p.add_argument('--config',type=Path);p.add_argument('--stage',choices=['coverage','plot','bundle']);p.add_argument('--task',type=int)
