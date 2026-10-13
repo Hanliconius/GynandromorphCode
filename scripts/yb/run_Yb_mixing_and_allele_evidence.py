@@ -43,13 +43,13 @@ def submit(source):
 def mean(cfg,task):
     spec=importlib.util.spec_from_file_location("mean_worker",Path(cfg["run_dir"])/"mean_worker.py")
     mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);mod.coverage(cfg,task)
-def report(cfg):
+def report(cfg,relative=False,bundle=None):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_pdf import PdfPages
     plt.rcParams.update({"pdf.fonttype":42,"font.size":9})
-    base=Path(cfg["run_dir"]);out=base/"Yb_d_both_references_observed_vs_assumed20pct_unmixed_mean_coverage.pdf"
+    base=Path(cfg["run_dir"]);out=base/("Yb_d_control_relative_mean_coverage.pdf" if relative else "Yb_d_both_references_observed_vs_assumed20pct_unmixed_mean_coverage.pdf")
     allrows=[]
     with PdfPages(out) as pdf:
         fig,axes=plt.subplots(2,2,figsize=(12,7),sharey=True,sharex="col")
@@ -63,6 +63,14 @@ def report(cfg):
             x=next(iter(profiles.values())).position.to_numpy()
             for t in profiles.values():
                 if not np.array_equal(x,t.position.to_numpy()):raise RuntimeError("Coordinate mismatch")
+            if relative:
+                baseline="melpomene" if ref=="Hmel2.5" else "rosina"
+                ids=[e["sample"] for e in entries if e["role"]=="control" and e.get("species")=="melpomene" and e.get("subspecies")==baseline]
+                denominator=np.vstack([profiles[s].normalized_depth.to_numpy() for s in ids]).mean(axis=0)
+                valid=np.isfinite(denominator)&(denominator>=.25)
+                for table in profiles.values():
+                    table["normalized_depth"]=np.divide(table.normalized_depth.to_numpy(),denominator,
+                        out=np.full(denominator.shape,np.nan),where=valid)
             for race,color in [("rosina","#662A83"),("melpomene","#555555")]:
                 samples=[e["sample"] for e in entries if e["role"]=="control" and e["species"]=="melpomene" and e["subspecies"]==race]
                 y=np.vstack([profiles[s].normalized_depth.to_numpy() for s in samples]).mean(axis=0)
@@ -91,16 +99,19 @@ def report(cfg):
             axes[-1,col].set_xlabel(contig+" position (Mb)")
         h,l=axes[0,0].get_legend_handles_labels();fig.legend(h,l,ncol=3,loc="upper center",bbox_to_anchor=(.54,.96))
         fig.suptitle("Yb(d): linear mean coverage and mixing sensitivity",fontsize=12)
-        fig.supylabel("50-bp mean / full-contig mean",x=.02)
+        fig.supylabel("Coverage / reference-matched control mean" if relative else "50-bp mean / full-contig mean",x=.02)
         fig.text(.09,.05,"20% is a user-specified exploratory assumption, not the fitted per-library mixture. Shading around corrected curves spans 15–25%, not a confidence interval.\n"
             "Each library scaled by its own contig mean before inversion; assumes comparable underlying contig dosage and mapping response.\n"
             "MAPQ >=30; duplicate/secondary/QC-failed/unmapped excluded; paired overlap counted once. No log transform or median inversion.\n"
             "Negative estimates retained in TSV and marked by downward triangles at zero; display range 0–2. Primer span shaded; exact CRE boundaries pending.",fontsize=8)
-        pdf.savefig(fig);plt.close(fig)
-    pd.DataFrame(allrows).to_csv(base/"mean_coverage_unmixing_sensitivity.tsv.gz",sep="\t",index=False)
-    (base/"unmixing.audit.json").write_text(json.dumps({"mixing":cfg["mixing_assumption"],
+        if relative:fig.text(.09,.015,"Per-bin baseline: Hmel2.5 = melpomene mean; HmRos = rosina mean. Baseline <0.25 scaffold-normalized depth masked; retained baseline = 1.",fontsize=8)
+        pdf.savefig(fig)
+        if bundle is not None:bundle.savefig(fig)
+        plt.close(fig)
+    pd.DataFrame(allrows).to_csv(base/("control_relative_unmixing_sensitivity.tsv.gz" if relative else "mean_coverage_unmixing_sensitivity.tsv.gz"),sep="\t",index=False)
+    (base/("control_relative.audit.json" if relative else "unmixing.audit.json")).write_text(json.dumps({"mixing":cfg["mixing_assumption"],
         "negative_bins":int(sum(bool(r["negative"]) for r in allrows)),"method":cfg["method"],
-        "scale":"own full-contig mean; requires equal underlying contig dosage","uncertainty":"mixing sensitivity only; no statistical confidence interval",
+        "scale":"own contig mean then per-bin reference-matched race mean" if relative else "own full-contig mean; requires equal underlying contig dosage","low_control_mask_threshold":.25 if relative else None,"uncertainty":"mixing sensitivity only; no statistical confidence interval",
         "pdf":str(out)},indent=2)+"\n")
     print("PDF\t"+str(out))
 def alleles(cfg,task):
@@ -138,7 +149,13 @@ def main():
         cfg=json.loads(a.config.read_text())
         if a.stage=="mean":mean(cfg,a.task)
         elif a.stage=="alleles":alleles(cfg,a.task)
-        else:report(cfg)
+        else:
+            from matplotlib.backends.backend_pdf import PdfPages
+            out=Path(cfg["run_dir"])/"Yb_d_mean_coverage_and_reference_matched_control_ratios.pdf"
+            with PdfPages(out) as bundle:
+                report(cfg,bundle=bundle)
+                report(cfg,relative=True,bundle=bundle)
+            print("BUNDLE_PDF\\t"+str(out))
 if __name__=="__main__":
     try:main()
     except Exception as e:print("ERROR: "+str(e),file=sys.stderr);sys.exit(2)
