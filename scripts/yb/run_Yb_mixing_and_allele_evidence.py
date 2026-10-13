@@ -99,7 +99,7 @@ def report(cfg):
         pdf.savefig(fig);plt.close(fig)
     pd.DataFrame(allrows).to_csv(base/"mean_coverage_unmixing_sensitivity.tsv.gz",sep="\t",index=False)
     (base/"unmixing.audit.json").write_text(json.dumps({"mixing":cfg["mixing_assumption"],
-        "negative_bins":sum(r["negative"] for r in allrows),"method":cfg["method"],
+        "negative_bins":int(sum(bool(r["negative"]) for r in allrows)),"method":cfg["method"],
         "scale":"own full-contig mean; requires equal underlying contig dosage","uncertainty":"mixing sensitivity only; no statistical confidence interval",
         "pdf":str(out)},indent=2)+"\n")
     print("PDF\t"+str(out))
