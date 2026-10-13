@@ -56,7 +56,7 @@ def submit(control):
     jobs=[]
     try:
         for stage,array,cpus,mem,limit in [('coverage','0-27%28',2,'8G','04:00:00'),
-                                        ('plot','0-1%2',1,'8G','00:30:00')]:
+                                        ('bundle','0-0%1',1,'8G','00:30:00')]:
             command=['sbatch','--parsable','--partition=cpu',f'--array={array}',
                 f'--cpus-per-task={cpus}',f'--mem={mem}',f'--time={limit}',
                 f'--job-name=Yb_{stage}',f'--chdir={base}',
@@ -118,7 +118,7 @@ def coverage(config,task):
         'mean_includes_zero_positions':True,'engine':'samtools depth; not Mosdepth',
         'partial_terminal_bin':'median of available contig bases'},indent=2)+'\n')
     print(f'PROFILE_COMPLETE\t{ref}\t{e["sample"]}\tmean_depth={mean:.4f}')
-def plot(config,task):
+def plot(config,task,bundle=None):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -138,13 +138,12 @@ def plot(config,task):
     for column,suffix,ylabel in [('normalized_depth','normalized','50-bp median / scaffold mean'),
                                 ('raw_bigwig','raw_log1p','ln(1 + raw bigWig coverage)')]:
         fig,axes=plt.subplots(len(groups),1,figsize=(10,9),sharex=True,sharey=True)
-        fig.subplots_adjust(left=.13,right=.98,top=.93,bottom=.12,hspace=.15)
+        fig.subplots_adjust(left=.13,right=.98,top=.90,bottom=.12,hspace=.15)
         for ax,((species,race,phenotype),samples) in zip(axes,groups.items()):
             values=np.vstack([profiles[s][column].to_numpy() for s in samples])
             # Normalize each individual first, then average, giving equal weights.
             avg=values.mean(axis=0)
             transform=np.log1p if column=='raw_bigwig' else lambda a:a
-            for row in values:ax.plot(x,transform(row),color='#909090',lw=.5,alpha=.5)
             ax.plot(x,transform(avg),color='black',lw=1.1,label=f'{race}: n={len(samples)}')
             for e in focal:
                 side=e['side'];leg=e['leg']
@@ -154,30 +153,60 @@ def plot(config,task):
             for lo,hi in LEGACY[ref]:ax.axvspan(lo/1e6,hi/1e6,color='#999999',alpha=.12,lw=0)
             ax.set_title(f'H. {species} {race} | yellow bar {phenotype} | n={len(samples)}',loc='left',fontsize=9)
             ax.spines[['top','right']].set_visible(False)
-            if column=='normalized_depth':ax.axhline(1,color='#999999',ls=':',lw=.6)
-        axes[0].legend(ncol=5,fontsize=7,loc='upper right')
+            if column=='normalized_depth':
+                ax.set_ylim(1,2)
+                ax.set_yticks([1,1.25,1.5,1.75,2])
+                ax.axhline(1,color='#999999',ls=':',lw=.6)
+        handles,labels=axes[0].get_legend_handles_labels()
+        labels[0]='Race mean (n=2)'
+        fig.legend(handles,labels,ncol=5,fontsize=8,loc='upper center',bbox_to_anchor=(.55,.955))
         axes[-1].set_xlim(start/1e6,end/1e6);axes[-1].set_xlabel(f'{contig} position (Mb)')
         fig.supylabel(ylabel,x=.02)
         fig.suptitle(f'Yb coverage on {ref}: focal Left/Right overlaid with paper controls',fontsize=11)
         note=('MAPQ >=30; duplicate/secondary/QC-failed/unmapped reads excluded; paired overlaps counted once.\n'
-              'Each individual normalized by its full-contig mean, then averaged within race (n=2). Samtools implementation; 50-bp nonoverlapping bins.'
+              'Each individual normalized by its full-contig mean, then averaged within race (n=2). Samtools implementation; 50-bp nonoverlapping bins. Display clipped to 1–2; values outside this range are hidden.'
               if column=='normalized_depth' else
               'Existing unfiltered 50-bp bamCoverage tracks; raw control values averaged within race, then transformed with ln(1 + coverage).')
-        fig.text(.13,.035,note+'\nGrey shading: legacy Yb(d)/Yb(v) intervals; Luca functional CRE boundaries remain unverified. Focal legs are libraries from one individual.',fontsize=7)
+        fig.text(.13,.035,note+'\nIndividual control curves omitted for clarity. Grey shading: legacy Yb(d)/Yb(v) intervals; Luca functional CRE boundaries remain unverified. Focal legs are libraries from one individual.',fontsize=7)
         out=outdir/f'Yb_{ref}_controls_LR_{suffix}.pdf'
-        fig.savefig(out);fig.savefig(out.with_suffix('.png'),dpi=200);plt.close(fig)
+        fig.savefig(out);fig.savefig(out.with_suffix('.png'),dpi=200)
+        if bundle is not None:bundle.savefig(fig)
+        plt.close(fig)
         print(f'PDF\t{out}')
     (outdir/'overlay.audit.json').write_text(json.dumps({'reference':ref,'method':config['method'],
         'groups':[{'species':s,'race':r,'yellow_bar':p,'n':len(ids),'accessions':ids} for (s,r,p),ids in groups.items()],
         'focal_individuals':1,'focal_libraries':4,'luca_CRE_verified':False},indent=2)+'\n')
+def bundle_plots(config):
+    from matplotlib.backends.backend_pdf import PdfPages
+    out=Path(config['run_dir'])/'Yb_both_references_controls_LR_normalized_1to2_and_raw_log1p.pdf'
+    tmp=out.with_name(out.stem+'.tmp.pdf')
+    with PdfPages(tmp) as bundle:
+        for task in range(2):plot(config,task,bundle=bundle)
+        bundle.infodict().update(Title='Yb control overlays: Hmel2.5 and HmRos',
+            Subject='Race means n=2 with focal Left/Right legs; normalized 1–2 and raw log coverage')
+    tmp.replace(out)
+    print(f'BUNDLE_PDF\\t{out}')
+def replot(base):
+    require(base/'run.json')
+    stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    frozen=base/f'replot_{stamp}.py'
+    shutil.copy2(__file__,frozen)
+    command=shlex.join([sys.executable,str(frozen),'--config',str(base/'run.json'),'--stage','bundle','--task','0'])
+    job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G',
+        '--job-name=YbBundle',f'--chdir={base}',f'--output={base}/logs/bundle.%j.out',
+        f'--error={base}/logs/bundle.%j.err','--wrap',command],text=True).strip().split(';')[0]
+    print(f'REPLOT_JOB\\t{job}')
+    print(f'BUNDLE_PDF\\t{base}/Yb_both_references_controls_LR_normalized_1to2_and_raw_log1p.pdf')
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--control-run',type=Path)
-    p.add_argument('--config',type=Path);p.add_argument('--stage',choices=['coverage','plot']);p.add_argument('--task',type=int)
+    p=argparse.ArgumentParser();p.add_argument('--control-run',type=Path);p.add_argument('--replot-run',type=Path)
+    p.add_argument('--config',type=Path);p.add_argument('--stage',choices=['coverage','plot','bundle']);p.add_argument('--task',type=int)
     a=p.parse_args()
-    if a.control_run:submit(a.control_run)
+    if a.replot_run:replot(a.replot_run)
+    elif a.control_run:submit(a.control_run)
     elif a.config and a.stage and a.task is not None:
         config=json.loads(a.config.read_text())
-        (coverage if a.stage=='coverage' else plot)(config,a.task)
+        if a.stage=='bundle':bundle_plots(config)
+        else:(coverage if a.stage=='coverage' else plot)(config,a.task)
     else:p.error('Use --control-run or --config/--stage/--task')
 if __name__=='__main__':
     try:main()
