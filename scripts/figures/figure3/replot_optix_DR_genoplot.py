@@ -16,9 +16,10 @@ KEY=['chrom','pos','ref','alt']
 COLORS={'Dennis':'#D79500','Ray':'#CC70A7'}
 plt.rcParams.update({'pdf.fonttype':42,'svg.fonttype':'none','font.size':9})
 
-def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False):
+def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False,row_labels=None):
     blocks=[];offset=0;maps=[];arrays=[]
     pk_samples=pk_samples or []
+    row_labels=row_labels or {}
     rows=['present']+pk_samples+['TN_Left','TN_Right','absent']
     nrows=len(rows)
     for module in ['Ray','Dennis']:
@@ -30,14 +31,14 @@ def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False):
         if t.duplicated(['row','column']).any():raise RuntimeError('Duplicate genoplot cell')
         arrays.append(t.pivot(index='row',columns='column',values='frequency').reindex(index=rows,columns=sites.column).to_numpy())
         blocks.append((module,offset,len(sites)));maps.append(sites);offset+=len(sites)
-    fig=plt.figure(figsize=(11,5.5+len(pk_samples)*.18))
+    fig=plt.figure(figsize=(13 if pk_samples else 11,5.5+len(pk_samples)*.18))
     fig.suptitle('optix: Dennis and Ray genoplot',x=.19,ha='left',fontsize=14)
     fig.text(.19,.90,f'BA >= {cutoff:.2f} | '+('Trait-specific labelled intervals' if scope else 'Full region')+(' | PK individual calls' if pk_samples else '')+(' | focal no-calls removed' if focal_callable else ''),fontsize=10)
     if not arrays:
         fig.text(.5,.5,'No SNPs pass these comparative filters',ha='center')
     else:
         mapping=pd.concat(maps,ignore_index=True);matrix=np.concatenate(arrays,axis=1)
-        locus=fig.add_axes([.19,.69,.72,.12]);heat=fig.add_axes([.19,.30,.72,.26])
+        locus=fig.add_axes([.30 if pk_samples else .19,.69,.61 if pk_samples else .72,.12]);heat=fig.add_axes([.30 if pk_samples else .19,.30,.61 if pk_samples else .72,.26])
         locus.set_xlim(1.06,1.24);locus.set_ylim(-.2,1.4)
         locus.hlines(0,1.06,1.24,color='#777',lw=1)
         for module,labels in [('Ray',['R1','R2']),('Dennis',['D1','D2'])]:
@@ -47,7 +48,8 @@ def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False):
         locus.set_yticks([]);locus.set_xlabel('Hmr18 locus (Mb)',fontsize=8)
         cmap=LinearSegmentedColormap.from_list('dosage',[(0,'#D7EDF5'),(.5,'#ECCB63'),(1,'#662A83')]);cmap.set_bad('#C8C8C8')
         image=heat.imshow(matrix,cmap=cmap,vmin=0,vmax=1,aspect='auto',interpolation='nearest',extent=(-.5,offset-.5,nrows-.5,-.5))
-        heat.set_yticks(range(nrows),['Pattern present']+pk_samples+['Left adjusted','Right adjusted','Pattern absent'])
+        heat.set_yticks(range(nrows),['Pattern present (comparative)']+[row_labels.get(x,x) for x in pk_samples]+['TNLeft adjusted','TNRight adjusted','Pattern absent (comparative)'])
+        heat.tick_params(axis='y',labelsize=7 if pk_samples else 9)
         heat.set_xticks([]);heat.tick_params(axis='y',length=0)
         for module,start,count in blocks:
             if start:heat.axvline(start-.5,color='white',lw=3)
