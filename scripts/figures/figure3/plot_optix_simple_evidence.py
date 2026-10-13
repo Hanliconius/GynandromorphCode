@@ -16,7 +16,7 @@ import Fig3_optix_full_range_frequency as full
 COLORS={'Band':'#087DBB','Dennis':'#D79500','Ray':'#CC70A7'}
 plt.rcParams.update({'pdf.fonttype':42,'svg.fonttype':'none','font.size':9})
 
-def draw(values,out,compact=False,combined=None):
+def draw(values,out,compact=False,combined=None,subtitle=None):
     values=values.copy()
     mapping=values[base.KEY].drop_duplicates().sort_values(base.KEY).reset_index(drop=True)
     mapping["plot_x"]=np.arange(len(mapping)) if compact else mapping.pos/1e6
@@ -81,11 +81,13 @@ def draw(values,out,compact=False,combined=None):
             label='B/B' if dose==0 else ('DR/DR' if dose==1 else 'B/DR')
             cartoon.text(x+.155,yy,label,va='center',transform=cartoon.transAxes,fontsize=8)
     fig.suptitle('optix: Left and Right genotype evidence',x=.14,ha='left',fontsize=14)
+    if subtitle:
+        fig.text(.14,.92,subtitle,fontsize=9)
     fig.legend(handles=[Line2D([],[],marker='o',color='#555',ls='',label='Left'),
         Line2D([],[],marker='v',markerfacecolor='white',color='#555',ls='',label='Right')],
         loc='upper right',bbox_to_anchor=(.965,.96),frameon=False,ncol=2)
-    fig.text(.14,.045,'Small upper tracks: comparative balanced accuracy; no BA cutoff. Grey ticks: unavailable focal calls.\n'
-        'All scored SNPs passing comparative QC are retained, including conflicting genotype pairs.\n'
+    fig.text(.14,.045,'Small upper tracks: comparative balanced accuracy. Grey ticks: unavailable focal calls.\n'
+        'Individual SNPs passing the stated comparative filters; conflicting genotype pairs retained.\n'
         'B-like / DR-like describes independently oriented markers. Cartoon shows expectations; phase is not inferred.',fontsize=8)
     stem='optix_simple_evidence_condensed' if compact else 'optix_simple_evidence'
     for suffix in ['pdf','svg','png']:fig.savefig(out/f'{stem}.{suffix}',dpi=200)
