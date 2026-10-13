@@ -20,6 +20,7 @@ def callable_sites(v):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--input-dir',type=Path,required=True)
     p.add_argument('--pk-samples',nargs='+')
+    p.add_argument('--metadata',type=Path,default=base.PROJECT/'data/derived/region_panel_metadata.tsv')
     p.add_argument('--vcf',type=Path,default=base.PROJECT/'external/krista_genotype_plots_original/Genotype_Plots/Optix_Hmr18-938195-1239421_biallelic.vcf')
     a=p.parse_args()
     opener=gzip.open if a.vcf.suffix=='.gz' else open
@@ -28,8 +29,27 @@ def main():
             if line.startswith('#CHROM'):
                 header=line.rstrip().split('\t')[9:];break
         else:raise RuntimeError('VCF header not found')
-    samples=a.pk_samples or [s for s in header if re.match(r'^PK',s,re.I)]
-    if not samples:raise RuntimeError('No PK-prefixed samples in VCF. Supply exact sample IDs with --pk-samples.')
+    if a.pk_samples:
+        samples=a.pk_samples
+        matched_metadata=[]
+    else:
+        meta=pd.read_csv(a.metadata,sep='\t',dtype=str).fillna('')
+        # Recover the same biological group as analysis 151, not a sample-ID prefix.
+        text=meta.astype(str).agg(' | '.join,axis=1)
+        hit=text.str.contains(r'Butterfly[ _-]*World[ _-]*piano[ _-]*keys|piano[ _-]*keys|BWPK',case=False,regex=True)
+        matched=meta.loc[hit].copy()
+        if matched.empty:
+            raise RuntimeError('No piano-key group found in canonical metadata. Metadata columns: '+', '.join(meta.columns))
+        samples=[];matched_metadata=[]
+        valid=set(header)
+        for _,row in matched.iterrows():
+            candidates=sorted(set(str(x).strip() for x in row.values)&valid)
+            if len(candidates)!=1:
+                raise RuntimeError('BWPK metadata row must resolve to exactly one VCF sample; matches='+repr(candidates)+'; row='+repr(row.to_dict()))
+            samples.append(candidates[0]);matched_metadata.append(row.to_dict())
+        samples=sorted(set(samples))
+        if len(samples)!=5:
+            raise RuntimeError(f'Expected the five analysis-151 BWPK individuals; resolved {len(samples)}: {samples}')
     if len(set(samples))!=len(samples):raise RuntimeError('Duplicate PK IDs')
     values=pd.read_csv(a.input_dir/'plot_values.tsv.gz',sep='\t')
     values=values.loc[values.module.isin(['Dennis','Ray'])]
@@ -57,7 +77,7 @@ def main():
             with_pk.to_csv(out/f'BA{int(cutoff*100)}_values_with_PK.tsv.gz',sep='\t',index=False)
             audit.append({'BA_min':cutoff,'before':len(candidate[['module']+KEY].drop_duplicates()),
                 'after':len(v[['module']+KEY].drop_duplicates()),'counts':counts})
-    (out/'audit.json').write_text(json.dumps({'PK_samples':samples,'VCF':str(a.vcf),'comparisons':audit,
+    (out/'audit.json').write_text(json.dumps({'PK_samples':samples,'PK_metadata':str(a.metadata),'matched_metadata':matched_metadata,'VCF':str(a.vcf),'comparisons':audit,
         'focal_callability_filter':True,'focal_genotype_state_filter':False,'PK_used_for_site_filter':False,
         'PK_QC':'DP>=2 GQ>=20','PK_missing_retained':True},indent=2)+'\n')
     print('PK_SAMPLES\t'+','.join(samples))
