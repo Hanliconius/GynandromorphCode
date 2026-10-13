@@ -198,7 +198,8 @@ def prepare(cfg,task):
     (d/'chromosome_alias.json').write_text(json.dumps(ref,indent=2)+'\n')
 def align(cfg,task):
     t=cfg['tasks'][task];ref=t['reference'];acc=t['sample'];tools=cfg['tools'];base=Path(cfg['run_dir']);d=base/ref['name']/acc;d.mkdir(parents=True,exist_ok=True)
-    if (d/'alignment.complete.json').is_file():return
+    if (d/'alignment.complete.json').is_file():
+        if ref['name']!='HmRos' or not cfg.get('shared_rosina_optix') or (d/'optix.bam').is_file():return
     fa=base/'Optix/reference/genome.fa' if ref['name']=='Optix' else Path(ref['fasta'])
     inputs=[Path(cfg['fastq_root'])/acc/f'{acc}_{i}.fastq.gz' for i in [1,2]]
     with tempfile.TemporaryDirectory(prefix=acc+'.',dir=d) as temp:
@@ -212,15 +213,30 @@ def align(cfg,task):
         region=ref['contig'] if ref['name']!='Optix' else 'Hmr18:1050000-1250000'
         retained=tmp/'locus.bam';run([tools['samtools'],'view','-b','-o',retained,marked,region]);run([tools['samtools'],'index',retained])
         retained.replace(d/'locus.bam');Path(str(retained)+'.bai').replace(d/'locus.bam.bai')
+        if ref['name']=='HmRos' and cfg.get('shared_rosina_optix'):
+            optix=tmp/'optix.bam'
+            chrom=cfg['shared_rosina_optix']['contig']
+            run([tools['samtools'],'view','-b','-o',optix,marked,f'{chrom}:1050000-1250000'])
+            run([tools['samtools'],'index',optix])
+            optix.replace(d/'optix.bam')
+            Path(str(optix)+'.bai').replace(d/'optix.bam.bai')
     (d/'alignment.complete.json').write_text(json.dumps({'sample':acc,'full_reference':ref['fasta'],'retained_region':region,'full_genome_alignment':True,'duplicates_marked_before_region_extraction':True},indent=2)+'\n')
 def profile(cfg,task):
     t=cfg['tasks'][task];ref=t['reference']['name'];acc=t['sample'];base=Path(cfg['run_dir']);d=base/ref/acc;d.mkdir(parents=True,exist_ok=True)
     if (d/'profile.complete.json').is_file():return
     bam=Path(t['reuse']['bam']) if t['reuse'] else d/'locus.bam';tools=cfg['tools'];contig,lo,hi=WINDOWS[ref]
     if ref=='Optix':
-        fa=base/'Optix/reference/genome.fa';out=d/'calls.vcf'
-        command=shlex.join([tools['bcftools'],'mpileup','-Ou','-f',str(fa),'-R',str(base/'optix_sites.bed'),'-a','FORMAT/DP,FORMAT/AD','-q','30','-Q','20',str(bam)])+' | '+shlex.join([tools['bcftools'],'call','-m','-A','-C','alleles','-T',str(base/'optix_alleles.tsv.gz'),'-f','GQ','-Ov','-o',str(out)])
-        run(['bash','-o','pipefail','-c',command])
+        out=d/'calls.vcf'
+        if cfg.get('shared_rosina_optix'):
+            fa=Path(cfg['shared_rosina_optix']['fasta'])
+            cmd=shlex.join([tools['bcftools'],'mpileup','-Ou','-f',str(fa),'-R',str(base/'optix_sites_rosina.bed'),'-a','FORMAT/DP,FORMAT/AD','-q','30','-Q','20',str(bam)])+' | '+shlex.join([tools['bcftools'],'call','-m','-A','-C','alleles','-T',str(base/'optix_alleles_rosina.tsv.gz'),'-f','GQ','-Ov','-o',str(d/'calls.rosina.vcf')])
+            run(['bash','-o','pipefail','-c',cmd])
+            run([tools['bcftools'],'annotate','--rename-chrs',base/'rosina_to_optix_chrom.tsv','-Ov','-o',out,d/'calls.rosina.vcf'])
+            (d/'calls.rosina.vcf').unlink()
+        else:
+            fa=base/'Optix/reference/genome.fa'
+            command=shlex.join([tools['bcftools'],'mpileup','-Ou','-f',str(fa),'-R',str(base/'optix_sites.bed'),'-a','FORMAT/DP,FORMAT/AD','-q','30','-Q','20',str(bam)])+' | '+shlex.join([tools['bcftools'],'call','-m','-A','-C','alleles','-T',str(base/'optix_alleles.tsv.gz'),'-f','GQ','-Ov','-o',str(out)])
+            run(['bash','-o','pipefail','-c',command])
     else:
         hdr=subprocess.check_output([tools['samtools'],'view','-H',str(bam)],text=True)
         length=next(int(dict(z.split(':',1) for z in line.split('\t')[1:])['LN']) for line in hdr.splitlines() if line.startswith('@SQ\t') and 'SN:'+contig in line.split('\t'))
