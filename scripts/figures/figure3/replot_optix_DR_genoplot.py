@@ -33,7 +33,7 @@ def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False,r
         if t.duplicated(['row','column']).any():raise RuntimeError('Duplicate genoplot cell')
         arrays.append(t.pivot(index='row',columns='column',values='frequency').reindex(index=rows,columns=sites.column).to_numpy())
         blocks.append((module,offset,len(sites)));maps.append(sites);offset+=len(sites)
-    fig=plt.figure(figsize=(13 if pk_samples else 11,5.5+len(pk_samples)*.18))
+    fig=plt.figure(figsize=(13 if pk_samples else 11,5.5+len(pk_samples)*(.40 if len(pk_samples)>8 else .18)))
     fig.suptitle('optix: '+('Band' if band_only else 'Dennis and Ray')+' genoplot',x=.19,ha='left',fontsize=14)
     fig.text(.19,.90,f'BA >= {cutoff:.2f} | '+('Trait-specific labelled intervals' if scope else 'Full region')+(' | PK individual calls' if pk_samples else '')+(' | focal no-calls removed' if focal_callable else ''),fontsize=10)
     if not arrays:
