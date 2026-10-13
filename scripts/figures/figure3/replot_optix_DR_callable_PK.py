@@ -51,6 +51,24 @@ def main():
         if len(samples)!=5:
             raise RuntimeError(f'Expected the five analysis-151 BWPK individuals; resolved {len(samples)}: {samples}')
     if len(set(samples))!=len(samples):raise RuntimeError('Duplicate PK IDs')
+    # Phenotypes are independently recorded metadata, never inferred from genotype calls.
+    phenotype_meta=pd.read_csv(a.metadata,sep='\t',dtype=str).fillna('')
+    phenotype_fields=['B','D','R','Yb-dorsal','Yb-ventral','Br','N','Sb']
+    labels={};phenotypes={}
+    def state(value):
+        try:
+            number=float(value)
+            return str(int(number)) if number in (0,1) else str(value)
+        except (ValueError,TypeError):return '?'
+    for sample in samples:
+        candidates=phenotype_meta.loc[phenotype_meta.apply(lambda col:col.astype(str).str.strip().eq(sample)).any(axis=1)]
+        if len(candidates)!=1:raise RuntimeError(f'{sample}: phenotype metadata must match exactly one row')
+        row=candidates.iloc[0]
+        phenotypes[sample]={field:state(row.get(field,'')) for field in phenotype_fields}
+        ph=phenotypes[sample]
+        def sign(field):return '+' if ph[field]=='1' else ('-' if ph[field]=='0' else '?')
+        labels[sample]=f"{sample} | B{sign('B')} D{sign('D')} R{sign('R')} | Yb d{sign('Yb-dorsal')}/v{sign('Yb-ventral')}"
+    samples=sorted(samples,key=lambda sample:(phenotypes[sample]['D']!='1',sample))
     values=pd.read_csv(a.input_dir/'plot_values.tsv.gz',sep='\t')
     values=values.loc[values.module.isin(['Dennis','Ray'])]
     subsets={c:callable_sites(select(values,c,True)) for c in [.8,.9]}
@@ -58,6 +76,7 @@ def main():
     sites=union[KEY].drop_duplicates()
     calls,seen=full.read_calls(a.vcf,sites,samples)
     out=a.input_dir/'DR_callable_PK';out.mkdir(exist_ok=True)
+    pd.DataFrame([{'Accession':sample,**phenotypes[sample]} for sample in samples]).to_csv(out/'PK_recorded_phenotypes.tsv',sep='\t',index=False)
     audit=[]
     with PdfPages(out/'optix_DR_BA80_BA90_callable_with_and_without_PK.pdf') as combined:
         for cutoff,v in subsets.items():
@@ -73,11 +92,11 @@ def main():
                     pk.append({**site.to_dict(),'row':sample,'frequency':dose if is_alt else 1-dose,
                         'source':'individual VCF GT; DP>=2 GQ>=20','pair_posterior':np.nan})
             with_pk=pd.concat([v,pd.DataFrame(pk)],ignore_index=True)
-            draw(with_pk,cutoff,True,out,combined,pk_samples=samples,focal_callable=True)
+            draw(with_pk,cutoff,True,out,combined,pk_samples=samples,focal_callable=True,row_labels=labels)
             with_pk.to_csv(out/f'BA{int(cutoff*100)}_values_with_PK.tsv.gz',sep='\t',index=False)
             audit.append({'BA_min':cutoff,'before':len(candidate[['module']+KEY].drop_duplicates()),
                 'after':len(v[['module']+KEY].drop_duplicates()),'counts':counts})
-    (out/'audit.json').write_text(json.dumps({'PK_samples':samples,'PK_metadata':str(a.metadata),'matched_metadata':matched_metadata,'VCF':str(a.vcf),'comparisons':audit,
+    (out/'audit.json').write_text(json.dumps({'PK_samples':samples,'PK_phenotypes':phenotypes,'PK_row_labels':labels,'PK_metadata':str(a.metadata),'matched_metadata':matched_metadata,'VCF':str(a.vcf),'comparisons':audit,
         'focal_callability_filter':True,'focal_genotype_state_filter':False,'PK_used_for_site_filter':False,
         'PK_QC':'DP>=2 GQ>=20','PK_missing_retained':True},indent=2)+'\n')
     print('PK_SAMPLES\t'+','.join(samples))
