@@ -1,5 +1,14 @@
 # Post hoc dark and pale piano-key controls
 
+Start raw-read acquisition immediately with `extend_PK_optix_Yb.py --download-new`.
+This submits one download task per PK accession absent from the original optix
+VCF, without needing either reference genome. The full `--submit --optix-run RUN`
+workflow automatically discovers active download array elements from these
+download runs and waits on them rather than duplicating downloads. Completed
+downloads are revalidated by the download worker. Failed elements are retried.
+Supply `--optix-reference FASTA` when the matching indexed whole genome cannot
+be discovered automatically; its frozen optix SNP REF bases must agree.
+
 This extension uses the 21 individuals explicitly labelled Piano Keys, dark
 or Piano Keys, pale in the supplied sample table: 12 dark, 9 pale. It excludes
 cydno, all cydno crosses and backcrosses, and ivory-only individuals. All 21
