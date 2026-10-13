@@ -114,7 +114,18 @@ def submit(a):
             if not target.exists() and local.is_file() and local.stat().st_size:
                 target.parent.mkdir(parents=True,exist_ok=True);target.symlink_to(local)
 
-    cfg={'run_dir':str(base),'repo':str(base/'code'),'samples':samples,'tasks':tasks,'references':refs,'tools':tools,'fastq_root':str(fastq),'optix_vcf':str(vcf),'optix_existing_samples':[s['sample'] for s in samples if s['sample'] in existing],
+    download_wait={}
+    for source in sorted((ROOT/'analysis/pk_dark_pale_downloads').glob('*/run.json')):
+        previous=json.loads(source.read_text());previous_jobs=source.parent/'jobs.json'
+        if not previous_jobs.exists() or previous.get('fastq_root')!=str(fastq):continue
+        jid=json.loads(previous_jobs.read_text()).get('download')
+        if not jid:continue
+        states=subprocess.check_output(['sacct','-X','-n','-j',jid,'--format=JobID,State','--parsable2'],text=True)
+        active={line.split('|')[0].strip() for line in states.splitlines() if len(line.split('|'))>1 and line.split('|')[1].strip() in {'PENDING','RUNNING','CONFIGURING','COMPLETING'}}
+        for index,sample in enumerate(previous['samples']):
+            element=jid+'_'+str(index)
+            if sample['sample'] in needed and element in active:download_wait[sample['sample']]=element
+    cfg={'run_dir':str(base),'repo':str(base/'code'),'samples':samples,'tasks':tasks,'references':refs,'tools':tools,'fastq_root':str(fastq),'optix_vcf':str(vcf),'optix_existing_samples':[s['sample'] for s in samples if s['sample'] in existing],'existing_download_dependencies':download_wait,
         'manifest_source':'user-provided dark/pale PK table; cydno, crosses, backcrosses, ivory-only excluded','site_selection_changed':False,'PK_used_for_ascertainment':False,'coverage_QC':'samtools depth -aa -s -q0 -Q30 -G1796; mean including zero-depth bases'}
     (base/'run.json').write_text(json.dumps(cfg,indent=2)+'\n')
     worker=base/'worker.sh';worker.write_text('#!/usr/bin/env bash\nset -euo pipefail\nexec '+shlex.join([sys.executable,str(base/Path(__file__).name),'--config',str(base/'run.json')])+' --stage "$1" --task "${SLURM_ARRAY_TASK_ID:-0}"\n')
@@ -127,11 +138,13 @@ def submit(a):
     try:
         if missing:
             prep=job('prepare',str(len(refs)-1),8,'32G','06:00:00')
-        dl=[i for i,s in enumerate(samples) if s['sample'] in needed]
-        if dl:download=job('download',','.join(map(str,dl)),1,'4G','12:00:00')
+        dl=[i for i,s in enumerate(samples) if s['sample'] in needed and s['sample'] not in download_wait]
+        prerequisites=sorted(set(download_wait.values()))
+        if dl:prerequisites.append(job('download',','.join(map(str,dl)),1,'4G','12:00:00'))
+        if missing:prerequisites.append(prep)
         deps=[]
         if new:
-            d='afterok:'+download+(':'+prep if missing else '')
+            d='afterok:'+':'.join(prerequisites) if prerequisites else None
             align=job('align',','.join(map(str,new)),16,'64G','2-00:00:00',d)
             deps.append(job('profile',','.join(map(str,new)),2,'8G','04:00:00','aftercorr:'+align,key='new_profiles'))
         if old:deps.append(job('profile',','.join(map(str,old)),2,'8G','04:00:00',('afterok:'+':'.join(sorted(waitjobs))) if waitjobs else None,key='reused_profiles'))
