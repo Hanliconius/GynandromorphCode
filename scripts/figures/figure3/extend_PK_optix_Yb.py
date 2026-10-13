@@ -53,24 +53,17 @@ def submit(a):
     values=pd.read_csv(a.optix_run/'plot_values.tsv.gz',sep='\t')
     keys=['chrom','pos','ref','alt'];sites=values[keys].drop_duplicates().sort_values(keys)
     refs=[dict(name=r['name'],fasta=str(focal/r['name']/'reference/genome.fa'),contig=r['contig']) for r in fc['references']]
-    optixref=a.optix_reference
     if missing:
-        if not optixref:
-            candidates=[]
-            # Look only for indexed whole genomes, never assume a locus FASTA is adequate.
+        # Hmr18 is the legacy chromosome name; test aliases in prepared rosina first.
+        candidates=([a.optix_reference] if a.optix_reference else
+                    [Path(r['fasta']) for r in refs if r['name']=='HmRos'])
+        if not a.optix_reference:
             for searchroot in [ROOT/'data',ROOT/'reference',ROOT/'references',ROOT/'external',ROOT/'analysis/genomewide_mixing_input/reference']:
                 if searchroot.exists():
-                    for fai in searchroot.rglob('*.fai'):
-                        rows=[x.split('\t') for x in fai.read_text().splitlines()]
-                        if len(rows)>=10 and any(x[0]=='Hmr18' and int(x[1])>=1240000 for x in rows):candidates.append(Path(str(fai)[:-4]).resolve())
-            candidates=sorted(set(candidates))
-            if len(candidates)!=1:raise RuntimeError('Optix samples absent from VCF: '+','.join(missing)+'; supply --optix-reference FULL_GENOME_FASTA matching Hmr18; indexed candidates='+repr([str(x) for x in candidates]))
-            optixref=candidates[0]
-        import pysam
-        with pysam.FastaFile(str(optixref)) as fa:
-            if len(fa.references)<10:raise RuntimeError('Optix reference must be a whole genome')
-            if any(fa.fetch(str(r.chrom),int(r.pos)-1,int(r.pos)).upper()!=r.ref.upper() for r in sites.itertuples()):raise RuntimeError('Optix FASTA does not match frozen SNP REF bases')
-        refs.append(dict(name='Optix',fasta=str(optixref.resolve()),contig='Hmr18'))
+                    candidates.extend(Path(str(fai)[:-4]) for fai in searchroot.rglob('*.fai'))
+        optixref,source_contig,audit=resolve_optix_alias(candidates,sites)
+        print('OPTIX_ALIAS\t'+source_contig+' -> Hmr18; exact frozen REF agreement',flush=True)
+        refs.append(dict(name='Optix',fasta=str(optixref),contig='Hmr18',source_contig=source_contig,alias_audit=audit))
     base=ROOT/'analysis/pk_dark_pale_optix_yb'/(datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'_'+uuid.uuid4().hex[:8]);(base/'logs').mkdir(parents=True)
     shutil.copy2(__file__,base/Path(__file__).name);shutil.copy2(HERE.parents[1]/'yb/submit_Yb_extra_controls.py',base/'download_worker.py')
     shutil.copy2(HERE/'pk_dark_pale_samples.tsv',base/'samples.tsv')
@@ -154,13 +147,55 @@ def submit(a):
         raise
     (base.parent/'latest_run.path').write_text(str(base)+'\n')
     print('RUN_DIR\t'+str(base));print(f'SCOPE\t21 PK; {len(new)} new locus alignment tasks; {len(old)} reused; {len(missing)} optix samples require new calls')
+def resolve_optix_alias(candidates,sites):
+    import pysam
+    if set(sites.chrom.astype(str))!={'Hmr18'}:raise RuntimeError('Expected legacy Hmr18 optix sites')
+    bases=sites[['pos','ref']].drop_duplicates()
+    if bases.pos.duplicated().any():raise RuntimeError('Conflicting frozen REF bases')
+    lo=int(bases.pos.min())-1;hi=int(bases.pos.max())
+    offsets=bases.pos.to_numpy(dtype=int)-1-lo;expected=bases.ref.str.upper().to_numpy()
+    if any(len(x)!=1 for x in expected):raise RuntimeError('Alias check requires SNP REF bases')
+    seen=set();audit=[]
+    for candidate in candidates:
+        candidate=Path(candidate).resolve()
+        if candidate in seen or not Path(str(candidate)+'.fai').is_file():continue
+        seen.add(candidate)
+        with pysam.FastaFile(str(candidate)) as fa:
+            if len(fa.references)<10:continue
+            matches=[]
+            for contig,length in zip(fa.references,fa.lengths):
+                if length<max(1250000,hi):continue
+                sequence=fa.fetch(contig,lo,hi).upper()
+                count=sum(sequence[int(i)]==base for i,base in zip(offsets,expected))
+                audit.append(dict(fasta=str(candidate),contig=contig,matched=count,total=len(expected),length=length))
+                if count==len(expected):matches.append(contig)
+            if len(matches)==1:return candidate,matches[0],audit
+            if len(matches)>1:raise RuntimeError('Ambiguous optix chromosome aliases: '+repr(matches))
+    best=sorted(audit,key=lambda x:x['matched']/x['total'],reverse=True)[:3]
+    raise RuntimeError('No chromosome matches all frozen optix REF bases at unchanged coordinates. Best candidates='+repr(best)+'; chromosome names alone cannot establish coordinate equivalence.')
 def prepare(cfg,task):
+    import pysam
     ref=cfg['references'][task];d=Path(cfg['run_dir'])/ref['name']/'reference';d.mkdir(parents=True,exist_ok=True);fa=d/'genome.fa'
-    if not fa.exists():fa.symlink_to(ref['fasta'])
-    for suffix in ['.fai','.amb','.ann','.bwt','.pac','.sa']:
-        source=Path(ref['fasta']+suffix)
-        if source.is_file() and not Path(str(fa)+suffix).exists():Path(str(fa)+suffix).symlink_to(source)
+    renamed=ref.get('source_contig',ref['contig'])!=ref['contig']
+    if not fa.exists():
+        if renamed:
+            temporary=d/'genome.fa.partial'
+            with pysam.FastaFile(ref['fasta']) as source,temporary.open('w') as out:
+                if ref['contig'] in source.references:raise RuntimeError('Chromosome rename would create duplicate FASTA IDs')
+                for name,length in zip(source.references,source.lengths):
+                    out.write('>'+ (ref['contig'] if name==ref['source_contig'] else name)+'\n')
+                    for start in range(0,length,60000):
+                        sequence=source.fetch(name,start,min(length,start+60000))
+                        out.write('\n'.join(sequence[i:i+60] for i in range(0,len(sequence),60))+'\n')
+            temporary.replace(fa)
+        else:fa.symlink_to(ref['fasta'])
+    if not renamed:
+        for suffix in ['.fai','.amb','.ann','.bwt','.pac','.sa']:
+            source=Path(ref['fasta']+suffix)
+            if source.is_file() and not Path(str(fa)+suffix).exists():Path(str(fa)+suffix).symlink_to(source)
+    if not Path(str(fa)+'.fai').exists():run([cfg['tools']['samtools'],'faidx',fa])
     if not Path(str(fa)+'.bwt').exists():run([cfg['tools']['bwa'],'index',fa])
+    (d/'chromosome_alias.json').write_text(json.dumps(ref,indent=2)+'\n')
 def align(cfg,task):
     t=cfg['tasks'][task];ref=t['reference'];acc=t['sample'];tools=cfg['tools'];base=Path(cfg['run_dir']);d=base/ref['name']/acc;d.mkdir(parents=True,exist_ok=True)
     if (d/'alignment.complete.json').is_file():return
