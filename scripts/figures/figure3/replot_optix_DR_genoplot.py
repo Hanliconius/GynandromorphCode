@@ -13,16 +13,18 @@ from matplotlib.backends.backend_pdf import PdfPages
 from replot_optix_pruned import select,INTERVALS
 
 KEY=['chrom','pos','ref','alt']
-COLORS={'Dennis':'#D79500','Ray':'#CC70A7'}
+COLORS={'Band':'#087DBB','Dennis':'#D79500','Ray':'#CC70A7'}
 plt.rcParams.update({'pdf.fonttype':42,'svg.fonttype':'none','font.size':9})
 
-def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False,row_labels=None):
+def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False,row_labels=None,modules=None):
+    modules=modules or ['Ray','Dennis']
+    band_only=modules==['Band']
     blocks=[];offset=0;maps=[];arrays=[]
     pk_samples=pk_samples or []
     row_labels=row_labels or {}
     rows=['present']+pk_samples+['TN_Left','TN_Right','absent']
     nrows=len(rows)
-    for module in ['Ray','Dennis']:
+    for module in modules:
         t=values.loc[values.module.eq(module)].copy()
         sites=t[KEY].drop_duplicates().sort_values(KEY).reset_index(drop=True)
         if sites.empty:continue
@@ -32,7 +34,7 @@ def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False,r
         arrays.append(t.pivot(index='row',columns='column',values='frequency').reindex(index=rows,columns=sites.column).to_numpy())
         blocks.append((module,offset,len(sites)));maps.append(sites);offset+=len(sites)
     fig=plt.figure(figsize=(13 if pk_samples else 11,5.5+len(pk_samples)*.18))
-    fig.suptitle('optix: Dennis and Ray genoplot',x=.19,ha='left',fontsize=14)
+    fig.suptitle('optix: '+('Band' if band_only else 'Dennis and Ray')+' genoplot',x=.19,ha='left',fontsize=14)
     fig.text(.19,.90,f'BA >= {cutoff:.2f} | '+('Trait-specific labelled intervals' if scope else 'Full region')+(' | PK individual calls' if pk_samples else '')+(' | focal no-calls removed' if focal_callable else ''),fontsize=10)
     if not arrays:
         fig.text(.5,.5,'No SNPs pass these comparative filters',ha='center')
@@ -41,7 +43,7 @@ def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False,r
         locus=fig.add_axes([.30 if pk_samples else .19,.69,.61 if pk_samples else .72,.12]);heat=fig.add_axes([.30 if pk_samples else .19,.30,.61 if pk_samples else .72,.26])
         locus.set_xlim(1.06,1.24);locus.set_ylim(-.2,1.4)
         locus.hlines(0,1.06,1.24,color='#777',lw=1)
-        for module,labels in [('Ray',['R1','R2']),('Dennis',['D1','D2'])]:
+        for module,labels in ([('Band',['B'])] if band_only else [('Ray',['R1','R2']),('Dennis',['D1','D2'])]):
             for label,(start,end) in zip(labels,INTERVALS[module]):
                 locus.add_patch(Rectangle((start/1e6,.1),(end-start)/1e6,.25,color=COLORS[module],lw=0))
                 locus.text((start+end)/2e6,.63 if label!='D2' else 1.05,label,color=COLORS[module],ha='center',fontsize=9)
@@ -62,14 +64,14 @@ def draw(values,cutoff,scope,out,combined,pk_samples=None,focal_callable=False,r
         mapping.to_csv(out/f'BA{int(cutoff*100)}_{"intervals" if scope else "full"}_columns.tsv',sep='\t',index=False)
         # Paired glyphs are schematic local genotype expectations, not phased haplotypes.
         cartoon=fig.add_axes([.19,.12,.72,.12]);cartoon.axis('off')
-        cartoon.text(0,.95,'Expected at Dennis / Ray-associated markers',weight='bold',fontsize=9)
-        for x,side,cols,label in [(0,'Left',['#662A83','#662A83'],'DR/DR'),(.53,'Right',['#D7EDF5','#662A83'],'B/DR')]:
+        cartoon.text(0,.95,'Expected at '+('Band' if band_only else 'Dennis / Ray')+'-associated markers',weight='bold',fontsize=9)
+        for x,side,cols,label in [(0,'Left',['#662A83','#662A83'],'B/B' if band_only else 'DR/DR'),(.53,'Right',['#D7EDF5','#662A83'],'B/DR')]:
             cartoon.text(x,.38,side,va='center')
             for j,c in enumerate(cols):cartoon.plot([x+.075+j*.05,x+.11+j*.05],[.38,.38],color=c,lw=9,solid_capstyle='round')
             cartoon.text(x+.19,.38,label,va='center')
         cartoon.set_xlim(0,1);cartoon.set_ylim(0,1)
     fig.text(.19,.035,'Comparative rows: measured frequencies. Focal calls: reciprocal-mixture posterior >=0.95.\n'+('Unavailable focal sites removed. ' if focal_callable else 'Grey = unavailable. ')+('PK: DP>=2 GQ>=20; grey = unavailable PK call. ' if pk_samples else '')+'Conflicting calls retained; phase is not inferred.',fontsize=8)
-    stem=f'optix_DR_genoplot_BA{int(cutoff*100)}_{"labelled_intervals" if scope else "full_region"}'+('_with_PK' if pk_samples else '')
+    stem=f'optix_{"Band" if band_only else "DR"}_genoplot_BA{int(cutoff*100)}_{"labelled_intervals" if scope else "full_region"}'+('_with_PK' if pk_samples else '')
     fig.savefig(out/(stem+'.pdf'));combined.savefig(fig);plt.close(fig)
 
 def main():
