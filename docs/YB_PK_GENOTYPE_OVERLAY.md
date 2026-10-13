@@ -1,0 +1,9 @@
+# Additional PK genotype overlay
+
+The optional --add-ready-pks mode of yb_corrected_genotypes.py adds the five original PK accessions SRR11243344, SRR11243353, SRR11243364, SRR11243375 and SRR11243376. It locates their original run through alignment job 138462316 in jobs.json. Only BAMs with an index and sample.complete.json are included, separately per reference; missing/unfinished alignments are explicitly audited and omitted. Thus pages may contain different available PK subsets.
+
+PK observations are counted at the existing control-selected SNPs only, with the same MAPQ30/baseQ30 fragment counting helper. Marker selection and focal merged-side likelihood/posterior calls do not change. PKs are unmixed controls: the original beta-binomial function evaluates the three diploid dosages with equal priors, transferring the saved optix error, ALT bias and concentration but applying no L/R contamination to PKs. Genotype dosage is displayed only at individual posterior >=0.95; uncertainty is missing, not rounded AF. This nuisance calibration transfer is exploratory, particularly across reference assemblies.
+
+Phenotype labels come from region_panel_metadata.tsv, including exact dorsal and ventral Yb entries. Dark/pale is labelled only when explicit PK/piano-keys dark/pale text is present in the metadata row; otherwise the row says shade unverified. No dark/pale state or zygosity is inferred from Yb presence. The metadata checksum, BAM paths/completion marker checksums, inclusion status and phenotype labels are retained in the run audit. Per-SNP PK counts, posterior and accepted dosage are saved separately.
+
+The extra mode produces a separate timestamped PDF named Yb_d_v_posterior95_corrected_genotypes_with_ready_PK_phenotypes.pdf; previous outputs are preserved. No new downloads or alignments are submitted by this mode. Additional PK samples from the expanded pipeline are not silently incorporated.
