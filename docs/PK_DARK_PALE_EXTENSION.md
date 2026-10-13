@@ -22,9 +22,14 @@ Optix displays retain the BA >=0.80 and >=0.90 labelled-interval selections,
 remove missing focal pairs and retain conflicting focal genotype states.
 
 The workflow inspects the existing optix VCF and reuses its available PK calls.
-Missing individuals require a full reference genome with Hmr18 and exact REF
-agreement at every frozen SNP. An unambiguous indexed genome is discovered
-locally, or supplied with --optix-reference. No coordinate transfer is guessed.
+Missing individuals require a full reference genome with exact REF agreement
+at every frozen SNP. The prepared HmRos genome is checked first, including
+NCBI chromosome accession aliases. A unique contig matching every frozen REF
+base at unchanged coordinates is used; a run-specific full-genome copy renames
+only that chromosome to Hmr18 and rebuilds FASTA/BWA indexes. The source and
+comparison audit are recorded. If it does not match, other local indexed genomes
+are checked, or one can be supplied with --optix-reference. No coordinate
+transfer is guessed.
 New optix calls use known-allele-constrained diploid bcftools calling with
 MAPQ >=30, BQ >=20, DP >=2 and GQ >=20. Their call source is recorded separately
 from the existing VCF calls.
