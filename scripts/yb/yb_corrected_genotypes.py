@@ -69,7 +69,7 @@ def main():
                     if interval=='d':
                         aa,bb=PRIMERS[ref];locus.plot([aa,bb],[.3,.3],color='#662A83',lw=4);locus.text((aa+bb)/2,.4,'Luca primer span',ha='center',fontsize=8)
                     locus.set_xlim(lo-1000,hi+1000);locus.set_ylim(-.1,.65);locus.set_yticks([]);locus.ticklabel_format(axis='x',style='plain',useOffset=False);locus.set_xlabel(chrom+' position (bp)')
-                    called=sum(np.isfinite(row['left_rosina_dosage']) for row in records);fig.suptitle(f'{ref} Yb({interval}): {called}/{len(records)} posterior95 genotype pairs')
+                    called=int(sum(np.isfinite(row['left_rosina_dosage']) for row in records));fig.suptitle(f'{ref} Yb({interval}): {called}/{len(records)} posterior95 genotype pairs')
                     fig.text(.18,.035,'Controls: measured read frequencies. Focal: merged T2/T3 diploid dosage; pair posterior >=0.95; grey = unavailable.\nOriginal archived beta-binomial likelihood; saved optix fit transferred without refitting. This is not a Yb-calibrated fit.\nRace-associated SNPs; phase and causal Yb genotype not established. Existing fragment counts differ from original VCF AD.',fontsize=8)
                     pdf.savefig(fig);plt.close(fig);audit['panels'].append({'reference':ref,'interval':interval,'selected_compatible':len(records),'posterior95':called})
     (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print('BUNDLE_PDF',pdfpath,sep='\t');print('AUDIT',out/'audit.json',sep='\t')
