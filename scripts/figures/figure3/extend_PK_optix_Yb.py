@@ -16,6 +16,30 @@ def header(path):
         for line in h:
             if line.startswith('#CHROM'):return line.rstrip().split('\t')[9:]
     raise RuntimeError('VCF header missing')
+def download_new(a):
+    """Start raw-read acquisition independently of reference preparation."""
+    samples=list(csv.DictReader((HERE/'pk_dark_pale_samples.tsv').open(),delimiter='\t'))
+    if len(samples)!=21 or len({s['sample'] for s in samples})!=21:
+        raise RuntimeError('Expected exactly 21 distinct dark/pale PKs')
+    vcf=ROOT/'external/krista_genotype_plots_original/Genotype_Plots/Optix_Hmr18-938195-1239421_biallelic.vcf'
+    existing=set(header(vcf))
+    samples=[s for s in samples if s['sample'] not in existing]
+    if not samples:
+        print('DOWNLOAD\tNo additional PK samples');return
+    base=ROOT/'analysis/pk_dark_pale_downloads'/(datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'_'+uuid.uuid4().hex[:8])
+    (base/'logs').mkdir(parents=True)
+    shutil.copy2(__file__,base/Path(__file__).name)
+    shutil.copy2(HERE.parents[1]/'yb/submit_Yb_extra_controls.py',base/'download_worker.py')
+    cfg={'run_dir':str(base),'samples':samples,'fastq_root':str(ROOT/'analysis/yb_extra_control_fastq')}
+    (base/'run.json').write_text(json.dumps(cfg,indent=2)+'\n')
+    with (base/'samples.tsv').open('w') as h:
+        writer=csv.DictWriter(h,fieldnames=list(samples[0]),delimiter='\t');writer.writeheader();writer.writerows(samples)
+    worker=base/'download.sh'
+    worker.write_text('#!/usr/bin/env bash\nset -euo pipefail\nexec '+shlex.join([sys.executable,str(base/Path(__file__).name),'--config',str(base/'run.json'),'--stage','download'])+' --task "$SLURM_ARRAY_TASK_ID"\n')
+    jobid=subprocess.check_output(['sbatch','--parsable','--partition=cpu',f'--array=0-{len(samples)-1}','--cpus-per-task=1','--mem=4G','--time=12:00:00','--job-name=PK_download',f'--output={base}/logs/download.%A_%a.out',f'--error={base}/logs/download.%A_%a.err',str(worker)],text=True).strip().split(';')[0]
+    (base/'jobs.json').write_text(json.dumps({'download':jobid},indent=2)+'\n')
+    (base.parent/'latest_run.path').write_text(str(base)+'\n')
+    print('DOWNLOAD_ARRAY\t'+jobid);print('NEW_PK_SAMPLES\t'+str(len(samples)));print('RUN_DIR\t'+str(base))
 def submit(a):
     samples=list(csv.DictReader((HERE/'pk_dark_pale_samples.tsv').open(),delimiter='\t'))
     if len(samples)!=21 or len({s['sample'] for s in samples})!=21:raise RuntimeError('Expected exactly 21 distinct dark/pale PKs')
@@ -235,9 +259,10 @@ def report(cfg):
     (base/'complete.json').write_text(json.dumps({'samples':21,'PK_used_for_ascertainment':False,'PDF':str(base/'PK_dark_pale_optix_Yb_posthoc.pdf'),'Yb_phenotypes':'not inferred from ivory or optix states; coverage rows shown individually','optix_existing':existing,'new_optix_QC':'Known-allele-constrained diploid bcftools calls; DP>=2 GQ>=20; MAPQ30 BQ20','focal_mixing':'existing reciprocal-mixture calls; no second correction'},indent=2)+'\n')
     print('PDF\t'+str(base/'PK_dark_pale_optix_Yb_posthoc.pdf'))
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--submit',action='store_true');p.add_argument('--optix-run',type=Path);p.add_argument('--focal-run',type=Path);p.add_argument('--optix-reference',type=Path)
+    p=argparse.ArgumentParser();p.add_argument('--submit',action='store_true');p.add_argument('--download-new',action='store_true',help='Submit new PK raw-read download array without requiring reference genomes');p.add_argument('--optix-run',type=Path);p.add_argument('--focal-run',type=Path);p.add_argument('--optix-reference',type=Path)
     p.add_argument('--config',type=Path);p.add_argument('--stage',choices=['prepare','download','align','profile','report']);p.add_argument('--task',type=int,default=0);a=p.parse_args()
-    if a.submit:submit(a)
+    if a.download_new:download_new(a)
+    elif a.submit:submit(a)
     else:
         cfg=json.loads(a.config.read_text())
         if a.stage=='download':
