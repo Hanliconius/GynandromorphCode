@@ -19,6 +19,7 @@ def callable_sites(v):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--input-dir',type=Path,required=True)
+    p.add_argument('--module',choices=['DR','Band'],default='DR')
     p.add_argument('--pk-samples',nargs='+')
     p.add_argument('--metadata',type=Path,default=base.PROJECT/'data/derived/region_panel_metadata.tsv')
     p.add_argument('--vcf',type=Path,default=base.PROJECT/'external/krista_genotype_plots_original/Genotype_Plots/Optix_Hmr18-938195-1239421_biallelic.vcf')
@@ -68,21 +69,22 @@ def main():
         ph=phenotypes[sample]
         def sign(field):return '+' if ph[field]=='1' else ('-' if ph[field]=='0' else '?')
         labels[sample]=f"{sample} | B{sign('B')} D{sign('D')} R{sign('R')} | Yb d{sign('Yb-dorsal')}/v{sign('Yb-ventral')}"
-    samples=sorted(samples,key=lambda sample:(phenotypes[sample]['D']!='1',sample))
+    samples=sorted(samples,key=lambda sample:(phenotypes[sample]['B' if a.module=='Band' else 'D']!='1',sample))
     values=pd.read_csv(a.input_dir/'plot_values.tsv.gz',sep='\t')
-    values=values.loc[values.module.isin(['Dennis','Ray'])]
+    modules=['Band'] if a.module=='Band' else ['Ray','Dennis']
+    values=values.loc[values.module.isin(modules)]
     subsets={c:callable_sites(select(values,c,True)) for c in [.8,.9]}
     union=pd.concat(list(subsets.values())).drop_duplicates(['module']+KEY+['row'])
     sites=union[KEY].drop_duplicates()
     calls,seen=full.read_calls(a.vcf,sites,samples)
-    out=a.input_dir/'DR_callable_PK';out.mkdir(exist_ok=True)
+    out=a.input_dir/(a.module+'_callable_PK');out.mkdir(exist_ok=True)
     pd.DataFrame([{'Accession':sample,**phenotypes[sample]} for sample in samples]).to_csv(out/'PK_recorded_phenotypes.tsv',sep='\t',index=False)
     audit=[]
-    with PdfPages(out/'optix_DR_BA80_BA90_callable_with_and_without_PK.pdf') as combined:
+    with PdfPages(out/f'optix_{a.module}_BA80_BA90_callable_with_and_without_PK.pdf') as combined:
         for cutoff,v in subsets.items():
             candidate=select(values,cutoff,True)
-            counts={m:len(v.loc[v.module.eq(m),KEY].drop_duplicates()) for m in ['Ray','Dennis']}
-            draw(v,cutoff,True,out,combined,focal_callable=True)
+            counts={m:len(v.loc[v.module.eq(m),KEY].drop_duplicates()) for m in modules}
+            draw(v,cutoff,True,out,combined,focal_callable=True,modules=modules)
             pk=[]
             for _,site in v.loc[v.row.eq('TN_Left')].iterrows():
                 is_alt=base.pattern_is_alt(site.selected_orientation)
@@ -92,7 +94,7 @@ def main():
                     pk.append({**site.to_dict(),'row':sample,'frequency':dose if is_alt else 1-dose,
                         'source':'individual VCF GT; DP>=2 GQ>=20','pair_posterior':np.nan})
             with_pk=pd.concat([v,pd.DataFrame(pk)],ignore_index=True)
-            draw(with_pk,cutoff,True,out,combined,pk_samples=samples,focal_callable=True,row_labels=labels)
+            draw(with_pk,cutoff,True,out,combined,pk_samples=samples,focal_callable=True,row_labels=labels,modules=modules)
             with_pk.to_csv(out/f'BA{int(cutoff*100)}_values_with_PK.tsv.gz',sep='\t',index=False)
             audit.append({'BA_min':cutoff,'before':len(candidate[['module']+KEY].drop_duplicates()),
                 'after':len(v[['module']+KEY].drop_duplicates()),'counts':counts})
@@ -100,5 +102,5 @@ def main():
         'focal_callability_filter':True,'focal_genotype_state_filter':False,'PK_used_for_site_filter':False,
         'PK_QC':'DP>=2 GQ>=20','PK_missing_retained':True},indent=2)+'\n')
     print('PK_SAMPLES\t'+','.join(samples))
-    print('PDF\t'+str(out/'optix_DR_BA80_BA90_callable_with_and_without_PK.pdf'))
+    print('PDF\t'+str(out/f'optix_{a.module}_BA80_BA90_callable_with_and_without_PK.pdf'))
 if __name__=='__main__':main()
