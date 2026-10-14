@@ -151,10 +151,10 @@ def worker(cfg,i):
     lengths=[]
     for bam in bams:
         header=subprocess.check_output([samtools,"view","-H",str(bam)],text=True)
-        sq=[line for line in header.splitlines() if line.startswith("@SQ\\t")]
+        sq=[line for line in header.splitlines() if line.startswith("@SQ\t")]
         sizes={}
         for line in sq:
-            fields=dict(item.split(":",1) for item in line.split("\\t")[1:] if ":" in item)
+            fields=dict(item.split(":",1) for item in line.split("\t")[1:] if ":" in item)
             sizes[fields.get("SN")]=int(fields["LN"])
         if contig not in sizes:
             raise RuntimeError(f"Contig {contig} absent from BAM header: {bam}")
@@ -171,7 +171,7 @@ def worker(cfg,i):
     count=0
     previous=0
     for line in proc.stdout:
-        fields=line.rstrip("\\n").split("\\t")
+        fields=line.rstrip("\n").split("\t")
         if fields[0]!=contig:raise RuntimeError(f"Unexpected contig in denominator: {fields[0]}")
         pos=int(fields[1])
         if pos!=previous+1:
@@ -214,14 +214,14 @@ def worker(cfg,i):
             rows.append({"reference":ref,"sample":t["sample"],"group":t["group"],"interval":key,
                          "position":bs+25.0,"median_depth":median,
                          "normalized_depth":median/denominator})
-    pd.DataFrame(rows).to_csv(out,sep="\\t",index=False)
+    pd.DataFrame(rows).to_csv(out,sep="\t",index=False)
     (out.parent/(t["sample"]+".normalization.json")).write_text(json.dumps({
         "reference":ref,"sample":t["sample"],"bam":bams,
         "contig":REGIONS[ref]["d"][0],"scaffold_length":contig_length,
         "depth_sum":total,"scaffold_mean_depth":denominator,
         "counted_bases":count,"flags":"samtools depth -aa -s -q 0 -Q 30 -G1796",
         "method":"Zero-inclusive arithmetic full-scaffold mean computed from the same BAM(s) and filters as per-window medians"
-    },indent=2)+"\\n")
+    },indent=2)+"\n")
     print("DONE",ref,t["sample"],"scaffold_mean",f"{denominator:.5f}")
 
 def report(cfg):
