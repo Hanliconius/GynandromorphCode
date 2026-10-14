@@ -183,7 +183,7 @@ def submit(a):
         a3=job("haplotype",88,4,"16G","12:00:00",10,[a2])
         a4=job("joint",2,4,"24G","12:00:00",2,[a3])
         a5=job("focal",2,2,"12G","06:00:00",2,[a4])
-        job("audit",1,2,"12G","02:00:00",None,[a5],"nano")
+        job("audit",1,2,"12G","02:00:00",None,[a5],"cpu")
     except Exception:
         for jid in jobs.values():
             subprocess.run(["scancel",jid],capture_output=True)
