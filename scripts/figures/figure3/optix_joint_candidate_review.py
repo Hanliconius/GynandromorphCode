@@ -33,11 +33,12 @@ SEEDS = [
 ]
 ACCESSIONS = re.compile(r"(?<![A-Z0-9])((?:ERR|SRR|DRR|ERS|SRS|DRS)\d+)(?!\d)", re.I)
 RACES = ("cythera", "vulcanus")
-RUN_FIELDS = ["run_accession", "sample_accession", "library_strategy",
-              "library_layout", "fastq_ftp", "fastq_md5", "fastq_bytes"]
+RUN_FIELDS = ["run_accession", "sample_accession", "secondary_sample_accession",
+              "library_strategy", "library_layout", "fastq_ftp", "fastq_md5",
+              "fastq_bytes"]
 OUTPUT_FIELDS = [
-    "subspecies", "biosample", "label", "run_accession",
-    "library_strategy", "library_layout", "fastq_r1", "fastq_r2",
+    "subspecies", "biosample", "secondary_sample_accession", "label",
+    "run_accession", "library_strategy", "library_layout", "fastq_r1", "fastq_r2",
     "md5_r1", "md5_r2", "bytes_r1", "bytes_r2", "source_evidence",
 ]
 
@@ -147,62 +148,84 @@ def safe_field(row, key):
 
 
 def parse_pair(row):
+    """Accept primary BioSample IDs (SAMEA/SAMN/SAMD) and ENA secondary ERS.
+
+    ENA generated FASTQs may include one extra unpaired/singleton file:
+    retain the uniquely identified mate1/mate2 pair and record their MD5s.
+    """
     if safe_field(row, "library_strategy").upper() != "WGS":
-        return None
+        return None, "NOT_WGS"
     if safe_field(row, "library_layout").upper() != "PAIRED":
-        return None
+        return None, "NOT_PAIRED"
     fields = [safe_field(row, key).split(";") for key in
               ("fastq_ftp", "fastq_md5", "fastq_bytes")]
     paths, md5s, sizes = fields
-    if not all(len(z) == 2 for z in fields):
-        return None
+    if not paths[0] or not (len(paths) == len(md5s) == len(sizes)):
+        return None, "FASTQ_FIELD_LENGTH_MISMATCH"
     pairs = {}
-    for p, checksum, size in zip(paths, md5s, sizes):
-        if not re.fullmatch(r"[a-fA-F0-9]{32}", checksum) or not size.isdigit():
-            return None
-        if p.endswith(("_1.fastq.gz", "_1.fq.gz")):
+    for path, checksum, size in zip(paths, md5s, sizes):
+        if path.endswith(("_1.fastq.gz", "_1.fq.gz")):
             mate = 1
-        elif p.endswith(("_2.fastq.gz", "_2.fq.gz")):
+        elif path.endswith(("_2.fastq.gz", "_2.fq.gz")):
             mate = 2
         else:
-            return None
+            # ENA can publish a third singleton read file; don't call it mate3.
+            continue
         if mate in pairs:
-            return None
-        pairs[mate] = (p, checksum, size)
+            return None, "DUPLICATE_FASTQ_MATE"
+        if not re.fullmatch(r"[a-fA-F0-9]{32}", checksum) or not size.isdigit():
+            return None, "INVALID_FASTQ_MD5_OR_SIZE"
+        pairs[mate] = (path, checksum, size)
     if set(pairs) != {1, 2}:
-        return None
+        return None, "NO_UNIQUE_FASTQ_PAIR"
     accession = safe_field(row, "run_accession")
-    sample = safe_field(row, "sample_accession")
+    primary = safe_field(row, "sample_accession")
+    secondary = safe_field(row, "secondary_sample_accession")
     if not re.fullmatch(r"[SED]RR\d+", accession):
-        return None
-    if not re.fullmatch(r"[SED]RS\d+", sample):
-        return None
-    return accession, sample, pairs
+        return None, "INVALID_RUN_ACCESSION"
+    if not re.fullmatch(r"(?:SAMEA|SAMN|SAMD|[SED]RS)\d+", primary):
+        return None, "INVALID_PRIMARY_BIOSAMPLE"
+    if secondary and not re.fullmatch(r"(?:[SED]RS|SAMEA|SAMN|SAMD)\d+", secondary):
+        return None, "INVALID_SECONDARY_BIOSAMPLE"
+    return (accession, primary, secondary, pairs), "OK"
 
 
 def lookup_one(item):
     race, label, query, origin = item
     records, error = ena_record(query)
     candidates = []
+    reasons = Counter()
     for row in records:
-        parsed = parse_pair(row)
+        parsed, reason = parse_pair(row)
         if parsed is None:
+            reasons[reason] += 1
             continue
-        run, sample, pairs = parsed
-        # A seed BioSample must never resolve to a different BioSample.
-        if query.startswith(("ERS", "SRS", "DRS")) and sample != query:
-            continue
+        run, primary, secondary, pairs = parsed
+        # Querying a historical ERS identifier should match its secondary ID,
+        # not incorrectly require primary BioSample (usually SAMEA) == ERS.
+        if query.startswith(("ERS", "SRS", "DRS")):
+            if query not in (primary, secondary):
+                reasons["HISTORICAL_SAMPLE_ID_MISMATCH"] += 1
+                continue
         if query.startswith(("ERR", "SRR", "DRR")) and run != query:
+            reasons["RUN_ID_MISMATCH"] += 1
             continue
         candidates.append(dict(
-            subspecies=race, biosample=sample, label=label or sample,
-            run_accession=run, library_strategy="WGS",
-            library_layout="PAIRED",
+            subspecies=race, biosample=primary,
+            secondary_sample_accession=secondary,
+            label=label or primary, run_accession=run,
+            library_strategy="WGS", library_layout="PAIRED",
             fastq_r1=pairs[1][0], fastq_r2=pairs[2][0],
             md5_r1=pairs[1][1], md5_r2=pairs[2][1],
             bytes_r1=pairs[1][2], bytes_r2=pairs[2][2],
             source_evidence=origin,
         ))
+        reasons["ACCEPTED"] += 1
+    if error:
+        return item, candidates, error
+    if not candidates:
+        summary = "; ".join(f"{k}={v}" for k, v in sorted(reasons.items()))
+        error = f"ENA_ROWS={len(records)}; {summary or 'NO_ROWS'}"
     return item, candidates, error
 
 
@@ -273,7 +296,7 @@ def main():
                     errors.append(dict(race=item[0], accession=item[2], reason=error))
                 elif not candidates:
                     errors.append(dict(race=item[0], accession=item[2],
-                                       reason="No paired WGS run with two validated FASTQ links"))
+                                       reason="No validated WGS run (unknown cause)"))
                 verified.extend(candidates)
     else:
         print("ENA\tNot queried; pass --ena for validation")
