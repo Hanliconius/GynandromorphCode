@@ -122,6 +122,18 @@ def submit(a):
          "phenotype_labels":STATES,"pk_genotype":"20 PK are homozygous Yb+/Yb+ by user rescoring",
          "tasks":tasks}
     if not cfg["samtools"]:raise RuntimeError("Cannot find samtools in PATH or frozen source-run tool paths")
+    unique_bams=sorted({str(p) for t in tasks for p in (t["bam"] if isinstance(t["bam"],list) else [t["bam"]])})
+    subprocess.run([samtools,"quickcheck","-v",*unique_bams],check=True)
+    # Check every BAM header against the reference-specific scaffold and
+    # catch wrong-reference/missing-scaffold inputs before any jobs launch.
+    for t in tasks:
+        if isinstance(t["bam"],list):continue
+        header=subprocess.check_output([samtools,"view","-H",t["bam"]],text=True)
+        expected=REGIONS[t["ref"]]["d"][0]
+        if not any(line.startswith("@SQ\t") and ("SN:"+expected) in line.split("\t")
+                   for line in header.splitlines()):
+            raise RuntimeError(f"Preflight scaffold mismatch {t['ref']} {t['sample']} {expected}")
+    print("PREFLIGHT_BAMS_OK",len(unique_bams),flush=True)
     (base/"run.json").write_text(json.dumps(cfg,indent=2)+"\n")
     py=shlex.quote(sys.executable)
     runner=" ".join((py,shlex.quote(str(script)),"--config",shlex.quote(str(base/"run.json"))))
