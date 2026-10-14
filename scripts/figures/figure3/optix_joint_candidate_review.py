@@ -126,7 +126,13 @@ def ena_record(query):
         try:
             with urlopen(uri, timeout=35) as response:
                 content = response.read(5_000_000).decode()
-            records = list(csv.DictReader(content.splitlines(), delimiter="\t"))
+            reader = csv.DictReader(content.splitlines(), delimiter="\t")
+            if not reader.fieldnames or not {"run_accession", "sample_accession"}.issubset(reader.fieldnames):
+                return [], "ENA returned no usable read_run header"
+            # Empty ENA TSV cells become None in csv.DictReader; normalize early.
+            records = [{k: (v if isinstance(v, str) else "")
+                        for k, v in row.items() if k is not None}
+                       for row in reader]
             return records, ""
         except (HTTPError, URLError, TimeoutError, ValueError) as error:
             last_error = str(error)
@@ -135,12 +141,17 @@ def ena_record(query):
     return [], "ENA_ERROR: " + str(last_error)
 
 
+def safe_field(row, key):
+    """ENA may return None for a missing value even when a column exists."""
+    return str(row.get(key) or "").strip()
+
+
 def parse_pair(row):
-    if row.get("library_strategy", "").upper() != "WGS":
+    if safe_field(row, "library_strategy").upper() != "WGS":
         return None
-    if row.get("library_layout", "").upper() != "PAIRED":
+    if safe_field(row, "library_layout").upper() != "PAIRED":
         return None
-    fields = [row.get(key, "").split(";") for key in
+    fields = [safe_field(row, key).split(";") for key in
               ("fastq_ftp", "fastq_md5", "fastq_bytes")]
     paths, md5s, sizes = fields
     if not all(len(z) == 2 for z in fields):
@@ -160,8 +171,8 @@ def parse_pair(row):
         pairs[mate] = (p, checksum, size)
     if set(pairs) != {1, 2}:
         return None
-    accession = row.get("run_accession", "")
-    sample = row.get("sample_accession", "")
+    accession = safe_field(row, "run_accession")
+    sample = safe_field(row, "sample_accession")
     if not re.fullmatch(r"[SED]RR\d+", accession):
         return None
     if not re.fullmatch(r"[SED]RS\d+", sample):
@@ -250,7 +261,14 @@ def main():
         with ThreadPoolExecutor(max_workers=args.ena_workers) as pool:
             futures = {pool.submit(lookup_one, item): item for item in requests.values()}
             for f in as_completed(futures):
-                item, candidates, error = f.result()
+                source = futures[f]
+                try:
+                    item, candidates, error = f.result()
+                except Exception as exc:
+                    errors.append(dict(race=source[0], accession=source[2],
+                                       reason="ENA_RECORD_ERROR: " +
+                                       type(exc).__name__ + ": " + str(exc)))
+                    continue
                 if error:
                     errors.append(dict(race=item[0], accession=item[2], reason=error))
                 elif not candidates:
