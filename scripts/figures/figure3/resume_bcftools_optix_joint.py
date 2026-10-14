@@ -23,6 +23,29 @@ EXCLUDED="SRR11243351"
 ALIGN_ARRAY="138468792"
 LOCI={"Optix":("NC_140406.1",1060000,1240000),
       "Yb":("NC_140403.1",1600000,1700000)}
+SHARD_BP=5000
+
+
+def make_shards(loci=LOCI, width=SHARD_BP):
+    """Partition 1-based inclusive intervals with no overlaps or gaps.
+
+    Absorb a last <=width remainder into the preceding shard to avoid tiny
+    one-base jobs. Never split the *samples* between joint calls.
+    """
+    if width < 1:
+        raise ValueError("Shard width must be positive")
+    result=[]
+    for locus,(contig,start,end) in loci.items():
+        if start < 1 or end < start:
+            raise ValueError("Invalid locus "+locus)
+        pos=start
+        while pos<=end:
+            stop=min(end,pos+width-1)
+            if end-stop<=width:
+                stop=end
+            result.append(dict(locus=locus,chrom=contig,start=pos,end=stop))
+            pos=stop+1
+    return result
 MP_OPTIONS=["-Ou","-a","FORMAT/DP,FORMAT/AD","-q","30","-Q","20"]
 CALL_OPTIONS=["-m","-A","-f","GQ","-Oz"]
 
@@ -81,7 +104,17 @@ def prepare(src):
     prev=load(src/"jobs.json")
     if prev.get("align")!=ALIGN_ARRAY:
         raise RuntimeError("Original alignment job ID changed")
-    bcftools=require(src/"toolenv/bin/bcftools")
+    # Reuse exactly the project's established bcftools executable if present.
+    # This helps preserve its caller version as well as command-line settings.
+    historical=Path(
+        "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/"
+        "analysis/pk_dark_pale_optix_yb/20261013T220116Z_0b6e0845/run.json"
+    )
+    previous_tool=None
+    if historical.is_file():
+        previous_tool=load(historical).get("tools",{}).get("bcftools")
+    preferred=Path(previous_tool) if previous_tool else src/"toolenv/bin/bcftools"
+    bcftools=require(preferred)
     require(src/"ref/complete")
     original=load(src/"run.json")
     require(original["fasta"])
@@ -94,7 +127,7 @@ def prepare(src):
             raise RuntimeError("Existing recovery run conflicts with expected samples")
         return out
     out.mkdir()
-    for d in ["logs","joint","focal","audit"]:
+    for d in ["logs","joint","shards","focal","audit"]:
         (out/d).mkdir()
     shutil.copy2(__file__,out/"resume_bcftools_optix_joint.py")
     (out/"bam").symlink_to(src/"bam",target_is_directory=True)
@@ -105,11 +138,14 @@ def prepare(src):
         w=csv.DictWriter(h,fieldnames=list(selected[0]),delimiter="\t",extrasaction="ignore")
         w.writeheader()
         w.writerows(selected)
+    planned=make_shards()
+    dump(out/"shards.json",planned)
     cfg=dict(root=str(out),source_run=str(src),fasta=original["fasta"],
         bcftools=str(bcftools),bam_list=str(out/"comparative_bams.list"),
         comparative=[r["sample"] for r in comparisons],
         focal=[r["sample"] for r in focal],
-        samples=selected,loci=LOCI,selected_alignment_indices=indices,
+        samples=selected,loci=LOCI,shards=planned,
+        shard_bp=SHARD_BP,selected_alignment_indices=indices,
         excluded_sample=EXCLUDED,excluded_task=14,
         expected_method="bcftools mpileup -a FORMAT/DP,FORMAT/AD -q30 -Q20 | bcftools call -m -A -f GQ",
         previous_manifest_sha256=hashlib.sha256((src/"manifest.tsv").read_bytes()).hexdigest(),
@@ -132,7 +168,8 @@ def submit(src):
     jobs_path=out/"jobs.json"
     if jobs_path.exists():
         raise RuntimeError("This recovery run has already submitted jobs")
-    # Each selected alignment must succeed; array element 14 is not included.
+    # Specific array elements are an established Slurm dependency syntax.
+    # Do not depend on whole 138468792: element 14 is known to fail.
     dep="afterok:"+":".join(ALIGN_ARRAY+"_"+str(i) for i in
                            cfg["selected_alignment_indices"])
     def sb(stage,task_count,cpus,mem,time,depends):
@@ -149,18 +186,22 @@ def submit(src):
         print("JOB\t"+stage+"\t"+jid,flush=True)
         return jid
     try:
-        jc=sb("joint",2,8,"48G","12:00:00",dep)
-        fc=sb("focal",2,2,"16G","06:00:00","afterok:"+jc)
-        sb("audit",1,2,"12G","02:00:00","afterok:"+fc)
+        shard=sb("shard",len(cfg["shards"]),1,"8G","08:00:00",dep)
+        combined=sb("concat",2,2,"12G","03:00:00","afterok:"+shard)
+        focaljob=sb("focal",2,2,"16G","06:00:00","aftercorr:"+combined)
+        sb("audit",1,2,"12G","02:00:00","afterok:"+focaljob)
     except Exception:
         for jid in submitted.values():
             subprocess.run(["scancel",jid],stdout=subprocess.DEVNULL,
                            stderr=subprocess.DEVNULL)
         raise
     print("METHOD\tbcftools mpileup -> bcftools call (established parameters)")
+    print("ARRAYS\t"+str(len(cfg["shards"]))+
+          " parallel genomic shards; 2 concat; 2 focal; 1 audit")
     print("COHORT\t43 comparative, 4 focal, excluded P4003")
     print("RUN_DIR\t"+str(out))
     print("GATK_SUBMISSIONS\t0")
+
 
 
 def check_bams(cfg):
