@@ -54,10 +54,16 @@ def records(run):
             hits=sorted(p for p in base.rglob("*.bam") if not p.name.endswith(".bai"))
             # Some PK manifests point to a BAM outside the per-sample directory.
             if not hits:
-                pc=source_cfg[1]
-                for entry in pc.get("tasks",[]):
-                    if entry.get("sample")==sample and entry.get("reference",{}).get("name")==ref:
-                        hits.append(Path(entry["bam"]))
+                pc=json.loads(need(Path(origins["pk_run"])/"run.json").read_text())
+                matches=[entry for entry in pc.get("tasks",[])
+                         if entry.get("sample")==sample and entry.get("reference",{}).get("name")==ref]
+                if len(matches)!=1:
+                    raise RuntimeError(f"PK task manifest not unique for {ref} {sample}")
+                reuse=matches[0].get("reuse")
+                if reuse and reuse.get("bam"):
+                    hits=[Path(reuse["bam"])]
+                else:
+                    hits=[base/"locus.bam"]
             if len(hits)!=1:
                 raise RuntimeError(f"Need exactly one PK BAM {ref} {sample}; found {len(hits)} in {base}")
             bam=hits[0]
