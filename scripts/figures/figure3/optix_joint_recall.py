@@ -520,9 +520,15 @@ def main():
     p.add_argument("--stage",choices=STAGES)
     p.add_argument("--task",type=int)
     a=p.parse_args()
-    if a.submit or a.preview:
+    if a.submit:
+        raise RuntimeError(
+            "DISABLED: this script submits the unapproved GATK/gVCF workflow. "
+            "Use resume_bcftools_optix_joint.py to call the existing BAMs via "
+            "the established bcftools mpileup | bcftools call method."
+        )
+    if a.preview:
         if not (a.preflight and a.candidates and a.sweep):
-            p.error("--submit/--preview needs --preflight, --candidates, --sweep")
+            p.error("--preview needs --preflight, --candidates, --sweep")
         submit(a)
     elif a.config and a.stage and a.task is not None:
         STAGES[a.stage](read(a.config),a.task)
