@@ -5,7 +5,7 @@ Sources: the completed Yb all-samples run, its frozen sample manifests,
 and existing BAMs. No downloading or alignment. Two vector PDFs:
 race-specific tracks and phenotype-pooled non-PK control tracks.
 """
-import argparse, json, subprocess, sys, shlex, shutil, hashlib
+import argparse, json, subprocess, sys, shlex, shutil, hashlib, csv
 from pathlib import Path
 from datetime import datetime, timezone
 import numpy as np
@@ -80,14 +80,9 @@ def records(run):
                 if bam is None:
                     raise RuntimeError(f"Cannot resolve original race/focal BAM for {ref} {sample}; verify original run manifest")
         need(bam)
-        profile=pd.read_csv(need(e["profile"]),sep="\t",usecols=["mean_depth","normalized_depth"])
-        valid=np.isfinite(profile["mean_depth"]) & np.isfinite(profile["normalized_depth"]) & (profile["normalized_depth"]>0)
-        ratio=(profile.loc[valid,"mean_depth"]/profile.loc[valid,"normalized_depth"]).to_numpy(dtype=float)
-        if not len(ratio):raise RuntimeError(f"No valid scaffold denominator: {ref} {sample}")
-        den=float(np.median(ratio))
-        if not np.allclose(ratio,den,rtol=1e-5,atol=1e-5):
-            raise RuntimeError(f"Inconsistent scaffold denominator: {ref} {sample}")
-        tasks.append(dict(ref=ref,sample=sample,group=group,bam=str(bam),denominator=den,
+        # No historical normalization factors are imported: every denominator
+        # is recalculated from this exact BAM with the same samtools filters.
+        tasks.append(dict(ref=ref,sample=sample,group=group,bam=str(bam),
                           provenance="user-rescored homozygous Yb+/Yb+" if group=="PK Yb+/Yb+" else "repository race Yb phenotype"))
     # Focal side means must be reconstructed by pooling base-level depth, not averaging per-library medians.
     for ref in REGIONS:
@@ -98,7 +93,7 @@ def records(run):
             orig=[t for t in tasks if t["ref"]==ref and t["sample"] in {e["sample"] for e in es}]
             if len(orig)!=2:raise RuntimeError("Focal profile mapping mismatch")
             tasks.append(dict(ref=ref,sample="TN_"+side+"_combined",group="focal combined",
-                              bam=[t["bam"] for t in orig],denominator=sum(t["denominator"] for t in orig),
+                              bam=[t["bam"] for t in orig],
                               provenance="per-base pooled T2+T3 depth; summed scaffold means"))
     for ref in REGIONS:
         rt=[t for t in tasks if t["ref"]==ref]
@@ -122,7 +117,7 @@ def submit(a):
         candidate_tools.extend([source_data.get("samtools"),source_data.get("tools",{}).get("samtools")])
     samtools=next((str(p) for p in candidate_tools if p and Path(p).is_file()),None)
     cfg={"run_dir":str(base),"source_run":str(a.run),"sources":origins,"samtools":samtools,
-         "method":"samtools depth -aa -s -q 0 -Q 30 -G1796; per-base depth median in 50bp absolute reference bins; divide by original own full-scaffold mean",
+         "method":"samtools depth -aa -s -q 0 -Q 30 -G1796 for both full-contig arithmetic mean including zeros and 50-bp local per-base medians; each library uses identical filters",
          "comparison_to_Luca":"Luca used mosdepth; using samtools with equivalent intended MAPQ>=30 and per-base window medians, but not byte-identical mosdepth output",
          "phenotype_labels":STATES,"pk_genotype":"20 PK are homozygous Yb+/Yb+ by user rescoring",
          "tasks":tasks}
@@ -132,13 +127,13 @@ def submit(a):
     runner=" ".join((py,shlex.quote(str(script)),"--config",shlex.quote(str(base/"run.json"))))
     common=["sbatch","--parsable","--partition=cpu","--chdir="+str(base)]
     def job(name,wrap,array=None,dependency=None):
-        flags=["--job-name="+name,"--time=04:00:00","--mem=4G","--cpus-per-task=1"]
+        flags=["--job-name="+name,"--time=16:00:00","--mem=6G","--cpus-per-task=1"]
         if array:flags+=["--array="+array]
         if dependency:flags+=["--dependency=afterok:"+dependency]
         flags+=["--output="+str(base/"logs"/(name+".%A_%a.out" if array else name+".%j.out")),
                 "--error="+str(base/"logs"/(name+".%A_%a.err" if array else name+".%j.err"))]
         return subprocess.check_output(common+flags+["--wrap="+wrap],text=True).strip().split(";")[0]
-    work=job("YbLucaMedian",runner+" --stage worker --task \"$SLURM_ARRAY_TASK_ID\"",f"0-{len(tasks)-1}%20")
+    work=job("YbLucaMedian",runner+" --stage worker --task \"$SLURM_ARRAY_TASK_ID\"",f"0-{len(tasks)-1}%12")
     plot=job("YbLucaPlot",runner+" --stage report",dependency=work)
     (base/"jobs.json").write_text(json.dumps({"median_array":work,"report":plot},indent=2)+"\n")
     print("MEDIAN_ARRAY",work)
@@ -152,6 +147,45 @@ def worker(cfg,i):
     out=Path(cfg["run_dir"])/ref/"median"/(t["sample"]+".tsv.gz")
     out.parent.mkdir(parents=True,exist_ok=True)
     rows=[]
+    contig=REGIONS[ref]["d"][0]
+    lengths=[]
+    for bam in bams:
+        header=subprocess.check_output([samtools,"view","-H",str(bam)],text=True)
+        sq=[line for line in header.splitlines() if line.startswith("@SQ\\t")]
+        sizes={}
+        for line in sq:
+            fields=dict(item.split(":",1) for item in line.split("\\t")[1:] if ":" in item)
+            sizes[fields.get("SN")]=int(fields["LN"])
+        if contig not in sizes:
+            raise RuntimeError(f"Contig {contig} absent from BAM header: {bam}")
+        lengths.append(sizes[contig])
+    if len(set(lengths))!=1:
+        raise RuntimeError(f"Scaffold lengths disagree among focal pooled BAMs: {lengths}")
+    contig_length=lengths[0]
+    # Recalculate the denominator with precisely the same read-depth options
+    # used for the 50-bp numerator. No prior normalization is imported.
+    depth_cmd=[samtools,"depth","-aa","-s","-q","0","-Q","30","-G",FRAG_FLAGS,
+               "-r",contig,*map(str,bams)]
+    proc=subprocess.Popen(depth_cmd,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    total=0
+    count=0
+    previous=0
+    for line in proc.stdout:
+        fields=line.rstrip("\\n").split("\\t")
+        if fields[0]!=contig:raise RuntimeError(f"Unexpected contig in denominator: {fields[0]}")
+        pos=int(fields[1])
+        if pos!=previous+1:
+            raise RuntimeError(f"Non-contiguous zero-inclusive depth for {t['sample']}: {previous} -> {pos}")
+        previous=pos
+        total+=sum(map(int,fields[2:]))
+        count+=1
+    stderr=proc.stderr.read()
+    if proc.wait():raise RuntimeError(f"Full-scaffold depth failed {t['sample']}: {stderr[-1200:]}")
+    if count!=contig_length:
+        raise RuntimeError(f"Expected {contig_length} scaffold bases, counted {count} for {t['sample']}")
+    denominator=total/contig_length
+    if not np.isfinite(denominator) or denominator<=0:
+        raise RuntimeError(f"Invalid new normalization factor: {t['sample']} {denominator}")
     for key,(contig,lo,hi) in REGIONS[ref].items():
         start=max(0,lo-1000);end=hi+1000
         # The original analysis uses 50-bp windows on an absolute contig grid.
@@ -179,9 +213,16 @@ def worker(cfg,i):
             median=float(np.median(values))
             rows.append({"reference":ref,"sample":t["sample"],"group":t["group"],"interval":key,
                          "position":bs+25.0,"median_depth":median,
-                         "normalized_depth":median/t["denominator"]})
-    pd.DataFrame(rows).to_csv(out,sep="\t",index=False)
-    print("DONE",ref,t["sample"])
+                         "normalized_depth":median/denominator})
+    pd.DataFrame(rows).to_csv(out,sep="\\t",index=False)
+    (out.parent/(t["sample"]+".normalization.json")).write_text(json.dumps({
+        "reference":ref,"sample":t["sample"],"bam":bams,
+        "contig":REGIONS[ref]["d"][0],"scaffold_length":contig_length,
+        "depth_sum":total,"scaffold_mean_depth":denominator,
+        "counted_bases":count,"flags":"samtools depth -aa -s -q 0 -Q 30 -G1796",
+        "method":"Zero-inclusive arithmetic full-scaffold mean computed from the same BAM(s) and filters as per-window medians"
+    },indent=2)+"\\n")
+    print("DONE",ref,t["sample"],"scaffold_mean",f"{denominator:.5f}")
 
 def report(cfg):
     import matplotlib
@@ -196,6 +237,8 @@ def report(cfg):
         tab=pd.read_csv(need(path),sep="\t")
         allrows.append(tab)
     data=pd.concat(allrows,ignore_index=True)
+    norms=[json.loads(need(root/t["ref"]/"median"/(t["sample"]+".normalization.json")).read_text()) for t in cfg["tasks"]]
+    pd.DataFrame(norms).to_csv(root/"normalization_audit.tsv",sep="\t",index=False)
     data.to_csv(root/"median_coverage_values.tsv.gz",sep="\t",index=False)
     fit=ROOT/"analysis/original_502/reciprocal_L_R_mixture/optix_reciprocal_L_R_mixture.summary.tsv"
     params=pd.read_csv(need(fit),sep="\t").set_index("statistic").value
@@ -260,7 +303,7 @@ def report(cfg):
                     axes[0,j].set_title("Yb("+key+")")
                     axes[-1,j].set_xlabel(contig+" position (Mb)")
                 fig.suptitle(ref+" | Luca-style 50-bp median / full-scaffold mean | "+mode.replace("_"," "),fontsize=12)
-                fig.text(.09,.012,f"MAPQ>=30, 50-bp median of zero-inclusive per-base depth; full-scaffold mean from existing validated coverage. "
+                fig.text(.09,.012,f"MAPQ>=30, 50-bp median of zero-inclusive per-base depth; full-scaffold mean recalculated from same BAM and filters. "
                          f"20 PK Yb+/Yb+ (user-rescored). L/R ribbons: Optix mixing fit {cl:.3f}/{cr:.3f} ±0.05, sensitivity only.",fontsize=8)
                 fig.tight_layout(rect=(0,.035,1,.96),h_pad=.6)
                 pdf.savefig(fig);plt.close(fig)
