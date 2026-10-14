@@ -59,12 +59,26 @@ def records(run):
             reuse=matches[0].get("reuse")
             bam=Path(reuse["bam"]) if reuse and reuse.get("bam") else base/"locus.bam"
         else:
-            bam=bam_index.get((ref,sample))
-            if bam is None:
-                base=Path(origins["mean_run"])/ref
-                hits=sorted(base.rglob(sample+"*.bam"))
-                if len(hits)==1:bam=hits[0]
-            if bam is None:raise RuntimeError(f"Cannot resolve BAM for {ref} {sample}")
+            # The extra-race alignment manifest stores BAM paths under
+            # <extra_run>/<reference>/coverage/<accession>.dedup.bam, while
+            # its tasks do not consistently expose a "bam" field.
+            if sample in {"ERR2298205","ERR2298206","ERR2298204","ERR2298214"}:
+                bam=Path(origins["extra_run"])/ref/"coverage"/(sample+".dedup.bam")
+            else:
+                bam=bam_index.get((ref,sample))
+                if bam is None:
+                    # Original race/focal alignment paths from the finished
+                    # Yb mixing source; do not search by arbitrary wildcard.
+                    old=Path(origins["mean_run"])
+                    candidates=[
+                        old/ref/"coverage"/(sample+".dedup.bam"),
+                        old/ref/"alignments"/(sample+".dedup.bam"),
+                        old/ref/"alignment"/(sample+".dedup.bam"),
+                    ]
+                    valid_paths=[p for p in candidates if p.is_file()]
+                    if len(valid_paths)==1:bam=valid_paths[0]
+                if bam is None:
+                    raise RuntimeError(f"Cannot resolve original race/focal BAM for {ref} {sample}; verify original run manifest")
         need(bam)
         profile=pd.read_csv(need(e["profile"]),sep="\t",usecols=["mean_depth","normalized_depth"])
         valid=np.isfinite(profile["mean_depth"]) & np.isfinite(profile["normalized_depth"]) & (profile["normalized_depth"]>0)
