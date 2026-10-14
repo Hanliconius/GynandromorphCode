@@ -283,10 +283,43 @@ def main():
     duplicates = {s: ids for s, ids in specimens.items() if len(ids) > 1}
     if duplicates:
         die(f"Multiple comparative runs per BioSample: {duplicates}")
-    reference = args.mean_run / "HmRos/reference/genome.fa"
+    # The mean/coverage run stores profiles, NOT the Rosina FASTA.
+    # The corrected shared-Rosina PK workflow records the exact genome here.
+    # Only fall back to the established genomewide-mixing inputs if required.
+    source_paths = []
+    shared = pk.get("shared_rosina_optix") or {}
+    if isinstance(shared, dict) and shared.get("fasta"):
+        source_paths.append(("PK shared_rosina_optix.fasta", Path(shared["fasta"])))
+    source_paths += [
+        ("PK HmRos references[]", Path(ref["fasta"]))
+        for ref in pk.get("references", [])
+        if ref.get("name") == "HmRos" and ref.get("fasta")
+    ]
+    metadata_path = ROOT / "analysis/genomewide_mixing_input/metadata/reference_fasta.path"
+    if metadata_path.is_file():
+        listed = metadata_path.read_text().strip().splitlines()
+        if listed:
+            source_paths.append(("genomewide-mixing metadata", Path(listed[0])))
+    source_paths.append((
+        "established Rosina reference",
+        ROOT / "analysis/genomewide_mixing_input/reference/GCF_056956725.1/"
+        "GCF_056956725.1_ASM5695672v1_genomic.fna"))
+    valid_sources = [(name, p) for name, p in source_paths
+                     if p.is_file() and Path(str(p) + ".fai").is_file()]
+    if not valid_sources:
+        die("No Rosina FASTA plus .fai found among the recorded sources: " +
+            "; ".join(f"{name}={p}" for name, p in source_paths))
+    reference_source, reference = valid_sources[0]
     alleles = args.pk_run / "optix_alleles_rosina.tsv.gz"
     ref_audit = audit_reference(reference, alleles)
+    ref_audit["selected_from"] = reference_source
+    ref_audit["source_candidates"] = [
+        dict(source=name, path=str(p), exists=p.is_file(),
+             indexed=Path(str(p) + ".fai").is_file())
+        for name, p in source_paths
+    ]
 
+    # Must exist before the previous analysis-142 metadata search writes its TSV.
     out.mkdir(parents=True)
     with (out / "manifest.preflight.tsv").open("w") as h:
         writer = csv.DictWriter(h, fieldnames=FIELDS, delimiter="\t")
