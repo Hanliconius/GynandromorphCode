@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ndj-lr-difference-scan"
+version = "1.0.0"
+description = "Exploratory paired-library AF and regional difference scan"
+requires-python = ">=3.10"
+dependencies = [
+  "matplotlib>=3.7",
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "pysam>=0.22",
+  "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+include = ["ndj_scan*"]
+
+[tool.setuptools.package-data]
+ndj_scan = ["batlowW_r.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,121 @@
+from pathlib import Path
+import csv
+import gzip
+import json
+import importlib.util
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.patheffects as pe
+from matplotlib.collections import PolyCollection
+from matplotlib.colors import LogNorm
+from matplotlib.lines import Line2D
+from scipy.stats import betabinom
+
+root = Path("analysis/figures/pairwise_AF_cli")
+prefix = root / "TN_merged_control_sites_hex40_batlowW"
+bins_path = Path(str(prefix) + ".AF_bins.tsv.gz")
+audit_path = Path(str(prefix) + ".AF.audit.json")
+output = root / "TN_AF_hex40_luka_bleute_unannotated.pdf"
+
+spec = importlib.util.spec_from_file_location(
+    "af_tool", "pairwise-af-hex20/plot_pairwise_AF.py"
+)
+tool = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(tool)
+
+audit = json.loads(audit_path.read_text())
+with gzip.open(bins_path, "rt") as handle:
+    rows = list(csv.DictReader(handle, delimiter="\t"))
+
+polygons, counts = [], []
+for row in rows:
+    x, y = float(row["left_centre"]), float(row["right_centre"])
+    w, h = float(row["width"]), float(row["height"])
+    count = int(row["count"])
+    if not np.isfinite([x, y, w, h]).all() or min(w, h) <= 0 or count < 0:
+        raise RuntimeError("Invalid hexagon record.")
+    polygons.append([
+        (x + w/2, y - h/4), (x + w/2, y + h/4),
+        (x, y + h/2),
+        (x - w/2, y + h/4), (x - w/2, y - h/4),
+        (x, y - h/2),
+    ])
+    counts.append(count)
+
+polygons = np.asarray(polygons)
+counts = np.asarray(counts, dtype=np.int64)
+if not len(counts) or not (counts > 0).any():
+    raise RuntimeError("No observed counts.")
+if int(counts.sum()) != audit["records_retained"]:
+    raise RuntimeError("Bin total does not match the audit.")
+
+params = audit["parameters"]
+vmin = params.get("vmin")
+vmax = params.get("vmax")
+vmin = 1 if vmin is None else float(vmin)
+vmax = max(float(counts.max()), vmin * 10) if vmax is None else float(vmax)
+
+depth, concentration, error = 40, 22., .001
+k = np.arange(depth + 1)
+af = k / depth
+scenarios = [(0., "#F000B8"), (.2, "#00D9EF")]
+states = [(l, r) for l in (0., .5, 1.) for r in (0., .5, 1.)]
+halo = [pe.Stroke(linewidth=3, foreground="white"), pe.Normal()]
+
+def centroid(left, right, mixing):
+    return (
+        (1 - mixing) * left + mixing * right,
+        mixing * left + (1 - mixing) * right,
+    )
+
+def probabilities(q):
+    mean = error + (1 - 2 * error) * q
+    values = betabinom.pmf(
+        k, depth, mean * concentration, (1 - mean) * concentration
+    )
+    return values / values.sum()
+
+def threshold(pmf, mass):
+    ordered = np.sort(pmf.ravel())[::-1]
+    index = np.searchsorted(np.cumsum(ordered), mass)
+    return ordered[min(index, len(ordered) - 1)]
+
+plt.rcParams.update({"font.size": 11, "pdf.fonttype": 42})
+fig = plt.figure(figsize=(11, 10))
+ax = fig.add_axes([.10, .20, .70, .70])
+cax = fig.add_axes([.85, .32, .025, .46])
+
+occupied = counts > 0
+hexes = PolyCollection(
+    polygons[occupied],
+    array=counts[occupied].astype(float),
+    cmap=matplotlib.colors.ListedColormap(json.loads(Path("palettes/barfbow/luka_bleute.json").read_text()), name="luka_bleute"),
+    norm=LogNorm(vmin=vmin, vmax=vmax),
+    edgecolors="none", zorder=0,
+)
+ax.add_collection(hexes)
+ax.set_facecolor("white")
+fig.colorbar(hexes, cax=cax, label="Observed sites per hexagon")
+cax.text(.5, -.09, "White = 0", transform=cax.transAxes,
+         ha="center", fontsize=9)
+
+
+vertices = polygons.reshape(-1, 2)
+ax.set(
+    xlim=(vertices[:, 0].min() - .004, vertices[:, 0].max() + .004),
+    ylim=(vertices[:, 1].min() - .004, vertices[:, 1].max() + .004),
+    aspect="equal",
+    xlabel=f"{params['left_sample']}\nALT-read fraction",
+    ylabel=f"{params['right_sample']}\nALT-read fraction",
+)
+ax.set_xticks(np.linspace(0, 1, 6))
+ax.set_yticks(np.linspace(0, 1, 6))
+ax.spines[["top", "right"]].set_visible(False)
+
+
+
+fig.savefig(output)
+plt.close(fig)
+print(output.resolve())

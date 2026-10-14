@@ -1,0 +1,2109 @@
+[
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandromorphCode_repo/scripts/audit_AF_joint_00_sitecount.slurm",
+    "sha256": "84dc121c22c62c1a2f193df5d2d2f0eae4bbb7f99eb7c23e046bd6cac0d74692",
+    "git_blob": "27477245954adae07915719b8a631f651a07c253",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_0/scripts/audit_AF_joint_00_sitecount.slurm"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandromorphCode_repo/scripts/figures/figure2/run_Figure2_panels.nano.slurm",
+    "sha256": "1716fdd034a8014b01257fd197e2629472580959e76456217d19fd1e77dc83f3",
+    "git_blob": "cf334e43732fcef01269e569b7f43931d668cbb0",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_0/scripts/figures/figure2/run_Figure2_panels.nano.slurm"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandromorphCode_repo/scripts/figures/figure2/submit_Figure2_panels.sh",
+    "sha256": "45180b2bee7db2a9ee63e4d0274604d7b7b38feb0073da3141fb02bdb6472bea",
+    "git_blob": "02f9160d2509d3a3ed34a3672f501473b850ff6c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_0/scripts/figures/figure2/submit_Figure2_panels.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/environment.yml",
+    "sha256": "25fff73ff7b03239b016a9d27b4fecf637dd590d06ca45802233422ee5a3a709",
+    "git_blob": "63af27eeb3eb97214342867c853723d60c302bc3",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/environment.yml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/tests/test_219_regenerate.py",
+    "sha256": "8a58d92830bc50bf9f625bb4bb058ab6bc91d88822cbf2c4a9402201b0b8acd6",
+    "git_blob": "bbd9fcdc0ec0163e82bcf744a9b82eac1dc293e1",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/tests/test_219_regenerate.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/tests/test_ndj.py",
+    "sha256": "c52e101f7f3cee62318d3f6f436ed03463fd1d07bfb2adf4edf2eacbca76857b",
+    "git_blob": "adb0209e6bf3b6de86668097452fd05983b22d7e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/tests/test_ndj.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/external/gynandromorph_2024/Snakefile",
+    "sha256": "404fcc4d79376d8e6f64c39f719f78aaf4473113560b1f22a1dbc392c8868740",
+    "git_blob": "af1cbcd1299ddf20b0934239a2653ec54a85725c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/external/gynandromorph_2024/Snakefile"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/pk_dark_pale_optix_yb/20261013T220116Z_0b6e0845/worker.sh",
+    "sha256": "96fc39264a419925698af0f7225a4034a90d5c31bb4eed2d4c256be6fab2f052",
+    "git_blob": "ff20928edee1ff41fb1277e66256fcc93e720131",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/pk_dark_pale_optix_yb/20261013T220116Z_0b6e0845/worker.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/pk_dark_pale_optix_yb/20261013T220116Z_0b6e0845/extend_PK_optix_Yb.py",
+    "sha256": "23d39197c7b5ed2811340ec4a8914a7bcef4d369fa6006558a2616f7b70a254b",
+    "git_blob": "b57b1fad48ff73e407582d741dcc90acce1ab7f1",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/pk_dark_pale_optix_yb/20261013T220116Z_0b6e0845/extend_PK_optix_Yb.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/run_ndj_scan.py",
+    "sha256": "280a39131b5ab43f1015202067fc0f796de7ce373b042fb4e20bbf7ee081ebb6",
+    "git_blob": "820e159dd310fc08435ed422c4c003a5bec60bce",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/run_ndj_scan.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/report.py",
+    "sha256": "0444da59a566ffd1ee684068695faf901d5614b6e60e350e2d2eb5c0fa7f6cf4",
+    "git_blob": "064d61f32f9af4cd81b1b1cfe0d449a3008819e5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/report.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/cli.py",
+    "sha256": "a21cc69d7c10413cf1e07306f9bc5edb24813e0820a0a7be05c32d62708fca66",
+    "git_blob": "c67744a28ceba889ca77a5c0fa18717725a87369",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/cli.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/__init__.py",
+    "sha256": "b040739bd64a1103c75392bf3044f50df4a2e7eecc5d02ec251ec89152e888d6",
+    "git_blob": "bef241874dd999646dde2624d7a79e8a9fc47f23",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/__init__.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/common.py",
+    "sha256": "17cb66cc1ad52dd375219f63d365b5aa516c649217b8344074a81a1e537b1e37",
+    "git_blob": "3e1c48a7a2598af0fcd072cd83eeda7c51558a52",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/common.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/scan.py",
+    "sha256": "afc4e793286a4ea30e5e2dd63263fc87ec64c08e38080b396ec6e24153bb15b0",
+    "git_blob": "22a2e0e0c6f7f990f3dc5d4db9c1d64cb209d7a6",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/scan.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/qc.py",
+    "sha256": "2eef2f17fa6227f633c10dd04b1255bbb84847bbcd8e8bd557c107f9b0f51eea",
+    "git_blob": "745ffd2ab210b8e4ee7a0ecd38db514537a26a68",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/code/ndj_scan/qc.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_local_both_references/20261012T194933Z_7fa9de96/worker.sh",
+    "sha256": "5b849539b03ab849f563453ecc8aa5f3079987726891efb6a98ecdd19c596e64",
+    "git_blob": "79da032452605519abda4879f415d808245c2f99",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_local_both_references/20261012T194933Z_7fa9de96/worker.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_local_both_references/20261012T194933Z_7fa9de96/plot_retry_20261012T232027Z_2543983/worker.sh",
+    "sha256": "e52a54452f0d58f5bdd73ab39ad671b9667d8a59eaf4de1295d324018486150a",
+    "git_blob": "5dbe35ae6d664571233eaf8b894c538dd71d510c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_local_both_references/20261012T194933Z_7fa9de96/plot_retry_20261012T232027Z_2543983/worker.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_extra_controls/20261013T201033Z_b28c41fe/worker.sh",
+    "sha256": "098b72f9808ef9eda82b105c15e73ec24743255351a4aacbe88e7a62d6135ce6",
+    "git_blob": "ed1289ca286e47233f075a6e2f191a8005f23938",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_extra_controls/20261013T201033Z_b28c41fe/worker.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_control_both_references/20261012T235236Z_923f6917/worker.sh",
+    "sha256": "1f666843b8556b5cca95aff5411e2671e1ef4bfc2fe054f92a4edc8c2229d12e",
+    "git_blob": "0f9385e82f8631307aa63fcabaa478730de64eba",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_control_both_references/20261012T235236Z_923f6917/worker.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_mixing_and_allele_evidence/20261013T194506Z_10e7bd9e/worker.sh",
+    "sha256": "4d77a5d94db14dff490fde1d5f06ed077065226cbfcefe167f5719eeec85e060",
+    "git_blob": "fae5acab40f23298d6b66b027ab5d4f756d64c04",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_mixing_and_allele_evidence/20261013T194506Z_10e7bd9e/worker.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_mixing_and_allele_evidence/20261013T194506Z_10e7bd9e/mean_worker.py",
+    "sha256": "023c41fdd3d16e9d25d5cc1fde798c1df81aa3ea2dfc03d34f1a6ce40b192e0d",
+    "git_blob": "8e12dde026d94533cb70370b8813fcde05ac5ea7",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_mixing_and_allele_evidence/20261013T194506Z_10e7bd9e/mean_worker.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_control_overlays/20261013T174941Z_c116f9a5/worker.sh",
+    "sha256": "324aaf4f26c4f8ef7611a4e05a3f24eca5abfdb362d5b04c7fecb9edfa60c41c",
+    "git_blob": "8b135244df9d4dfeceaa37a6470e8e32688c0565",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_control_overlays/20261013T174941Z_c116f9a5/worker.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_Hmel2_5_normalized_coverage/tools/pybigwig/pyBigWigTest/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_Hmel2_5_normalized_coverage/tools/pybigwig/pyBigWigTest/__init__.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_Hmel2_5_normalized_coverage/tools/pybigwig/pyBigWigTest/test.py",
+    "sha256": "fc156ce486d1ffb0f0a40ae9c6021c540796273a9e0754f90400f48e15a335e4",
+    "git_blob": "7a1bd6a06bc0271adcb00d71f13063362626e728",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_Hmel2_5_normalized_coverage/tools/pybigwig/pyBigWigTest/test.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/setup.py",
+    "sha256": "ac1bd319382eb0deaf1acd9a8043353e13c6fcee90f91757864939f20911e176",
+    "git_blob": "775168a66d0ae519eb5bc175ac07d5deda82d0a0",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/setup.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/Makefile",
+    "sha256": "f372cc0543bcca414bde87876eb26d55ea26aa751d0ab3644035e36b664ba940",
+    "git_blob": "17b13b64b173dfdfdee9a2ef83788c443a63c81e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/Makefile"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/pyproject.toml",
+    "sha256": "61dc68287788159afd0498fa19e9c680ccaab83d482ca38c385465fb88a8f76a",
+    "git_blob": "bc2be6730f09d097bf6af5350c4e8ff657dde3f8",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/pyproject.toml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/.github/workflows/ci.yaml",
+    "sha256": "055c0173f0cbe453aabb3687513cc4d442bdb318d9de547347497d887ab83a95",
+    "git_blob": "628acea0c45c72af7fcac0d699b4f18c69d1bfec",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/.github/workflows/ci.yaml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/python/minimap2.py",
+    "sha256": "67dd4fc772a35afec27303d4d81305721b412d49929e059a745a1d29a43ec75f",
+    "git_blob": "db6125da6aa55acc56a2ce78b9cab712d87ee7bb",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/python/minimap2.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/misc/paftools.js",
+    "sha256": "0539eb3e4217920abedca07dd255a7955825a26c3f3dbdcaa2e2631ed4c99c3c",
+    "git_blob": "24405e38fe6987095ed36a050cf5883a084fb0da",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/misc/paftools.js"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/misc/mmphase.js",
+    "sha256": "2406826b390ad5c4ac1c2e589224923ac835e1c934aa2101a3978189943afa01",
+    "git_blob": "84a33a686da149c153883bcd4be620f541ff95dd",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/misc/mmphase.js"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/tex/eval2roc.pl",
+    "sha256": "5156544ceec1c88cf2b24d86c110c5b1dc54b8f2554c18d12b0f5b3418900b8d",
+    "git_blob": "9c32e38d9fa792c21aef3c3910f0854e99005655",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/tex/eval2roc.pl"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/tex/Makefile",
+    "sha256": "1b4b111f33653dafc61894c6d34e1034e7e8e3aa4433241a63329c6c1ce28055",
+    "git_blob": "418a9628be17f45c528f3031352bee199cc3bc0e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/tex/Makefile"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/tex/hs38-simu.sh",
+    "sha256": "87a5d21ce1783899f5f7b4019d0b82087f32ae1b7d0b8ea7d80a2c308a046491",
+    "git_blob": "0fe08aaf605a02fcff1038332e42b60dea9d3e42",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2-2.28.tmp/tex/hs38-simu.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/tools/minimap2_env/bin/paftools.js",
+    "sha256": "0539eb3e4217920abedca07dd255a7955825a26c3f3dbdcaa2e2631ed4c99c3c",
+    "git_blob": "24405e38fe6987095ed36a050cf5883a084fb0da",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/yb_exact_coordinate_transfer/tools/minimap2_env/bin/paftools.js"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/chromosome_coverage_bars/run_20260923T162015902039Z/coverage_bars_mirrored.py",
+    "sha256": "5d3e7bbebb0cd099a88d229055218dbfe660131d73fd4226c2a150809be1afdc",
+    "git_blob": "b6df3ddc90816c4b13e4070159801bb6b4ff84f0",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/chromosome_coverage_bars/run_20260923T162015902039Z/coverage_bars_mirrored.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/chromosome_coverage_bars/run_20260923T162015902039Z/coverage_bars.py",
+    "sha256": "755d8a46e35f69a358916c530351d749c1d22e19b36e56f509bf1d3c97b1dcd5",
+    "git_blob": "d1d5ffe894dbbc0ca96df4959e491f930d6d3184",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/analysis/chromosome_coverage_bars/run_20260923T162015902039Z/coverage_bars.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex20/plot_pairwise_AF.py",
+    "sha256": "b67beabc1dfc0c27d58aaa5e72038a77589cdd6f32d4bafb4a0d1e59093c348e",
+    "git_blob": "66f73acbc9f44ede928bf2f623666f6103ba4d61",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex20/plot_pairwise_AF.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex20/pyproject.toml",
+    "sha256": "afebd0ab325c79efc217af97a564c59f06df532087288720ac16b054b942bd30",
+    "git_blob": "3746c20faaf1248c203df1e17233e83e4120ae21",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex20/pyproject.toml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex20/tests/test_afplot.py",
+    "sha256": "0c08f11bb1fe5041080e3e9c9ce5a40bca5ebe02d5c5f731286d45207a97c3f1",
+    "git_blob": "d7048aafd21591b02fe1cd92d52250320418034c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex20/tests/test_afplot.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex20/.github/workflows/tests.yml",
+    "sha256": "fb9556907c9dd6114af5f44f4b9d737fc1ed1664630f07abb34150a10a56116a",
+    "git_blob": "8ce1156830627c29c436aa15fbf4050ea6f538dd",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex20/.github/workflows/tests.yml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex20/examples/make_demo_vcf.py",
+    "sha256": "d40245dbab33ab07b63f5682c9e6236bea9725d294f503facd832dcc55b14f6e",
+    "git_blob": "421d6385533b29bc305e9f1be2195b7c58ecba5a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex20/examples/make_demo_vcf.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af/plot_pairwise_AF.py",
+    "sha256": "dc2f8d5e549e0e5b7131e0844ef357f386d0a9ff4730b8c07f8eaaa9c3380971",
+    "git_blob": "8a9ec76a65c326cc0787fb51f4275d49f3554f23",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af/plot_pairwise_AF.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af/pyproject.toml",
+    "sha256": "ad9e8365dedab36155354e7654b4223d1ffb9b8bf36225e33cf107a4d4c17971",
+    "git_blob": "79b24b7cbe1a37583f0c9a9e4f9d12dfb2ad88e3",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af/pyproject.toml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af/tests/test_afplot.py",
+    "sha256": "6f1f64393ebbd636d4ebba092db2b69b9ae007323b59ed93d2fd0ec187274df6",
+    "git_blob": "b001e12004f19b3efff8a3f3442fea1a93a77d98",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af/tests/test_afplot.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af/.github/workflows/tests.yml",
+    "sha256": "fb9556907c9dd6114af5f44f4b9d737fc1ed1664630f07abb34150a10a56116a",
+    "git_blob": "8ce1156830627c29c436aa15fbf4050ea6f538dd",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af/.github/workflows/tests.yml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af/examples/make_demo_vcf.py",
+    "sha256": "d40245dbab33ab07b63f5682c9e6236bea9725d294f503facd832dcc55b14f6e",
+    "git_blob": "421d6385533b29bc305e9f1be2195b7c58ecba5a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af/examples/make_demo_vcf.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af/build/lib/plot_pairwise_AF.py",
+    "sha256": "dc2f8d5e549e0e5b7131e0844ef357f386d0a9ff4730b8c07f8eaaa9c3380971",
+    "git_blob": "8a9ec76a65c326cc0787fb51f4275d49f3554f23",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af/build/lib/plot_pairwise_AF.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex45/plot_pairwise_AF.py",
+    "sha256": "f9c2805db1eb3735698012fdcdf2b8715b933117b53e175d6ad0cb79a2102d2c",
+    "git_blob": "7618a79688e05f53a22c38e15d2a2ca85ad0e94c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex45/plot_pairwise_AF.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex45/pyproject.toml",
+    "sha256": "b8e9d14c7ad6e084ee4dfc703d75b108e483ee8b806e6de61a6f5b0fd8fb008f",
+    "git_blob": "cad831aa2925e9e394dacadeda4f5b2b1b78f1df",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex45/pyproject.toml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex45/tests/test_afplot.py",
+    "sha256": "141d9a083667efa54e7df426c1ae795e6689546208ff8a530755853dec70d860",
+    "git_blob": "56ceef4ad20310928d8070f0fcfb7b75d3168d94",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex45/tests/test_afplot.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/pairwise-af-hex45/examples/make_demo_vcf.py",
+    "sha256": "d40245dbab33ab07b63f5682c9e6236bea9725d294f503facd832dcc55b14f6e",
+    "git_blob": "421d6385533b29bc305e9f1be2195b7c58ecba5a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/pairwise-af-hex45/examples/make_demo_vcf.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/run_ndj_scan.py",
+    "sha256": "280a39131b5ab43f1015202067fc0f796de7ce373b042fb4e20bbf7ee081ebb6",
+    "git_blob": "820e159dd310fc08435ed422c4c003a5bec60bce",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/run_ndj_scan.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/requirements.txt",
+    "sha256": "086f55a41deef6bec2c9b6d6de9fe986db0649c1c5709ffd8e8a43f6309bafed",
+    "git_blob": "c83455c36a08d9fccf19b4e8bf51647dfa798a8d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/requirements.txt"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/pyproject.toml",
+    "sha256": "2508a9e7240f4c3d22fc6669e53d058f0f32b045b2b3fa53ac316bdf97cfeb9d",
+    "git_blob": "0a543948a685a593df39c382a08bcc34d4430bd0",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/pyproject.toml"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/tests/test_scan.py",
+    "sha256": "959ec029a8c4508ef68bcd93c844d846416653511747a0076a221eb80035a578",
+    "git_blob": "f5a4e16eb7b8b2f6cf99b65f05561f3e667a103f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/tests/test_scan.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/tests/test_submission.py",
+    "sha256": "8c628839adecaa604f6ca89b909ea94262eb3b30f0496391170511da1a6bed4b",
+    "git_blob": "b6a2abded6b7cdfa30c7f93b35e53e49a4015a5f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/tests/test_submission.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/tests/make_fixture.py",
+    "sha256": "3fab7bf605c81639d45756a43e2d9b63060551ea0da9dbd1c8880546d5c18099",
+    "git_blob": "cf85652303bbc878e28071acd9cc3fba88d0d4b8",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/tests/make_fixture.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/ndj_scan/report.py",
+    "sha256": "0444da59a566ffd1ee684068695faf901d5614b6e60e350e2d2eb5c0fa7f6cf4",
+    "git_blob": "064d61f32f9af4cd81b1b1cfe0d449a3008819e5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/ndj_scan/report.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/ndj_scan/cli.py",
+    "sha256": "a21cc69d7c10413cf1e07306f9bc5edb24813e0820a0a7be05c32d62708fca66",
+    "git_blob": "c67744a28ceba889ca77a5c0fa18717725a87369",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/ndj_scan/cli.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/ndj_scan/__init__.py",
+    "sha256": "b040739bd64a1103c75392bf3044f50df4a2e7eecc5d02ec251ec89152e888d6",
+    "git_blob": "bef241874dd999646dde2624d7a79e8a9fc47f23",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/ndj_scan/__init__.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/ndj_scan/common.py",
+    "sha256": "17cb66cc1ad52dd375219f63d365b5aa516c649217b8344074a81a1e537b1e37",
+    "git_blob": "3e1c48a7a2598af0fcd072cd83eeda7c51558a52",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/ndj_scan/common.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/ndj_scan/scan.py",
+    "sha256": "afc4e793286a4ea30e5e2dd63263fc87ec64c08e38080b396ec6e24153bb15b0",
+    "git_blob": "22a2e0e0c6f7f990f3dc5d4db9c1d64cb209d7a6",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/ndj_scan/scan.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/NDJ_LR_difference_pipeline/ndj_scan/qc.py",
+    "sha256": "2eef2f17fa6227f633c10dd04b1255bbb84847bbcd8e8bd557c107f9b0f51eea",
+    "git_blob": "745ffd2ab210b8e4ee7a0ecd38db514537a26a68",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/NDJ_LR_difference_pipeline/ndj_scan/qc.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/palettes/barfbow_generator.py",
+    "sha256": "f015ef4bf653c3725be0397e083224c771ba3e96103055652b690ec42dac2fc9",
+    "git_blob": "de40c7362161f2f6758cf2c950d7dd3b7afc9d45",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/palettes/barfbow_generator.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/palettes/barfbow/barfbow.py",
+    "sha256": "bfd8a1a82dd824dc24e8e286c683b0f390fb30f7c61570b90d2c96553c320735",
+    "git_blob": "014a52a4a0f1e385141c95efa62a88120f35b93b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/palettes/barfbow/barfbow.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/coverage-bars/coverage_bars.py",
+    "sha256": "755d8a46e35f69a358916c530351d749c1d22e19b36e56f509bf1d3c97b1dcd5",
+    "git_blob": "d1d5ffe894dbbc0ca96df4959e491f930d6d3184",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/coverage-bars/coverage_bars.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/coverage-bars/test_synthetic.py",
+    "sha256": "1e29a1dfe554eee1e971bb6ab69339bd42c39ec7f8809f4cc9ec3285ef7098c4",
+    "git_blob": "24df7388a633efd866b3ea8f607e43ce2e997fa2",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/coverage-bars/test_synthetic.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/170_plot_science_exact_L_DRDR_R_BDR_homhetcolours.R",
+    "sha256": "9b05ccf459da0ae79ee39a8ec3712455f79070b28b1e465b12e10c7579fe3059",
+    "git_blob": "f76ee407339c3aadb706bb54d42ac608fcff40a8",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/170_plot_science_exact_L_DRDR_R_BDR_homhetcolours.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/148_plot_B_D_R_balanced_compact_BA099_ribbons.R",
+    "sha256": "bd4ff363fb9bf23a7e816c8af074492a7a65b0e1c5b4ca3dc5abeae99b018d36",
+    "git_blob": "7d8f955757385f597978f177fab5d49506727122",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/148_plot_B_D_R_balanced_compact_BA099_ribbons.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/157b_fix_BDR_label_validation.py",
+    "sha256": "95121dba025c7e0ff42ca00739251ee973500b7712f067f14758d7ec096f8cd0",
+    "git_blob": "f48edffbf8e0c783f4d10b33a84c0d81a33cebb8",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/157b_fix_BDR_label_validation.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/123_plot_R_BA90_focal_and_high_depth_AF_rows.R",
+    "sha256": "8624511fd80ca49e095355e53198983d9f966829d33c33c326deaeffb46a16ef",
+    "git_blob": "1a2f257dca56ef47d08ad05de312f59932334bf8",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/123_plot_R_BA90_focal_and_high_depth_AF_rows.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/94a_audit_original502_sample_callability_seqtype_cydno.py",
+    "sha256": "3534fc973589a5f21c1c33946cd5ebd8bcb2a7ab619e62d2ad7f68056ceb4aa6",
+    "git_blob": "64e1ec5594b1041235af9975f6caab3deaeaa32b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/94a_audit_original502_sample_callability_seqtype_cydno.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/101d_drop_remaining_best_SNP_breakers.py",
+    "sha256": "1bd958decca66e642df9a35bd103f8f36d6c28304346466fd40cae6cdd6ab6de",
+    "git_blob": "ea3eb037e3f09c9aa9e2a971fbc5908b5aa4ff28",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/101d_drop_remaining_best_SNP_breakers.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/90d_plot_supplement_comparative_site_ascertainment.R",
+    "sha256": "9b5ba3151090e07bf6d1d934ec429e2309c7f7c09554aafccbca792f2d4cff6b",
+    "git_blob": "d9ebff886b9557a25c6a5ed29d1c1388c6a0f45a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/90d_plot_supplement_comparative_site_ascertainment.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/119c_scan_B_west_of_Andes.py",
+    "sha256": "ea2a3070c7380d6bb32a0ce80408b87c4c4001a6d4c9321af0aa55393b8f378c",
+    "git_blob": "869941d12b63211b54b9b221cee93c569c82a422",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/119c_scan_B_west_of_Andes.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/119a_prepare_B_west_of_Andes_reanalysis.py",
+    "sha256": "bf8bbf978cf405ec0bd0bf132c2a260850d2798e47749c1b30210cdb8ed2d7d2",
+    "git_blob": "d270051fd85c56f593732cdd68e98b3f0ab365c4",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/119a_prepare_B_west_of_Andes_reanalysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/130_prepare_first20000bp_analysis.py",
+    "sha256": "ca53b4467af523eab475fe51d3238bb2e6117ebf8582099e157eaa8fcc20fa93",
+    "git_blob": "e0c29cb79bd0b2802ef6f2377e2f63f80c0b6164",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/130_prepare_first20000bp_analysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/91b_audit_band_51pass_vs_502_individuals.py",
+    "sha256": "75436765f572720727772da232c181ff5bf7d71bde1c419d364a82afeb8f72c4",
+    "git_blob": "f9a38d20fd4d614640485dfe1e483858d68fa34a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/91b_audit_band_51pass_vs_502_individuals.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/153c_make_nonfixed_ref_plotter.R",
+    "sha256": "c4ddb18465733847f2859780f4b3d5f0c85fd45096db3e7b83129831365615a9",
+    "git_blob": "59c08610d364af08428c703e4da58dbcebd29a70",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/153c_make_nonfixed_ref_plotter.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100b_prepare_drop_problematic_reanalysis_scripts.py",
+    "sha256": "8cace260bce407ef731c44940e0ef39f0b03a5dd270d863d8ef2ecd562c5f0b6",
+    "git_blob": "39dc6469cf4d0030d979815a53c047ebc0eab3eb",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100b_prepare_drop_problematic_reanalysis_scripts.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/101a_summarize_corrected_perfect_B_D_R_sites.py",
+    "sha256": "5f95fa2da0ccb2cc7db7decc89541283128e7e3b126efe7188e41b22787943fa",
+    "git_blob": "4b11cd7d2679cdf5546bcdb46defdde93d58999d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/101a_summarize_corrected_perfect_B_D_R_sites.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/106b_overwrite_D_R_overviews_with_focal.R",
+    "sha256": "7ebe0b765729315d952e2d098d49bd4d8cb1f23c0c1a02e7e4fd0610b88db056",
+    "git_blob": "b705131fb840e9e4f606f7c2f5141b6ea5a2e952",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/106b_overwrite_D_R_overviews_with_focal.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/117b_plot_optix_deltaAF_and_focal_dosage.R",
+    "sha256": "183f5576d607fa93fc0bc9c92bc3c6d391f8a6cf531ae84d1546315d9e41b281",
+    "git_blob": "e8bcbd2f2dfde7dc16cd03c1d680056c8a080027",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/117b_plot_optix_deltaAF_and_focal_dosage.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/21_plot_optix_51sample_band_genotype_heatmaps.py",
+    "sha256": "05415893cff7376ae0c57a637fdcd07954aa9c977827d97888774e8f8cf6fe77",
+    "git_blob": "c601a67219fae378403451214490627f09578d93",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/21_plot_optix_51sample_band_genotype_heatmaps.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/104_extract_perfect_D_R_all_comparative_genotypes.py",
+    "sha256": "021f47c18ea9e36003cfb52b7499c41237c1cfc80f6c3819521f0e3d17565b7d",
+    "git_blob": "a396e58a6d28c2423e7203e843941dfab5f2c312",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/104_extract_perfect_D_R_all_comparative_genotypes.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/calculate_autosomal_pi_by_taxon.slurm",
+    "sha256": "a4903ffaa8465c806d5e5dd1391e72f8098507b34671768cef0234b1565a81a7",
+    "git_blob": "fef772303bccfebb2df1b5b1010bf4e1e8ac62b4",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/calculate_autosomal_pi_by_taxon.slurm"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/93c_plot_optix_predictive_genotype_subset_curated.R",
+    "sha256": "19e5dc700204bbb25b8e3841ca1517b91c61f373f8f439ae9d243a2cce103094",
+    "git_blob": "9ff5d7207af994d986f35625734025bda2476ece",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/93c_plot_optix_predictive_genotype_subset_curated.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_founder_mixing_cartoons.py",
+    "sha256": "242f99f66ff2e7321a9a862d854d70179d356f42420565451cd02f30396da4d2",
+    "git_blob": "9f4d330254325bdc8d207fbf7d3e0c0002bbb93e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_founder_mixing_cartoons.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/150_plot_key_region_population_context_genoplots.R",
+    "sha256": "049c5627cb3b901f81302c1d56499a2c763570726f608334795c4b71a4af6c33",
+    "git_blob": "0fa45c096b9125f2617b391fcf13be936b67ec66",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/150_plot_key_region_population_context_genoplots.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_coverage_observed_expected_grouped.py",
+    "sha256": "64ccfe78b4cbaa8e220ba259b7274c3de27e8ff6136e4086da08479dcdf8e945",
+    "git_blob": "90d6181f98e8db9ce70cb9c806bf0b6b78619fa9",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_coverage_observed_expected_grouped.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100_preflight_recover_previous_cohort_filters.py",
+    "sha256": "089a2ad9ee45c23c21c0c1e75c04ae31fd137562625c54985a88d9d40c245020",
+    "git_blob": "6974fafb1b562806571e9dd018353f4c168df03a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100_preflight_recover_previous_cohort_filters.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/111c_scan_B_DRnegative_timareta.py",
+    "sha256": "cc03a278e752f46e2d48a2721d62bf7379079ca579c217d604d7d225b3f493e4",
+    "git_blob": "d64957e5f79210580cf0d754a42513f6705f5507",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/111c_scan_B_DRnegative_timareta.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/169_prepare_autosome_calling_manifest.py",
+    "sha256": "9ae8cd511a27e5c34aceeb793b579fe5bb2383d7d6f56270700c1af5b2830b71",
+    "git_blob": "93975f5869775d0a2fe43c28ab6f3dfddba58336",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/169_prepare_autosome_calling_manifest.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/169c_prepare_nuclear_chromosome_manifest.py",
+    "sha256": "0341b2db548249c043bbe6bd637b606de3dd52591975ee81e56b35454ade2a8a",
+    "git_blob": "290f5a190d9556a3e4b8df82c8c6005d17c2f48e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/169c_prepare_nuclear_chromosome_manifest.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/158_audit_three_vs_four_founder_inputs.py",
+    "sha256": "0e5f3ccd3dca2f238e340316c20c64576ef3077bbb771f07bf12cc66fd1031e5",
+    "git_blob": "2f00c0824ba57fb4a9b0848cdf0f57a2da4c8b7f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/158_audit_three_vs_four_founder_inputs.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/102_plot_perfect_D_R_comparative_SNP_ribbon.R",
+    "sha256": "7a78f268cca57750a08207762e51697c47ccc0b6f15072e0098fa1d4a9166cc5",
+    "git_blob": "23d5f4d3d13da9ef6e2139979521caa1f62e7345",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/102_plot_perfect_D_R_comparative_SNP_ribbon.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/146_plot_final_B_D_R_sidebias_alternatives.R",
+    "sha256": "ebe83fc04a28541f6beb5d5ec3269876b38849e6f68854fc7dfb635e989a4e7e",
+    "git_blob": "b9c8c254f6248ee102d7be0dae1bb122e1212c2d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/146_plot_final_B_D_R_sidebias_alternatives.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/99g_audit_three_way_score_breakers.py",
+    "sha256": "a657b71c9357d627b78c4baeec44e71504c72383cc8fe71f1b4d5334f9726254",
+    "git_blob": "ecc4e4cb1b5f09ff313c115226331b3c3e3c93fe",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/99g_audit_three_way_score_breakers.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/32_collapse_optix_candidate_genotype_patterns.py",
+    "sha256": "ad5ee3698e773aa2a1f513e6174992de8d9f54f0c9dcb793adad853585ad4572",
+    "git_blob": "a1524b7938fb04dee83f66705be9e156cf97650c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/32_collapse_optix_candidate_genotype_patterns.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/97b_plot_core_explanatory_optix_genoplots.R",
+    "sha256": "13b8835fbd45d1b7e356056e4c08ce9e62c7100b5367d8d6fc4740f8be45fae6",
+    "git_blob": "4907f609c80bf37989a9403a62b5a13a5ed21dd5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/97b_plot_core_explanatory_optix_genoplots.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/101c_audit_remaining_breaker_metadata.py",
+    "sha256": "5785d5e73dfe4aec852b55f980f8fd4dc93bd5d634c8fef7ebd3120fa84c5755",
+    "git_blob": "b7320a9e555e0bb1a41bd43927e9d9d8b37db52b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/101c_audit_remaining_breaker_metadata.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/213_plot_sequential_model_compatibility.py",
+    "sha256": "f35961eecf64f947ec2a29822f98f9db4a1e7b8abdb80108290dcacb818d8e53",
+    "git_blob": "27b86b1e05fc9aa1dfcc737c04305edc34f0659b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/213_plot_sequential_model_compatibility.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/222_plot_AF_controls_hex45.py",
+    "sha256": "f1025fb3ef173baf112ae5f277bed2ced62bab9116c113d12d55162c11211cc8",
+    "git_blob": "92d654da134315ad2aa8d97fb7ab766c9e26528a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/222_plot_AF_controls_hex45.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_simulated_founder_slides.py",
+    "sha256": "87755a4eb780469daa854f627a4eb0e6812334169bf8a7c37cd9e3cccb452415",
+    "git_blob": "77a44fa261cca73964a9bd5505ffc736b046901d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_simulated_founder_slides.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/95b_find_broad_band_vcf_by_sample_overlap.py",
+    "sha256": "fa4665a0634e541b2e6ad137b07e294fe2bf7c58d02e8bdfeaa7eab44909293f",
+    "git_blob": "080e2e2e3ea273243850d161429b9a93200884c1",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/95b_find_broad_band_vcf_by_sample_overlap.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/155_make_canonical_taxon_plotter.R",
+    "sha256": "71e88ef9f8e9e9c1bff2e0725c979e7b19488100414c76edf67217d02d9b0dd6",
+    "git_blob": "970c3d733d788620299bb1cead07abf7f8fad41e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/155_make_canonical_taxon_plotter.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/110d_plot_B_no_DR_positive_BA_and_focal.R",
+    "sha256": "874e4744b8dee9a88c53af041b2fba15b97332b547814b30a821f50fca8f86ac",
+    "git_blob": "456223b8498350ab1100823e495603e376549239",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/110d_plot_B_no_DR_positive_BA_and_focal.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/96a_scan_broad_optix_Ray.py",
+    "sha256": "644536306919a54a5e3a395c382744b5e8fa14c9aa3338c733555957496b976a",
+    "git_blob": "40a7196542da865c9c582bce9ba008187a89872d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/96a_scan_broad_optix_Ray.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/107c_plot_BA_with_separate_focal_genotype_tracks.R",
+    "sha256": "85e9ddfe3e5decd25f85ff89855eefd40c65e962df5c9e6a7df4b5330b0e9699",
+    "git_blob": "adccadbad773a2501fe8fe3885019f82e11ec9ee",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/107c_plot_BA_with_separate_focal_genotype_tracks.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/164_plot_science_BDR_rugs_LR_rows.R",
+    "sha256": "dd38093e7895750215d2f7990e747e97ee377300b18ca77aa804caa050c7890a",
+    "git_blob": "ce14a1503618a492eb50adcd3f9b3acafb97aba7",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/164_plot_science_BDR_rugs_LR_rows.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/234_submit_pixy_pi_17controls.sh",
+    "sha256": "f9e616902c159ebddb5ec3aa6d1177ff6d42b3660c1c7c9b0bd408a3f2212add",
+    "git_blob": "2322a07e93fb8c4c88908404520205f43a78d6cc",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/234_submit_pixy_pi_17controls.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100b_fix_imported_cohort_builder.py",
+    "sha256": "943808370153776084181e453e2d8f595c7c7ef820497bcd4865f0da2dc15671",
+    "git_blob": "b6bd68a8b195e2af0df1e4a7623d0c12c6801b0f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100b_fix_imported_cohort_builder.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_gyno_three_founder.py",
+    "sha256": "9f8b3030fe8a4e47410a0e61b54e4b66fbef878e2f48d43640e1a43cabd21e3e",
+    "git_blob": "bd044ebbf6862091d78b15b85ba1726c8a4d0631",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_gyno_three_founder.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/94b_compare_frozen_snp_scores_WGS_vs_all.py",
+    "sha256": "94d05aeec1553654b7ff90409a29413d4f98d3d5301c630c4c4f6f7c0c1af5be",
+    "git_blob": "e945a792a842a35dae121c6a4f9b7dd086b9d689",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/94b_compare_frozen_snp_scores_WGS_vs_all.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/161_plot_founder_mixing_narrative.py",
+    "sha256": "ef979f7091b3a40af41f80055fe8af44af1539fce284830d8cb8a772d0509d6c",
+    "git_blob": "b86f1b5b631a74eec1ab1f61484c54bf773135f2",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/161_plot_founder_mixing_narrative.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/214_plot_founder_distribution_ladder.py",
+    "sha256": "a4e87bfa39cfce7b0a84fb14d4ba3fa9a303d4797acb47017e131003d8be7481",
+    "git_blob": "c9996d177f1c348cb8cfe20a7c7d210cf09fef70",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/214_plot_founder_distribution_ladder.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/152_plot_population_frequency_plus_LR_BWPK_exact_BA.R",
+    "sha256": "85493cb67dff3ef1013c5dccc8c1dc466bed73c961340fbad21d21144e606e65",
+    "git_blob": "196c7dbee1a7280ab470cb3756e0785131c4e834",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/152_plot_population_frequency_plus_LR_BWPK_exact_BA.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/195b_validate_full_sib_joint_calls.py",
+    "sha256": "20c2433c9b155ef398fed60d4353ee256854be7b5c21bbb571ff139b5260ed85",
+    "git_blob": "21f868523cfb2a8840c7de5ec5db90ff0070485b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/195b_validate_full_sib_joint_calls.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_coverage_observed_expected_bars.py",
+    "sha256": "3ae133ac48fb2e259e749bb80fa2d385ea5c28da237f5c476b425de9e2a413ff",
+    "git_blob": "10ff73ea567b326ec35dd361a615ac69215043e3",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_coverage_observed_expected_bars.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_centroid_symmetric_contours.py",
+    "sha256": "38277fb57d87aec21ce66095ec29652a79b8f0fe916c0bf89e90ccb06b3b6daf",
+    "git_blob": "f7be1d69300583f9cfaca289df4f9963eb58fe31",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_centroid_symmetric_contours.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/138b_plot_krista_Dennis_Ray_reciprocal_genoplots.R",
+    "sha256": "2afc861e2422be4439e15ec22ed5f10361f46c9823f40cef5fa32d188fb1b84f",
+    "git_blob": "558432537e7c0e4b324986ce50e7c173789c4c59",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/138b_plot_krista_Dennis_Ray_reciprocal_genoplots.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/230_prepare_pixy_pi_17controls.sh",
+    "sha256": "f22a9d609d3bc076976fb58b79505f85ceb207373c74d71389c729053b6e55dd",
+    "git_blob": "96ee99dfde53aa474fecface205d94a9eac52d5e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/230_prepare_pixy_pi_17controls.sh"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/110c_scan_B_no_DR_positive.py",
+    "sha256": "e4f84c094fe69c4da72eeccfb7cfa28108c9c1f23433ce7edb5e3dad8bcbdf02",
+    "git_blob": "f5e7096e0ffebf539cde984caa6462236c484e9f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/110c_scan_B_no_DR_positive.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/112_replicate_wallbank2016_fixed_SNP_analysis.py",
+    "sha256": "c9828191c1dd67a6f65415f1a839af5c6baa02a96b8f8bfd7ebc872899f794a7",
+    "git_blob": "0f35b336afb0a831952d3080f8f3aabdb068520b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/112_replicate_wallbank2016_fixed_SNP_analysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/144_prepare_final_DR_adjusted_LR.py",
+    "sha256": "7a8a1f333f6529069fe5e466acd192102a03df7ae6238475d2f3860d99ecaec5",
+    "git_blob": "2b3dae7c0f055a225096475b2d0ac96e3c71b309",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/144_prepare_final_DR_adjusted_LR.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/226_plot_AF_controls_hex20.py",
+    "sha256": "cfac30b30ac155cb91fbd6c8f0841ce7508e47247bc2766b61af37f09eb08493",
+    "git_blob": "271309afa1abbf3b4a12012b1483d9c12ee17e5b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/226_plot_AF_controls_hex20.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/127_plot_first500bp_focal_vs_WGS_allele_balance.R",
+    "sha256": "afa510368423a5c923c640ea0865105d5ab0edd9770f8b161b178f18496c7ae9",
+    "git_blob": "2deef3540b09fa562df6fe1d63b1579c56d51c24",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/127_plot_first500bp_focal_vs_WGS_allele_balance.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/167_plot_science_collapsed_LR_difference_emphasis.R",
+    "sha256": "bb82a78f0ac89d1f4679226c32667312b6eb9a75b352a4ec7d8d77cdcab1f832",
+    "git_blob": "c499a12fb3fb13a3197229e51648594f662fe7ea",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/167_plot_science_collapsed_LR_difference_emphasis.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/162_extend_founder_mixing_visuals.pre_contrast_trends.py",
+    "sha256": "9a1a81695dddefe7405a7fe153339ff71c498c6b6727d6538b9a5fe8a84646c4",
+    "git_blob": "237d797614b0a0482f14680a19e11f0b83c08fdf",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/162_extend_founder_mixing_visuals.pre_contrast_trends.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_TN_AF_centroid_overlay.py",
+    "sha256": "fa7c5403a9e130e11c451afc94310f40b30e23bba8ee53410ac4cce8baabfc18",
+    "git_blob": "7d5bfa1e7adf2a7d53fa44c69b0a90feea7ed21d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_TN_AF_centroid_overlay.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/165_plot_science_BDR_rugs_LR_two_blocks.R",
+    "sha256": "a9dd54ec583472227ffdc333f344839bcc99499d7fe54a31ce4e62a89de016f2",
+    "git_blob": "e3346874786e880aafe69b608fa867406eb15c30",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/165_plot_science_BDR_rugs_LR_two_blocks.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/194e_validate_full_sib_call_subsets.py",
+    "sha256": "15073fb53c6abc40224d1ef1ef77c0a910a214c0d38954cb21ecd2d9d1b59c98",
+    "git_blob": "419e64bc3e9564ac02ddf23f67b92c7e5e88f3ac",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/194e_validate_full_sib_call_subsets.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/95d_scan_long_band_original502_WGS_vs_WGSplusCS.py",
+    "sha256": "a653cedf8994e730db193a60b3d35c276ce409c4293349fe9639f129e00dcc3a",
+    "git_blob": "6db678e017794cf5265dc28f5eb78abba779eb40",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/95d_scan_long_band_original502_WGS_vs_WGSplusCS.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/94d_rescore_all_original502_snps_WGS_vs_WGSplusCS.py",
+    "sha256": "9bb5630bc3561c07e54328089abd6780ee44baa6d49694f3251deea9ed67f7da",
+    "git_blob": "5eabed5c23ecc0b40e1e0bc93d40c2f3df3ae5a5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/94d_rescore_all_original502_snps_WGS_vs_WGSplusCS.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/105_plot_perfect_D_R_all_comparative_genotypes.R",
+    "sha256": "69fb584949f7669c9155633b267499828e27f6cf0d10a6993bb9e72f73cc1752",
+    "git_blob": "be59fa31d4261451b475a90551f1c147ff815a68",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/105_plot_perfect_D_R_all_comparative_genotypes.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/109e_sanity_check_B_heurippa_besckei_reanalysis.py",
+    "sha256": "4c9bb8b7ec3b6b3a936335b223d88b068f7293b78bf80161bbfdd8f26f721b9f",
+    "git_blob": "d6cfe9cfadece09ffbb8c54c9329de5d6cbaa6b4",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/109e_sanity_check_B_heurippa_besckei_reanalysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/151_plot_population_frequency_plus_LR_BWPK.R",
+    "sha256": "1e94429ce7262a82521361e4c4656c3028fd5ce6d24e5baf60bdfe1eae5b7f34",
+    "git_blob": "8d1096dd695520ecacaf82ed5dda67d601097631",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/151_plot_population_frequency_plus_LR_BWPK.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/count_pure_melpomene_polymorphic_sites.slurm",
+    "sha256": "9b3fcd4b02cd1943b5eed0d804f143ea6046b2200a7e82ab390e641b1b80e975",
+    "git_blob": "03f19e5fa6aeb640792d8730af352d51bc0f50dc",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/count_pure_melpomene_polymorphic_sites.slurm"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/93b_plot_optix_comparative_predictive_genotype_supplement.R",
+    "sha256": "eaa154f7ead5f7730ac7c67934b3db4dd384ccb5f2f7c18ebbed77c86312b1b7",
+    "git_blob": "9519b4510576b26efde45265834fd906ca15dd73",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/93b_plot_optix_comparative_predictive_genotype_supplement.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/119b_plot_D_R_expected_site_genotypes.R",
+    "sha256": "521c77d50703c593402d20adbc356f95956b9b00471ef3c92fa4ff642bc35ce6",
+    "git_blob": "7bc3f36265dd7f75b015867dac18e540d3cd64ea",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/119b_plot_D_R_expected_site_genotypes.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/231_call_pixy_allsites_chunks.nano.slurm",
+    "sha256": "348d2f1cca449d4d2fe60efb3ab0128bdd35f498d47f69b43c984fa11a1ed4a9",
+    "git_blob": "4fb110c2dc06f0a0dc1582318c1316be43a8b063",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/231_call_pixy_allsites_chunks.nano.slurm"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100b_cohort_builder_drop_problematic.py",
+    "sha256": "c2c8ede09e6c2402b78c601879b5373f0eb8035c2dc5bca74fcd9e149b00b0be",
+    "git_blob": "fc2f83f1ca3cd4c823faec6c5c9e3a152fedf6be",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100b_cohort_builder_drop_problematic.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/162_extend_founder_mixing_visuals.py",
+    "sha256": "f27254a8144be95eba438e8d6c67d5e33e68b8d39fe1e1d196ddf3956079303c",
+    "git_blob": "ab4fbf92aaf8f986f16214377bcced5d8ee0b5d4",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/162_extend_founder_mixing_visuals.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/158b_fix_factor_commas.R",
+    "sha256": "bd7e35ba6f19b7ef72209bbe10fc7211b5a6cc14a5422af09f45d9bbc1e49f01",
+    "git_blob": "40c024edb2baa03f196be188331062ec26db7155",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/158b_fix_factor_commas.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_centroid_selected_mixes.py",
+    "sha256": "126b03cfa8c07af11b560618c19720d156a328d79b73986ae0a89041be556c32",
+    "git_blob": "bfe7f7e47ae3373b0ca9572f1331fc92ec32c4be",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_centroid_selected_mixes.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/116c_fix_Wallbank_D_R_plot_hlines.py",
+    "sha256": "5595ea0b952c8998c7aae0e6de4b18cffbe71a94707ec0ddb46968561d93ac9c",
+    "git_blob": "81ee4a1cbff16e61b98246eeb3d25f0a5bf66da5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/116c_fix_Wallbank_D_R_plot_hlines.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/210_plot_reciprocal_mixture_recaller_narrative.py",
+    "sha256": "4fb0503ff30d90faea0c1cf76128885794e18050243fc692f5e75042690c999f",
+    "git_blob": "997a530b5860413e89fd818c7c6de3846b466971",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/210_plot_reciprocal_mixture_recaller_narrative.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/101b_audit_previous_manifest_module_labels.py",
+    "sha256": "c06f4110a87efc4f1a6b9ce7789307d8fe32aff3192d97d997a3b61ce259ec9a",
+    "git_blob": "a38cce96efb83175900720c25be1f0e004430f3c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/101b_audit_previous_manifest_module_labels.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/119b_base_scorer_B_west_of_Andes.py",
+    "sha256": "8071ca56995d3b69960226bbf0626480fc60952f66c76f99e6dcd1086e77d6f9",
+    "git_blob": "cca1800d3771dfb5d0a32fbf78954661a33943e3",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/119b_base_scorer_B_west_of_Andes.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/162_make_Arnaud_BDR_metadata_tables.py",
+    "sha256": "c0d0717274357e8f3480f7df4da51e88b3c8a946b8baf3b23d7a772f124ce629",
+    "git_blob": "70c4964f2d746e5533fafba33d7b87d944c7c3f2",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/162_make_Arnaud_BDR_metadata_tables.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100b_prepare_drop_problematic_scanners.py",
+    "sha256": "cff198cac65f2d370ef081c49e512c6376cf85ef4e29da5acf959a0e7261131b",
+    "git_blob": "ed25564c3fe3a6ca15c7d9ce9bb929b7152fe656",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100b_prepare_drop_problematic_scanners.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100d_scan_Ray_drop_problematic.py",
+    "sha256": "923c6e12161b45451a038bc0860e5001a15fe775a754fdcbb19b2ee7cc5d98ab",
+    "git_blob": "d281942706d39507fb9c922680f686bce83dc351",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100d_scan_Ray_drop_problematic.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/225_regenerate_TN_NDJ_AF_hex20.py",
+    "sha256": "7ba77d709395f391508deabe8da4b174b95bbb30b2b0d07ddd90cc7a97d60d5d",
+    "git_blob": "cd44f49a87ad60f841ca759e3372c899277eeef2",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/225_regenerate_TN_NDJ_AF_hex20.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/109d_plot_B_heurippa_besckei_BA_and_focal.R",
+    "sha256": "eb278b9d98a5a8fbed2cfd49dcfcb794845e89b9d7096b0b6bb312b3b7849fce",
+    "git_blob": "b170a796ce7c78a94bccc39bc758e8e8d8518d48",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/109d_plot_B_heurippa_besckei_BA_and_focal.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/140_plot_B_western_adjusted_LR.R",
+    "sha256": "eafed235a7294d4cfbbecddc139eac28056c1a556e59c7ab339f4e0e9eb64856",
+    "git_blob": "6eb01d45c428a7617a50cd3dec231188d6728911",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/140_plot_B_western_adjusted_LR.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/155_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref_taxon_canonical.R",
+    "sha256": "87b392306b17cfe65f227b562ab0c5e5f7bc5c3a0cbe1d7b7255ef1d3e19c66b",
+    "git_blob": "6d687d54cf5256f50998d51ec44b4d1f440a1910",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/155_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref_taxon_canonical.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/215_plot_founder_distribution_matrix.py",
+    "sha256": "8afb51cba454707ec260a16e12c1bba4f8ace6c4d2ffb574967c26f6799f7276",
+    "git_blob": "81cecabfd789d0726a287b539319d35ebf062c5a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/215_plot_founder_distribution_matrix.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/157_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref_taxon_canonical_BDR_labels.R",
+    "sha256": "20f57851959e7ced8670544e8a03ddfbfde29107a26aed8b35a545a4f97aee67",
+    "git_blob": "6da26e3a71bc9d821cba13c8b8c00f66b52969ec",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/157_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref_taxon_canonical_BDR_labels.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/161_plot_B_vs_DR_repolarized.R",
+    "sha256": "1475d29d11911da3cd54ba41c30b17051f460f7fab047329ed78cd370f2dff9b",
+    "git_blob": "c09d15d200356be40a112d5eabdf7e3bce76ade7",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/161_plot_B_vs_DR_repolarized.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/37_inventory_krista_genotype_plots_tar.py",
+    "sha256": "01179333256924f1b17796ba820ed6aa54f9b6bddf808ea1bdad8171c9e3aa65",
+    "git_blob": "daf6ddaf821d4955ea094eac52e89cf5e18b0c7c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/37_inventory_krista_genotype_plots_tar.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/regenerate_TN_AF_hex40.py",
+    "sha256": "66ad0a80d22054291160cda1747548cae4e6205f04012104c83a0aeb63651d1f",
+    "git_blob": "4e6ea6ebe3d8f48cf0afe891858adf74655446d7",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/regenerate_TN_AF_hex40.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/121b_plot_all_R_BA90_genotypes.R",
+    "sha256": "1e36501cc5b8e02eac7519439c8c46a13e9a168b6ad01de73082d1424009357c",
+    "git_blob": "99dc511fbd204b7c31e921ac01652550d78681eb",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/121b_plot_all_R_BA90_genotypes.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/02_inventory_region_archives.py",
+    "sha256": "a3db89148d86c2c324df837a3bf3e2351ef86bf0fac8b233f2778e9507ec52e1",
+    "git_blob": "d762ad7ac8f8857df307a79b5cce0165f86e3ab9",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/02_inventory_region_archives.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/26b_audit_unindexed_51sample_optix_slices.py",
+    "sha256": "8d7738c838c24588806e7d1d740932de6b765cc4702813e155cc5735061eaec6",
+    "git_blob": "2b66c316871855a5ee2922636a0e8dd089fa55b4",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/26b_audit_unindexed_51sample_optix_slices.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/218_submit_NDJ_finish.py",
+    "sha256": "ec70317427f9aa76d8ae5b2d9d9587912cc274f79de8cb3a7c0a438bacac4855",
+    "git_blob": "791fc4b0399893f06c11e02f04d04b900f385020",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/218_submit_NDJ_finish.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/163_plot_science_BDR_rugs_exact_LR.R",
+    "sha256": "a4f9333956d523138b5eb0a90bf55cd60e7712f7345c7c90833e24a0103fee7c",
+    "git_blob": "66e3f2305beb06115fd47b5992dae045360e8074",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/163_plot_science_BDR_rugs_exact_LR.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/159b_restore_published_region_coordinates.R",
+    "sha256": "e435b7b85a86f8ccf66379065a0ca33724f1ac83eee3f97a4dc00044dd3a5c43",
+    "git_blob": "3d8233938e9e7ee757292dec171a3a55d7f74a28",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/159b_restore_published_region_coordinates.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/201_simulate_empirical_full_sib_mixing.py",
+    "sha256": "ab1f3b06f90db6a640087c19601cb088c423121bd4cb3c2a33464009a08eec40",
+    "git_blob": "0311cd61350e50747127e2f66884ee338b52c749",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/201_simulate_empirical_full_sib_mixing.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/144_remake_B_D_R_with_frozen_focal_sites.R",
+    "sha256": "78e0eb115922d675925af14c5ddbe1fbd7cd225bbc30994b50fce434ef737fa5",
+    "git_blob": "300cd35b7018ecdb056ac47a6ca2e615f6f24f1d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/144_remake_B_D_R_with_frozen_focal_sites.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/233_collect_pixy_pi.nano.slurm",
+    "sha256": "3c97264ebb9b13704802cc576700164f5ddd5f9f36045369fe72746224019d2c",
+    "git_blob": "29f93d0e99f117483e5ee2f737fc6a18df332562",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/233_collect_pixy_pi.nano.slurm"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/163_inventory_genomewide_inputs.py",
+    "sha256": "d17fb2ebff6badee0c115b3957ae9ae33fbb6f141fdb9522795ee5e7884f755c",
+    "git_blob": "04c621e4f04bfe46c3423646efea96c309406764",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/163_inventory_genomewide_inputs.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/198_infer_sibling_ibd_by_chromosome.py",
+    "sha256": "c2cad3f44b5c946136c15110f5beca2b1d82834f8b0f1ffb5b241e0f232e0ddc",
+    "git_blob": "d9e7d7da407278f2dd05583061a63d2d9592526d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/198_infer_sibling_ibd_by_chromosome.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/232_run_pixy_pi_chunks.nano.slurm",
+    "sha256": "6d90729926cb56b26f559bbad16e5ed913683ce74ca77fbf22bafd7829129674",
+    "git_blob": "ad877261048c958267a17bfb9b98de6df369383d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/232_run_pixy_pi_chunks.nano.slurm"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/219_regenerate_TN_NDJ_AF.py",
+    "sha256": "f51007f253ef84e90dd8e0f2256758eaac18f8652be3ab49f17e2cab4b9ba52d",
+    "git_blob": "1fd52f204ff6c4b02c2e3b78f16c5ab9751aa666",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/219_regenerate_TN_NDJ_AF.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/131_plot_first20000bp_focal_vs_WGS_allele_balance.R",
+    "sha256": "5420b83b41196ba2c29dded5b4f970b147e5eabba192589c61183b0f2f160fb4",
+    "git_blob": "c76a3988b06fc2e6f099208ce7a7cd95292669c7",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/131_plot_first20000bp_focal_vs_WGS_allele_balance.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/166_plot_science_collapsed_LR_variants.R",
+    "sha256": "0d1c4cb2c7ff74b08ca967abe257037a85534fb1442e316d001f44e6ba71df61",
+    "git_blob": "518afeccb15c47b3a1dcb34d42bd67d641c46b40",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/166_plot_science_collapsed_LR_variants.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/108_plot_B_BA_with_separate_focal_genotype_tracks.R",
+    "sha256": "be5ddaa873aeae8240df1599b5ceff9458839126c38bd4518465e6ac43bfda27",
+    "git_blob": "f246a499e18607e4ff629094514b1828c8c0a152",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/108_plot_B_BA_with_separate_focal_genotype_tracks.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/171_plot_science_exact_L_DRDR_R_BDR_nonconcordant_pubstars.R",
+    "sha256": "fc587d015e0d7d384d9b278385dfed82fd5e36f5687a6504be71ab776d369735",
+    "git_blob": "691a122fc07146440556a661d8b35725d12cf301",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/171_plot_science_exact_L_DRDR_R_BDR_nonconcordant_pubstars.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_smudge_smu_viridis.py",
+    "sha256": "f3de4b383a2d0f372ca9d0f3d73ddaa749cdc01247acfe1c2e7c351ec2ad48bb",
+    "git_blob": "c5486b0c8302a87a157e665a9ac73959b00c85bf",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_smudge_smu_viridis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/110a_prepare_B_no_DR_positive_reanalysis.py",
+    "sha256": "d5f0cbe6976a5c5b1748670756047d15d0d1ce4010859a1e9786d63c5d86b327",
+    "git_blob": "9e01540a3034ed1f5fcc544db4a19139ccd45691",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/110a_prepare_B_no_DR_positive_reanalysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/92b_plot_final_curated_focal_figures.R",
+    "sha256": "93c0db9b6f6c5493af4648a71274ec51e1d6f8cb29fd7a2eba23f5334759fb54",
+    "git_blob": "45d872f8265a79830a2e061189fa2cb21d704830",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/92b_plot_final_curated_focal_figures.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/196_mendelian_qc_by_chromosome.py",
+    "sha256": "3a78134e5733f249fc36dc07bd098930b4018b8866cac6c6254726ed9f5f3b33",
+    "git_blob": "bd11af10468e1d211d576e603382bcd4510c3593",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/196_mendelian_qc_by_chromosome.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/159_plot_science_trials_pubregions_cartoons.R",
+    "sha256": "652f53669ce9a2b79ec6fbde05bc7943f43242f96cf32fa4599dfb8ca583196e",
+    "git_blob": "45295910dc586af77b4417219f1807b9fae52192",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/159_plot_science_trials_pubregions_cartoons.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/154_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref_taxon_only.R",
+    "sha256": "87f36f3944d829a3f8dbe477016119af368e08f48447eebe4af19c1de2136660",
+    "git_blob": "5435c5133556c96b32e52e1c19817582a186676a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/154_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref_taxon_only.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/160_fix_science_cartoon_sidecar.R",
+    "sha256": "03630e2b0d6ef2e870d9f6bda73c01a0380a52375aeefc9736cbf29b04380e2e",
+    "git_blob": "4332e496f0dd96af2491ec78ec786370c8d8e576",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/160_fix_science_cartoon_sidecar.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/109b_base_scorer_B_heurippa_besckei.py",
+    "sha256": "7a591a3b253fb59a2054a99f0334c8f97077fc4d7c639a376f8f579ce0931707",
+    "git_blob": "bd555bec746d84d84a36b696eaf20fa4ead0545c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/109b_base_scorer_B_heurippa_besckei.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/93d_build_optix_original502_genotype_plot_table.py",
+    "sha256": "8f2a321c23539066f4e888856a9f5a637902f381784846d22f5a9635156f4044",
+    "git_blob": "9471951b664b9ef245fb2f84781e41527a150593",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/93d_build_optix_original502_genotype_plot_table.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_TN_AF40_batlowW_50pct.py",
+    "sha256": "0152201590a4b9fe260a86aacee6bc549a0f46be939c6d1a91798a1daa2b65a1",
+    "git_blob": "eb20f0f8fa8b2acfbe0bc1128c98f600c23a6fa9",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_TN_AF40_batlowW_50pct.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_TN_AF40_mixing_overlay.py",
+    "sha256": "af12fb8eb61c47b336b33428632ef4fe7398619afdbb684470c3f71d0ae35f92",
+    "git_blob": "4868ad33622def9d94460403e68c9d0e267e504d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_TN_AF40_mixing_overlay.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/03_extract_region_archives_once.py",
+    "sha256": "b436bbbc5ff1747cf86ee0d19f469300931ac5bca9d10abe157c3b77ec070b63",
+    "git_blob": "e4ba1a404fd327a1b2ff7fcee2347b0e26ce4d7f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/03_extract_region_archives_once.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/116b_plot_Wallbank_Dennis_Ray_BA.R",
+    "sha256": "48062a6bdf8225f95e7b4761d164eb6aa105c4aab1ef727acd5e21a59f8eaf1a",
+    "git_blob": "545debc7d7cec33a578b7a63d3a20d8f322ec780",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/116b_plot_Wallbank_Dennis_Ray_BA.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/25_extract_plot_specific_optix_code.py",
+    "sha256": "2f75e382bdc501374d200821318283ae1199888a0f1200221b743fb1eb82654e",
+    "git_blob": "c43eb2bc9d80c919c2698bdc3a33ce7bf0ae0d5d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/25_extract_plot_specific_optix_code.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/101a_fix_dynamic_cohort_size.py",
+    "sha256": "b6a9b9f564b0a31cba90abd0173595a4729305d5f35061c04c541de6d613bba2",
+    "git_blob": "be22379af793e60c0d94137679e5dbec42cf6f10",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/101a_fix_dynamic_cohort_size.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/151d_make_exact_BA_population_plotter.py",
+    "sha256": "93202abf122365b8098206c280b5b4aa0e4e0a18150ed55efa2c8901fbce4f81",
+    "git_blob": "c30e1332b457d722b8857f16fe79587cafa8cd17",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/151d_make_exact_BA_population_plotter.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/129_plot_first5000bp_focal_vs_WGS_allele_balance.R",
+    "sha256": "a8ab8307cc61fe7470c27cf75838cc099c31e3086566c21f597a09a4f3d79876",
+    "git_blob": "3000f6534e0945dbaca0af9e91077babd89668e5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/129_plot_first5000bp_focal_vs_WGS_allele_balance.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/156b_patch_metadata_column_resolver.R",
+    "sha256": "62d1569d27a22cfbfe1095754cd6416f7b6ac0e5090f0c7c10ef2c78deda5942",
+    "git_blob": "fca01aaa5f2b6ef3eb32718c2201ec6842f62dc2",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/156b_patch_metadata_column_resolver.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_smudge_smu_luka_bleute.py",
+    "sha256": "fd3f24d104e63018e0e6b7dfc883f4c3f985deaf2c3b173fe787010a0bb6cd16",
+    "git_blob": "e579dd197109628af25373cf5571e38f2d6dd8ce",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_smudge_smu_luka_bleute.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_AB_A_digametic.py",
+    "sha256": "544917f7e9ebbc8f3c5dbda7ad4c2645ca7365f24d0b5bca0ba02f9ca85974ed",
+    "git_blob": "092a2adfedd3133def7c7cf61ab8cf36cde269e4",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_AB_A_digametic.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/101b_identify_remaining_best_SNP_breakers.py",
+    "sha256": "d5c0adfc8cc0fa8a0e7d53dab52ddaeaf7fc8f327dcea061aee343338e6002c0",
+    "git_blob": "0619376f29b4ef7138a0a79c209a39dd4344e608",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/101b_identify_remaining_best_SNP_breakers.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/93e_plot_optix_predictive_genotype_subset_original502.R",
+    "sha256": "230a0fc5a38d75ed6b32d27f3ae4f54172506400a9fc66a35b806c49c1515796",
+    "git_blob": "2c18c22e83eb129e7f94be5b9a111d97343226be",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/93e_plot_optix_predictive_genotype_subset_original502.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/138d_replot_krista_Dennis_Ray_as_true_vector.R",
+    "sha256": "cac525d6b69d23357b2b65ff0f0c601ed98102abc203b781c375eeb322602a36",
+    "git_blob": "0030150cb65466bfd87ae6d177e5986f40ae70d5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/138d_replot_krista_Dennis_Ray_as_true_vector.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/207_build_sequential_founder_narrative.py",
+    "sha256": "00ea7c1c7d14aeccebd1b37a364cb53259c09c09846238aa94f669f7895d331e",
+    "git_blob": "e8d3e52b2d7dc4c1ebc77fb12be628d8c45be2c1",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/207_build_sequential_founder_narrative.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/135_plot_reciprocal_genotype_histogram_comparison.R",
+    "sha256": "46f3579d15e23f1093ec2ad17dad922c6a59396b119ca4f8f40f6dc3d036010b",
+    "git_blob": "f7fc7b7970e49cf3047abc6108964d006dc05749",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/135_plot_reciprocal_genotype_histogram_comparison.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/137b_plot_band_original_region_reciprocal_genoplot.R",
+    "sha256": "f3bb63be125a344a0789c1ac17a5508a9f2da552db5fa338968743a9664a9c4c",
+    "git_blob": "9f20dcb0fdc6233e561b79b4ffae737643ba641b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/137b_plot_band_original_region_reciprocal_genoplot.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/114_prepare_Ray_contigua_dominant_pattern_analysis.py",
+    "sha256": "64d39d9b5c4bc100af64d33d789e5218a7e58257ed7e9adc40c39483dc6dafd4",
+    "git_blob": "1751d45060a8ac905342897a374e5e1d3c8daad5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/114_prepare_Ray_contigua_dominant_pattern_analysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/110b_base_scorer_B_no_DR_positive.py",
+    "sha256": "f942846186b8c32e7b87e50f6131adda0f8f30c259472c776772d6ba3d1acadf",
+    "git_blob": "61ac78d3abe921b159c442ea75e8f8cfd7b380bc",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/110b_base_scorer_B_no_DR_positive.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/128_prepare_first5000bp_analysis.py",
+    "sha256": "cb19c52c2cc0023ed2963c19062e054ad2cb61799f6d1d54c55ac76a9a6ac420",
+    "git_blob": "9cb19e2252cb7102689491d635fc9df5d4d1f1a1",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/128_prepare_first5000bp_analysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_founder_slides_empirical_depth.py",
+    "sha256": "5b8dee33d9d28e6a5e8ef34f3b86915ee38bf3c4d000ace4366fe63b90165c09",
+    "git_blob": "1586b52832cf1239f117a78acef5be66cf92000b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_founder_slides_empirical_depth.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/47_select_comparative_informative_sites.py",
+    "sha256": "ec603d8abb729b09dc1ea6f950dd332e8311b5399fbe5d09442cb67920d76f58",
+    "git_blob": "b94953ca57def31f2a0dea8be9a3d5587fec2994",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/47_select_comparative_informative_sites.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/33_build_focal_pseudopool_evidence.py",
+    "sha256": "a5174af956bcb17e25bc1758c7a168149d18c3797a356b4095064e081758c46d",
+    "git_blob": "f9c10e9936a7e2bd94169b8c1781ef51e28cb310",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/33_build_focal_pseudopool_evidence.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/99h_fix_diagnostic_group_labels.py",
+    "sha256": "5fa16649331e4e3df7eee80738a0af23a017b1b3d49529557861efea66c60a55",
+    "git_blob": "e8b2133d157cc1dd2e1bcacdde23f134a26506de",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/99h_fix_diagnostic_group_labels.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/156_make_BDR_ordered_canonical_taxon_plotter.R",
+    "sha256": "c0b4a7c3b5a5679b08d48f5fb021aa30b0d45ad1ad222b52d5a87845c106a19c",
+    "git_blob": "25cda0294b2720614bd407e2dd56166e23e944bb",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/156_make_BDR_ordered_canonical_taxon_plotter.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/120b_plot_all_comparative_R2_site_genotypes.R",
+    "sha256": "a3273204e36de1dd177ceba391ae667c0496cfbc14dc7d07a743d2f715827402",
+    "git_blob": "444385d4474317c485fd51f4e83da6b4b2d823e8",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/120b_plot_all_comparative_R2_site_genotypes.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/127_prepare_first500bp_allele_balance_plot.py",
+    "sha256": "2aa17780fe5d1b227b8775751e88d5b07332602b6d1c2810cfd0577d53bc192c",
+    "git_blob": "e4b3db61ec48201c2b31570be3d23d2859d695b9",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/127_prepare_first500bp_allele_balance_plot.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/157c_fix_population_identity_validation.R",
+    "sha256": "30ff1040317305f3842d906a3a049983752c5fad4bd9da0e87326f84780ade0f",
+    "git_blob": "72272317cf632aa8aed0638a8e84c7106f89750a",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/157c_fix_population_identity_validation.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/35_plot_polarized_focal_optix_evidence.R",
+    "sha256": "49433a45e83d5648c154aa22d3e4ea3cf5b72874888770c848bb41ee27276970",
+    "git_blob": "80586830f189886184fefefc1d5bd5825e25061d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/35_plot_polarized_focal_optix_evidence.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100a_prepare_problematic_sample_exclusion.py",
+    "sha256": "3dbd3d3823f53605d69c8ec713dc9bc25e1835bd5960ca591e73343bae2b36e0",
+    "git_blob": "42a1d7606617118c785f552f85ec7fe9bc6bb248",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100a_prepare_problematic_sample_exclusion.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/149_plot_B_D_R_unified_balanced_compact_BA099_ribbons.R",
+    "sha256": "b8946cf6c2595386e1718273f08669bad8a71fa32898aac3637e87963de2f2b8",
+    "git_blob": "dca30421e7516775b3896e35af52f41332731adb",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/149_plot_B_D_R_unified_balanced_compact_BA099_ribbons.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/159_fit_autosomal_three_vs_four_founder.py",
+    "sha256": "1253140e7644e58645427a05a7add5d0696c88054da9d5af12592cd6381b28f9",
+    "git_blob": "9d8788090e869cf6b5505e285e20a05578df727c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/159_fit_autosomal_three_vs_four_founder.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/158_make_science_condensation_trials.R",
+    "sha256": "f069f4a3dcbb8fc4adf44609a1dd446dc3bcd15d089a3789d38c919c22e6d4fe",
+    "git_blob": "23f271e0296a1b7c34c3c0c9861d1e130e6be6da",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/158_make_science_condensation_trials.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/154_make_taxon_only_nonfixed_ref_plotter.R",
+    "sha256": "13e0c12405f5f512b24fb2c79756d9625f871af841dadbae1fced5ff74e03696",
+    "git_blob": "5c0c078d525e31553ee3eb6781539e565c4da033",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/154_make_taxon_only_nonfixed_ref_plotter.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/125_plot_focal_vs_high_depth_WGS_allele_balance.R",
+    "sha256": "2fb00c35d1aac42f57944e6e1b34894b511006930b9013174d0164728c223b9f",
+    "git_blob": "83385d990faa59c9e42d7641f385882af06eb8d0",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/125_plot_focal_vs_high_depth_WGS_allele_balance.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100b_base_scorer_drop_problematic.py",
+    "sha256": "c115064b238d12074020e2d6e90e40c630fbb5c949f0cc60c299e41bae5f4165",
+    "git_blob": "94f63e86cb673c6b1de1ef1a33d4ea9c5d6a9262",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100b_base_scorer_drop_problematic.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/218_NDJ_controls.py",
+    "sha256": "fa3a914c52305aefdf97394a0a1fc654ea18bdcd54445f2ca586c82ef5977932",
+    "git_blob": "f42bce76a58d56bcecc8c9c507524dabc3f15569",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/218_NDJ_controls.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/143b_combine_final_adjusted_LR_B_D_R_panels.R",
+    "sha256": "d23d5e2b787c19d147d3d419011526622da2347fec4c4336ed14db3fe91126d4",
+    "git_blob": "c75e95275dfb83c409cc327eca4ad3adc4be8ddc",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/143b_combine_final_adjusted_LR_B_D_R_panels.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/160_simulate_calibrate_autosomal_founder_models.py",
+    "sha256": "20a2bfc836199e80b7716724c2f0102c75a34b1c6beb55944ec61df9888640ae",
+    "git_blob": "bf153a0c2e5faed6739535df86c00dd5b2c61fd9",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/160_simulate_calibrate_autosomal_founder_models.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/92b_plot_final_merged_lr_figures.R",
+    "sha256": "0433cd6814af6a340aa4a471285bdc8c43376853d3e1a581bf2a9a89e579e819",
+    "git_blob": "4b52e84fc04d20a1ac796b7f8ac1a2fd6ea7a43f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/92b_plot_final_merged_lr_figures.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/count_variant_sites_by_taxon.slurm",
+    "sha256": "5103cbd6fe9c7e466fd36db29f590bad4c8a9100833eab60edf3e34e9bd1cd5c",
+    "git_blob": "695346061c0769c59fc0e2d7d3889966260985ea",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/count_variant_sites_by_taxon.slurm"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/95a_scan_long_band_region_WGS_vs_WGSplusCS.py",
+    "sha256": "17d93f9ba3d81cf09472cb0b3097fc2b82ed265c346268028a0885b369780f5e",
+    "git_blob": "09582f6a420b0968be56b82cd983bfa177b42466",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/95a_scan_long_band_region_WGS_vs_WGSplusCS.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100b_rebuild_filtered_manifest_and_base_scorer.py",
+    "sha256": "ce4af073a310e7d9375bd5180922c68775ae528fd03aa5d518fcd5a11b5736c5",
+    "git_blob": "dfa05f7d564271ae7885e0c78ba94f5952d279ce",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100b_rebuild_filtered_manifest_and_base_scorer.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/224_plot_NDJ_chr15_1n3n_followup.py",
+    "sha256": "adbc64a7081f451ac7725c42a771c6d770aceca4a46e6d2d0abe17fc0c3abe40",
+    "git_blob": "411b61a8d22b4113b8e4f036da7a7825e4a637da",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/224_plot_NDJ_chr15_1n3n_followup.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/153_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref.R",
+    "sha256": "813bd2b13a912e574b20dce9ca652ac6f557cb226141a0788245b0f4bb42339c",
+    "git_blob": "640500ae0577201cbd0a4d717befc24257e6b753",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/153_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/189_inventory_full_sib_pedigree.py",
+    "sha256": "c53f620ae45e9ec9b4f2cf9bca5c22dae414fc5080f78095b51b7b331f7d7078",
+    "git_blob": "c5fe9fd932db3a980dd9b925b89c841a2f72b6af",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/189_inventory_full_sib_pedigree.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/46_restyle_aligned_genotype_plots.py",
+    "sha256": "c02b686161d771169d9163be6f0ef7ee1c0cf156bc33a1f6df12ca78772f474a",
+    "git_blob": "baa49fc4cd073bf8f4e9c8691d09bd4c34754882",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/46_restyle_aligned_genotype_plots.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/168_plot_science_LR_supportive_glyphs.R",
+    "sha256": "60c9a9cc6f4f0a5aabf6e564a8fb0f192054dd26647a4fb7b2947c70c24e1179",
+    "git_blob": "0abeb823c57c445360129031373da9724983ef92",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/168_plot_science_LR_supportive_glyphs.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/96c_plot_broad_optix_association_ribbons.R",
+    "sha256": "a743197f46d62cb6d2631e50f59322b6a274e4054e8586cc4c1fe0ecc7b5e9cd",
+    "git_blob": "618ddd4beb2beeaae8262e41ec11b28b26ecbc6b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/96c_plot_broad_optix_association_ribbons.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/162a_add_genotype_contrast_trends.py",
+    "sha256": "5cdef50cd1a1ee6f6e35c78bdc527277890ba06d936b0e39832d093e230bc29d",
+    "git_blob": "1612fcd83db1310a7a25010856598366cc055f25",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/162a_add_genotype_contrast_trends.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/145_plot_B_D_R_correct_pattern_ribbons.R",
+    "sha256": "49fa69de4ffd44e9222da3b1a570f82cd0d9534761bb3fac38bd70632cb4e5f2",
+    "git_blob": "f13458dbe0da03cddcb0964b734ecb8670aa15d8",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/145_plot_B_D_R_correct_pattern_ribbons.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_TN_AF40_mixing_overlay_viridis.py",
+    "sha256": "35762299069e5120af8f44da2168771d159e17a208c107509c7a13d33d30cfb1",
+    "git_blob": "5ce969f84c683b8cd6c7a3b986aa8889ac4f1e9c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_TN_AF40_mixing_overlay_viridis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/109c_scan_B_heurippa_besckei.py",
+    "sha256": "ea888d296ab57f30c052b8fab8d18e07cecb628c9915d72c2da60bc9edb22daf",
+    "git_blob": "254dce62df674db39d0f5839b52ce0a3aec81b76",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/109c_scan_B_heurippa_besckei.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_TN_AF40_viridis_unannotated.py",
+    "sha256": "0b1302ea4b9032a869b4f71bc422d8f0c584682a29b082834cfabbc3d8ed86e4",
+    "git_blob": "8ffea8d6dffe36c27c5c3e6265aaf8d825c2e2e1",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_TN_AF40_viridis_unannotated.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/139_plot_B_six_taxon_exclusions.R",
+    "sha256": "7c36c3278fe9e8143a6bfad3c17865d5e6d9eaa944b7fc666cace59cd26dd62b",
+    "git_blob": "82c1d83087541c74e2df9250ab0c7d0826b4337b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/139_plot_B_six_taxon_exclusions.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_centroid_contours.py",
+    "sha256": "acb209ac87eb2701366ed5497a740b030f6935f9f3564d617503e8b0bf149f9c",
+    "git_blob": "50111f2b6a89afecc06827ef14f3ac6d559140af",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_centroid_contours.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/156c_fix_metadata_reader.R",
+    "sha256": "b885b8e642804a1316e2d1061dac20361f3dc693f159c1cce796e7a6366c6f0e",
+    "git_blob": "1cfc6212e6156b5edd20b063c4dd9fc0fe396670",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/156c_fix_metadata_reader.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/170_make_homhetcolour_version_from_169.py",
+    "sha256": "5e04856fba6250babbd6a400348e5cdf6ea4368952cca306a0e3609f0842ae26",
+    "git_blob": "fd1ef1cb2ecd635149df3979990dddb6c770b940",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/170_make_homhetcolour_version_from_169.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/107b_add_focal_LR_track_to_BA_manhattan.R",
+    "sha256": "57bdac345ea48f6800dc11982d991d451390810f3d61efcb45e9e31c88886193",
+    "git_blob": "f095c6a3c0153102945cf4024304f31cde8fc788",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/107b_add_focal_LR_track_to_BA_manhattan.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/141_prepare_western_plus_heurippa.py",
+    "sha256": "f0d25046c0414bccfd2902d5d3e1539640f4c48568142bb10948420d625238ba",
+    "git_blob": "4bf69e9492102cc7b1d12e386d1b15270184a0b1",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/141_prepare_western_plus_heurippa.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/94c_plot_filtered_WGS_vs_WGSplusCS_genotypes.R",
+    "sha256": "f15f0c7181aa43d19fa46d9539564f41a89b9d3885b646b2013228792bf077f6",
+    "git_blob": "aa43a568170fb63dfe532d5ee84451e5347726ae",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/94c_plot_filtered_WGS_vs_WGSplusCS_genotypes.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/152_make_exact_BA_population_frequency_plotter.py",
+    "sha256": "ed12db235e9ab9b819fdab83070d936ee70dfbb82247fbc5f0f1804be0970df5",
+    "git_blob": "d0aa8d1e3502c0e528493178e0328b8d21c92870",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/152_make_exact_BA_population_frequency_plotter.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_depth_dispersion_correct_founder_models.py",
+    "sha256": "39c6669c5c1b1f4492846d89b66f4e8a9138f086d53327615b54c172afda19d4",
+    "git_blob": "57aa5a4cef063f2cf85a74f48c3e5ab071259940",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_depth_dispersion_correct_founder_models.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/111a_prepare_B_with_DR_negative_timareta.py",
+    "sha256": "bd3f93ce5d5b42ab2e34bb6e70655610e198785d99b53b32659730588126584b",
+    "git_blob": "d7fb45242acaa8b197f50463d4c8894e90ddd7d9",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/111a_prepare_B_with_DR_negative_timareta.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/34_plot_optix_comparative_and_focal_evidence.R",
+    "sha256": "3fea4a3fd272c0414ea01a9b72b1e366dfa84375cb9e2f549b01b8e119632633",
+    "git_blob": "60365cacd712a074b61409668ac3ffd2dd2387cc",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/34_plot_optix_comparative_and_focal_evidence.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/147_plot_B_D_R_compact_BA099_ribbons.R",
+    "sha256": "11e856490736f961caf7d0e45253c83ef63928ee3ccc33632174106933749c25",
+    "git_blob": "ef359eedef64940c3a0cd885183109b86afe1568",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/147_plot_B_D_R_compact_BA099_ribbons.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/94e_build_recalculated_diagnostic_genotype_tables.py",
+    "sha256": "2adb9eb66e4511cdf49b354b0407594d1c1d35b08b2bd4e6958d7402505c5eb3",
+    "git_blob": "e9b3ea2adad97a44b3a8eb46edd5c8ba350772c2",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/94e_build_recalculated_diagnostic_genotype_tables.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/93a_build_optix_comparative_genotype_plot_table.py",
+    "sha256": "d14e19700a99f3fa645ebe3228213b6306bd62b0f8a0f98b9bf3f9cf09ac9df4",
+    "git_blob": "3f754049f72a3beb9b3f60cb16d94ed36bcd6ca7",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/93a_build_optix_comparative_genotype_plot_table.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/136b_plot_R_BA90_reciprocal_genoplot.R",
+    "sha256": "66296f977d7233d3fbc9426e937000ad8c2867c49d70c1a62305362357384c0c",
+    "git_blob": "7bdf5b8e691bb3c6b98fbb299a64b62596c47084",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/136b_plot_R_BA90_reciprocal_genoplot.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/upgrade_AF_histograms_loess.py",
+    "sha256": "b66b93a2be75f082e9c080aa390fb8d1b6a02df5eb9d0478976d75bcf5ffc63c",
+    "git_blob": "6024c1b31920b6c71ae06ef3128bc6c4a719ba77",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/upgrade_AF_histograms_loess.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/107_plot_broad_D_R_BA_manhattan.R",
+    "sha256": "2f921df6f1493318404f2fe26bea011cdfdfffa6cbbda0c32fcb0deecc674038",
+    "git_blob": "35ebc1a1bea2f382fc90bba5e1ab5551caa31e82",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/107_plot_broad_D_R_BA_manhattan.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/156_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref_taxon_canonical_BDR_order.R",
+    "sha256": "c26cbce0ebac8b63c75b4b6158cab55970351ed9ee31ef5cf41f9b6a0925d765",
+    "git_blob": "ff5263511c10073387a9474e04d4c960194d9f4f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/156_plot_population_frequency_plus_LR_BWPK_exact_BA_nonfixed_ref_taxon_canonical_BDR_order.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/158_plot_science_condensation_trials.R",
+    "sha256": "044a96b7662a658276d6b6440dce040e48694a981d80f8a3093ea40608ff79dc",
+    "git_blob": "1231d29037469b265eba1ab5f52535b4b755313e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/158_plot_science_condensation_trials.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/36_plot_minimal_polarized_focal_optix_evidence.R",
+    "sha256": "6b4e12f42e384184aad29f549f1887ccc83d80189675bc6d86a9e6a140dc6659",
+    "git_blob": "8b4acec6e9599c1f8ea8bbef0c57f403d3241279",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/36_plot_minimal_polarized_focal_optix_evidence.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/113_prepare_Ray_contigua_fixed_SNP_replication.py",
+    "sha256": "e4a682e14c85a21ea835da4ed3f11313a316dcc70f732093cfbb0fe13f30ed03",
+    "git_blob": "e2b72b2f5896c4e2145b0a3db8a1dc66aaeb18b0",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/113_prepare_Ray_contigua_fixed_SNP_replication.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_TN_AF40_luka_bleute.py",
+    "sha256": "cabbea08dbcb22fe729cbed7e11637bc9950e54e97dd6e6ce643058cc8d3b5c2",
+    "git_blob": "2be2a22e97ca17d7ec96653fead9a381ea3f0eed",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_TN_AF40_luka_bleute.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/157_make_BDR_labelled_taxon_plotter.R",
+    "sha256": "7d4049d3025ec835959f1dc0661f151c359be3eba9d979ab864c5960b261ca64",
+    "git_blob": "db320fe805af01d0d1ce90698ed3b9b2778a563d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/157_make_BDR_labelled_taxon_plotter.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/96a_scan_broad_optix_Dennis.py",
+    "sha256": "4569b15219ac9251d65b718e40364ff7ee5704e992c9c372dd02e40d159bf772",
+    "git_blob": "2847147407b66ec4318dc8ed74ac8250743e184f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/96a_scan_broad_optix_Dennis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/43_plot_actual_pooled_optix_evidence_v4.R",
+    "sha256": "46f25886716e58cf4d6506d4da21d22a1eb0a8de42245fce22e21985b0e35a51",
+    "git_blob": "5362670f374636e380d6598745d45f2aa69e6cc2",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/43_plot_actual_pooled_optix_evidence_v4.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/221_regenerate_TN_NDJ_AF_hex45.py",
+    "sha256": "b0ad4d1e6f3b909c505d91703135544476d85c9947de20a1b3b42af8871e2443",
+    "git_blob": "e055801c8bcf30603516bad46d05652854ffa043",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/221_regenerate_TN_NDJ_AF_hex45.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/143_combine_final_B_D_R_panels.R",
+    "sha256": "ed84718b34119ed207b5aa40d963a1593ec525d6e376df45f1b9a12ec285799e",
+    "git_blob": "bea6a6ae96cd188de866416096eeb59a02cdba50",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/143_combine_final_B_D_R_panels.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/142_prepare_B_western_postman_vs_western_Amazon_DR.py",
+    "sha256": "74bad1a1124f815e58cd5848e2a64240e46a74f0cfb7096b4c0397d2115b4536",
+    "git_blob": "44fcb29cc482e4963527eb35901cc620efb7b49e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/142_prepare_B_western_postman_vs_western_Amazon_DR.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/169_plot_science_exact_L_DRDR_R_BDR.R",
+    "sha256": "4d0d69ee4df1790b9fac1cc393f8734b6dae31f39c850a21ef2b7e2c7cb1a9f7",
+    "git_blob": "f69743bb9c5760b99098c24ef609be62a0bccc5f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/169_plot_science_exact_L_DRDR_R_BDR.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/90c_plot_main_biological_focal_locus.R",
+    "sha256": "478e8bb1063e1f950efe8789c86ebaa00e48979d19ee72548c81f55c256a377c",
+    "git_blob": "f2c4c454bca69f695bb0fff8fe7ade60f57281e0",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/90c_plot_main_biological_focal_locus.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/146_plot_B_D_R_correct_pattern_BA099_ribbons.R",
+    "sha256": "847619e68120cc714795f0a315aee3d1c868761aa1f892bb5518a4e0fc51d514",
+    "git_blob": "5c27a9d97042d6f92bdda593cb4872b68f20b1ea",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/146_plot_B_D_R_correct_pattern_BA099_ribbons.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/121_prepare_broad_R_BA90_genoplot_scripts.py",
+    "sha256": "0c33777d2b783ec4860b79ebe56a975154ce44d4c1f2b100ed75a208898d5cc3",
+    "git_blob": "d2589a68409de2d4e15125bb3de75529c26a729f",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/121_prepare_broad_R_BA90_genoplot_scripts.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/109a_prepare_B_heurippa_besckei_reanalysis.py",
+    "sha256": "31760e41a1026e788220dbf3efa9ab87e9b2e294c4e295e59b684a59cd7efd31",
+    "git_blob": "b2c2b3c77676b3dcdb82f5423fb3718a7466d191",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/109a_prepare_B_heurippa_besckei_reanalysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/90e_plot_supplement_full_focal_evidence.R",
+    "sha256": "92eff74525dbd12e925654f1827d77870b89508f3ccee4f4ecaf8975312637de",
+    "git_blob": "92254fd44bea75c725cb4e23db3a4fd8ed285c1b",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/90e_plot_supplement_full_focal_evidence.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/plot_AF_narrative_frames.py",
+    "sha256": "fb7fd278833ed3014cb2bebd00f49ae7baafc4846337a0da02abb9d5b4857b2a",
+    "git_blob": "abf83aec59bc548e7abf197cd78afbc3f1d942d3",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/plot_AF_narrative_frames.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100d_scan_Dennis_drop_problematic.py",
+    "sha256": "bf4eeee4aef3cdaf5d1dc570ffd355fbe097260e3d64b7c28aa32379db289a2b",
+    "git_blob": "40d2b5a303a038687f76b157462079145f4a73d5",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100d_scan_Dennis_drop_problematic.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/113_replicate_Ray_with_current_contigua.py",
+    "sha256": "f1b42890ccff69e389b802488c091553b5a67fe817514e81ace5cec3042e0441",
+    "git_blob": "9b664ba782e006a7279d79f9e517103160fa4df7",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/113_replicate_Ray_with_current_contigua.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/101a_identify_best_B_D_R_site_breakers.py",
+    "sha256": "7bb57ac21145e6948a16251ab49198fdf7be7d921fddb95ee20b3ef894db432d",
+    "git_blob": "39a20788b07dabe30bb038d14cae0d1f4c0834f7",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/101a_identify_best_B_D_R_site_breakers.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/115b_plot_D_R_Wallbank_fixed_dominant_adjusted_LR.R",
+    "sha256": "5c807cf7255378152f4fd3c6741014bf83eca8e2042994881e815bd2b463648e",
+    "git_blob": "b929507e1e9aa81107efa0241d6c9f5e8ccf6335",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/115b_plot_D_R_Wallbank_fixed_dominant_adjusted_LR.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/119d_plot_B_west_of_Andes_BA_and_focal.R",
+    "sha256": "950614606e29dbdf33914af0bfe9004f8d9ba867f4fbda5b9d9f408786f4d108",
+    "git_blob": "a466357ccfb79f64d0d4cfb200aca0e387c9e68d",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/119d_plot_B_west_of_Andes_BA_and_focal.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/141_plot_B_western_plus_heurippa_adjusted_LR.R",
+    "sha256": "8d7df397df08374c1d3382c34a4ce6e378e57b332d597a020242a2662f35a788",
+    "git_blob": "d65487da840740d06c71b862d6224a42ee72e30c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/141_plot_B_western_plus_heurippa_adjusted_LR.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/94f_plot_recalculated_diagnostic_genotypes.R",
+    "sha256": "00d5cd921b705e4a62dad90807f0593c8fb7fe85779d8f99e80379bff1547b52",
+    "git_blob": "ddb7e40f085edffc0e8dceecdbd3589580776a12",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/94f_plot_recalculated_diagnostic_genotypes.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/118_plot_simple_optix_comparative_and_focal_pattern.R",
+    "sha256": "9832afb39efe5eac030b47ab7b01ef164675fff55d6559d911f225a12d44343b",
+    "git_blob": "12762e75a6795e83dffb36ae9e7b19d8084ac12e",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/118_plot_simple_optix_comparative_and_focal_pattern.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/197_collect_full_sib_mendelian_qc.py",
+    "sha256": "1f3ac4a38e97d151d609fcee2abf9d2f7a39a04d197e2b061ed9097dc4cb3073",
+    "git_blob": "6f059a96994a974358ce407977651d31b3cbcb9c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/197_collect_full_sib_mendelian_qc.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/118b_add_krista_windows_to_simple_optix_plot.py",
+    "sha256": "423b707adefe6ef874b18a6fac3ab82fa7c9baccd40c7cfbeaa70a23cef9265f",
+    "git_blob": "bc0030c38c65e26a5a4eabe632b5f52ca3b8a9ab",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/118b_add_krista_windows_to_simple_optix_plot.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/111b_base_scorer_B_DRnegative_timareta.py",
+    "sha256": "a17f6211ab7c0b16dd4938102215fc9b5ec6e622143757aa221840284884e9c8",
+    "git_blob": "8a94cebe110eb2c60c17af2c5d6c0e22ef0b79d1",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/111b_base_scorer_B_DRnegative_timareta.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/115_plot_D_R_Wallbank_fixed_dominant_evidence.R",
+    "sha256": "557803bc09fa96a58b4a451731756fcc18774ed7e98efe962e047c9133db5130",
+    "git_blob": "c965bc9082f1cef0f6eb454ca71ea02f3d8019dd",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/115_plot_D_R_Wallbank_fixed_dominant_evidence.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/122_plot_R_BA90_depth_diagnostics.R",
+    "sha256": "bac58cff3a327ff1d7be3c97434cc15259492e6975d51b9c91cf19c064a0c37b",
+    "git_blob": "8d8179aeab56d36318daa5d02123111661ada4fa",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/122_plot_R_BA90_depth_diagnostics.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/133_plot_full_optix_AF_histograms.R",
+    "sha256": "e9fb15558481326ee46fb7110e192dee1b297b668a12560a9fd47c978f2e1d5d",
+    "git_blob": "5d6a2bba805df55c4b26631392e5010805cfcaec",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/133_plot_full_optix_AF_histograms.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/114_Ray_contigua_dominant_pattern_analysis.py",
+    "sha256": "353256ae081dcdf463bc6d3ac5e343e47f1a4f376f96db97a9a2e1de1612b234",
+    "git_blob": "a25573db3eedc68996b1dc200c484a4511e6ea34",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/114_Ray_contigua_dominant_pattern_analysis.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/99d_audit_canonical_D_R_discordant_samples.py",
+    "sha256": "a03b9b4167c4360cd4ecaa5a2d98a70b9beb11a74ef201c73696a6d7a88a7185",
+    "git_blob": "ab46ef277ab22066d3ec15f5eb503866c195b44c",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/99d_audit_canonical_D_R_discordant_samples.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/100c_scan_band_drop_problematic.py",
+    "sha256": "0260abab40f6842583908a87c353b5208bee6394020df64d482f34424608c5f9",
+    "git_blob": "7cff67f2b44c8ded10e5eeeef33e79b08fa9a836",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/100c_scan_band_drop_problematic.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/169b_prepare_numeric_autosome_manifest.py",
+    "sha256": "01a663dca63e2094fecfc5bf6860604839ead90ea33afdf402f066b8b3e95888",
+    "git_blob": "6c8fe83c85602c86c9732b3bebeda6f66e612100",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/169b_prepare_numeric_autosome_manifest.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/142_plot_B_western_postman_vs_western_Amazon_DR_adjusted_LR.R",
+    "sha256": "5a49246cf466164ea3c70bd64250d28979ebeece3e737e03e295fe41b9daad4a",
+    "git_blob": "a28340c41f3a0d643f348c896e97f0bad372ba76",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/142_plot_B_western_postman_vs_western_Amazon_DR_adjusted_LR.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/111d_plot_B_DRnegative_timareta_BA_and_focal.R",
+    "sha256": "38bf2b46fc38056a1d19eb083cccd315d4a34e05684c4be4a025f07d7c9f6638",
+    "git_blob": "c0718677b89aed8998941f73946045b90e6c3b02",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/111d_plot_B_DRnegative_timareta_BA_and_focal.R"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/91c_trace_band_error_sample_metadata.py",
+    "sha256": "88ad366a7c302f618229263f886b8de8227646eeec5f4c47f3564c2995117175",
+    "git_blob": "87906cf6bc43971c48fb070b259521f1d02b9766",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/91c_trace_band_error_sample_metadata.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/200_prepare_empirical_sibling_model_inputs.py",
+    "sha256": "8009c8872add816e80e97a9f60c31616ef8dc2eb838c1096571e3da62a3dc9ac",
+    "git_blob": "bfb7239005e5d5cd2811506c621a2e61b596cc53",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/200_prepare_empirical_sibling_model_inputs.py"
+  },
+  {
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/scripts/223_recolour_genoplots_baku.py",
+    "sha256": "e7017dc96e6bb28af744a7ada2922718e408249d4bcce7d190ea01cba9223ece",
+    "git_blob": "7bb9eadeb20df8b9fd2f0f9fd135fe154d7c5505",
+    "status": "RECOVERED",
+    "destination": "recovery/20261014T183358Z/source_1/scripts/223_recolour_genoplots_baku.py"
+  }
+]
