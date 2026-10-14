@@ -45,14 +45,23 @@ the excluded specimen.
 
 Recovery script:
 `scripts/figures/figure3/resume_bcftools_optix_joint.py`.
-It submits two independent region-wise, 43-sample bcftools joint calls
-with dependencies on the **individual 47 selected alignment array tasks**
-(`afterok:138468792_0:..._47` excluding task 14). It then uses the
-pre-existing focal pileup and QC functions from the frozen, original
-aligned-run script. These functions do not perform GATK calling.
-New outputs are isolated in
-`20261014T211057Z/bcftools_joint_recall/`; existing BAMs are accessed
-read-only. Each joint VCF records its bcftools version and exact options.
+It submits a **47-BAM validation gate**, then **56 independent
+5-kb genomic-region joint-calling tasks** (36 Optix, 20 Yb), followed by
+two interval-concatenation tasks, two independent focal-allele-count tasks,
+and one final audit. Every shard calls all **43 comparative BAMs together**
+using the standard `bcftools mpileup | bcftools call` parameters. It does
+not call individuals independently or merge heterogeneous cohort VCFs.
+The validation gate depends on the **47 selected alignment array elements**
+(`afterok:138468792_0:..._47` excluding task 14). Only completed indexed
+BAMs are used. Shards have **no Slurm array concurrency cap**.
+
+The focal allele counts and the final genotype QC are self-contained
+workers, avoiding the earlier broken attempt to invoke the original frozen
+script with incompatible configuration keys. Outputs are isolated in
+`20261014T211057Z/bcftools_joint_recall_arrayed/`; existing BAMs are
+accessed read-only. The run records the bcftools executable selected from
+the older PK project configuration when available, the original manifest
+checksum, region shard plan and the exact call options.
 
 **Important distinction:** A simultaneous multi-sample bcftools call is
 not equivalent to combining independently called VCFs or forcing genotypes
