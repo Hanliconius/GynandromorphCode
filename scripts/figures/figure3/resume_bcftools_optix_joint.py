@@ -186,7 +186,8 @@ def submit(src):
         print("JOB\t"+stage+"\t"+jid,flush=True)
         return jid
     try:
-        shard=sb("shard",len(cfg["shards"]),1,"8G","08:00:00",dep)
+        gate=sb("validate",1,2,"8G","02:00:00",dep)
+        shard=sb("shard",len(cfg["shards"]),1,"8G","08:00:00","afterok:"+gate)
         combined=sb("concat",2,2,"12G","03:00:00","afterok:"+shard)
         focaljob=sb("focal",2,2,"16G","06:00:00","aftercorr:"+combined)
         sb("audit",1,2,"12G","02:00:00","afterok:"+focaljob)
@@ -219,56 +220,153 @@ def check_bams(cfg):
                 raise RuntimeError("Incorrect BAM read-group sample "+name)
 
 
-def joint(cfg,task):
+def validate(cfg,task):
+    if task!=0:
+        raise RuntimeError("validate expects task zero")
+    check_bams(cfg)
+    bcftools=require(cfg["bcftools"])
+    version=subprocess.check_output([str(bcftools),"--version"],text=True).splitlines()[0]
+    fasta=require(cfg["fasta"])
+    require(str(fasta)+".fai")
+    out=Path(cfg["root"])
+    dump(out/"audit"/"alignment_validation.json",
+         dict(libraries_validated=47,comparative=43,focal=4,
+              old_run=cfg["source_run"],bcftools_version=version,
+              reference=str(fasta),excluded=EXCLUDED))
+    print("VALIDATED\t47 BAMs; 43 comparative; 4 focal; "+version,flush=True)
+
+
+def shard(cfg,task):
+    """One independent interval, all 43 comparative BAMs, same bcftools caller."""
     import pysam
     out=Path(cfg["root"])
-    locus=list(cfg["loci"])[task]
-    ch,start,end=cfg["loci"][locus]
-    dest=out/"joint"/(locus+".all_sites.vcf.gz")
-    done=out/"joint"/(locus+".complete.json")
-    if dest.exists() and done.exists():
+    shards=cfg["shards"]
+    if task<0 or task>=len(shards):
+        raise RuntimeError("Unknown genomic shard "+str(task))
+    item=shards[task]
+    locus=item["locus"]
+    chrom=item["chrom"]
+    start=item["start"]
+    end=item["end"]
+    directory=out/"shards"/locus
+    directory.mkdir(exist_ok=True)
+    prefix=str(task).zfill(4)
+    dest=directory/(prefix+".vcf.gz")
+    marker=directory/(prefix+".complete.json")
+    if marker.is_file() and dest.is_file() and Path(str(dest)+".tbi").is_file():
+        if load(marker).get("interval")!=[chrom,start,end]:
+            raise RuntimeError("Shard reuse interval mismatch "+str(task))
         return
-    check_bams(cfg)
-    tmp=out/"joint"/(locus+".partial.vcf.gz")
-    tmp.unlink(missing_ok=True)
+    require(out/"audit"/"alignment_validation.json")
+    tmp=directory/(prefix+".partial.vcf.gz")
     Path(str(tmp)+".tbi").unlink(missing_ok=True)
-    mp=[cfg["bcftools"],"mpileup","-Ou",
-        "-f",cfg["fasta"],"-r",f"{ch}:{start}-{end}",
-        "-a","FORMAT/DP,FORMAT/AD","-q","30","-Q","20",
-        "-b",cfg["bam_list"]]
+    tmp.unlink(missing_ok=True)
+    cmd=[cfg["bcftools"],"mpileup","-Ou","-f",cfg["fasta"],
+         "-r",chrom+":"+str(start)+"-"+str(end),
+         "-a","FORMAT/DP,FORMAT/AD","-q","30","-Q","20",
+         "-b",cfg["bam_list"]]
     call=[cfg["bcftools"],"call","-m","-A","-f","GQ",
           "-Oz","-o",str(tmp)]
-    print("CALL\t"+locus+"\t43 comparative BAMs",flush=True)
-    p1=subprocess.Popen(mp,stdout=subprocess.PIPE)
+    print("CALL_SHARD\t"+str(task)+"\t"+locus+"\t"+
+          str(start)+"-"+str(end)+"\t43 samples",flush=True)
+    rc1=rc2=None
+    p1=subprocess.Popen(cmd,stdout=subprocess.PIPE)
     try:
         p2=subprocess.Popen(call,stdin=p1.stdout)
         p1.stdout.close()
-        status2=p2.wait()
-        status1=p1.wait()
+        rc2=p2.wait()
+        rc1=p1.wait()
     finally:
         if p1.poll() is None:
             p1.kill()
             p1.wait()
-    if status1 or status2:
-        raise RuntimeError("bcftools mpileup/call exit statuses: "+
-                           str((status1,status2)))
+    if rc1 or rc2:
+        tmp.unlink(missing_ok=True)
+        raise RuntimeError("bcftools mpileup/call exit codes "+str(rc1)+"/"+str(rc2))
     require(tmp)
     subprocess.run([cfg["bcftools"],"index","-t",str(tmp)],check=True)
     require(str(tmp)+".tbi")
-    with pysam.VariantFile(str(tmp)) as f:
-        names=list(f.header.samples)
-        sites=sum(1 for _ in f)
-    if len(names)!=43 or set(names)!=set(cfg["comparative"]) or sites==0:
-        raise RuntimeError("Incorrect bcftools VCF sample set or zero sites")
+    n=0
+    with pysam.VariantFile(str(tmp)) as vf:
+        samples=set(vf.header.samples)
+        if samples!=set(cfg["comparative"]) or len(samples)!=43:
+            raise RuntimeError("Shard has incorrect comparative sample list")
+        prev=start-1
+        for v in vf:
+            if v.contig!=chrom or not start<=v.pos<=end or v.pos<prev:
+                raise RuntimeError("Shard records beyond interval or unordered "+str(task))
+            prev=v.pos
+            n+=1
+    if n==0:
+        # For very low coverage, a zero-record shard is biologically possible,
+        # but it is still a valid VCF with header and must be accounted for.
+        print("SHARD_ZERO_RECORDS\t"+str(task),flush=True)
     tmp.replace(dest)
     Path(str(tmp)+".tbi").replace(str(dest)+".tbi")
-    version=subprocess.check_output([cfg["bcftools"],"--version"],text=True).splitlines()[0]
-    dump(done,dict(caller="bcftools",bcftools_version=version,
-                   locus=locus,sites=sites,samples=names,
-                   mpileup_options=MP_OPTIONS,call_options=CALL_OPTIONS,
-                   source_method="scripts/figures/figure3/extend_PK_optix_Yb.py",
-                   legacy_VCF_used=False,gvcf_used=False))
-    print("JOINT_COMPLETE\t"+locus+"\t"+str(sites),flush=True)
+    dump(marker,dict(index=task,locus=locus,interval=[chrom,start,end],
+                     records=n,samples=43,bcftools_args=cfg["expected_method"]))
+    print("SHARD_COMPLETE\t"+str(task)+"\t"+str(n),flush=True)
+
+
+def concat(cfg,task):
+    """Concatenate ordered, non-overlapping intervals; verify exact partition."""
+    import pysam
+    out=Path(cfg["root"])
+    locus=list(cfg["loci"])[task]
+    chunks=[(i,r) for i,r in enumerate(cfg["shards"]) if r["locus"]==locus]
+    if not chunks:
+        raise RuntimeError("No shards for "+locus)
+    paths=[]
+    last=cfg["loci"][locus][1]-1
+    total=0
+    for i,item in chunks:
+        if item["start"]!=last+1:
+            raise RuntimeError("Gap or overlap in genomic shards at "+str(i))
+        last=item["end"]
+        chunk=out/"shards"/locus/(str(i).zfill(4)+".vcf.gz")
+        marker=load(require(out/"shards"/locus/(str(i).zfill(4)+".complete.json")))
+        if marker["interval"]!=[item["chrom"],item["start"],item["end"]]:
+            raise RuntimeError("Shard interval metadata mismatch")
+        require(chunk)
+        require(str(chunk)+".tbi")
+        total+=marker["records"]
+        paths.append(str(chunk))
+    if last!=cfg["loci"][locus][2]:
+        raise RuntimeError("Last shard not at locus end")
+    dest=out/"joint"/(locus+".all_sites.vcf.gz")
+    complete=out/"joint"/(locus+".complete.json")
+    if dest.is_file() and complete.is_file():
+        return
+    tmp=out/"joint"/(locus+".partial.vcf.gz")
+    tmp.unlink(missing_ok=True)
+    Path(str(tmp)+".tbi").unlink(missing_ok=True)
+    subprocess.run([cfg["bcftools"],"concat","-Oz","-o",str(tmp)]+paths,
+                   check=True)
+    require(tmp)
+    subprocess.run([cfg["bcftools"],"index","-t",str(tmp)],check=True)
+    require(str(tmp)+".tbi")
+    with pysam.VariantFile(str(tmp)) as vf:
+        names=set(vf.header.samples)
+        if names!=set(cfg["comparative"]) or len(names)!=43:
+            raise RuntimeError("Concatenated cohort mismatch "+locus)
+        records=0
+        prior=cfg["loci"][locus][1]-1
+        for row in vf:
+            if row.pos<prior or row.contig!=cfg["loci"][locus][0]:
+                raise RuntimeError("Concatenated VCF unordered "+locus)
+            prior=row.pos
+            records+=1
+    if records!=total or records==0:
+        raise RuntimeError("VCF records lost during concat: "+
+                           str(records)+" vs "+str(total))
+    tmp.replace(dest)
+    Path(str(tmp)+".tbi").replace(str(dest)+".tbi")
+    dump(complete,dict(locus=locus,records=records,
+                       shard_count=len(paths),comparative_samples=43,
+                       callers="joint bcftools mpileup|call on all 43 samples per shard",
+                       frozen_legacy_VCF_used=False,gvcf_used=False))
+    print("CONCAT_COMPLETE\t"+locus+"\t"+str(records),flush=True)
+
 
 
 def get_previous_focal_and_audit(cfg):
