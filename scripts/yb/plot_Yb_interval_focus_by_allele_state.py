@@ -62,13 +62,13 @@ def main():
                     if curves.empty:raise RuntimeError("No Yb+/Yb+ PK coverage for "+ref+" "+interval)
                     for _,sample_data in curves.groupby("sample"):
                         sample_data=sample_data.sort_values("position")
-                        upper.plot(sample_data.position/1e6,sample_data.observed,color=COLORS[1],alpha=.20,lw=.65)
-                    means=curves.groupby("position").observed.mean()
+                        upper.plot(sample_data.position/1e6,sample_data["observed"],color=COLORS[1],alpha=.20,lw=.65)
+                    means=curves.groupby("position")["observed"].mean()
                     upper.plot(means.index/1e6,means.values,color=COLORS[1],lw=2.2,label="PK Yb+/Yb+ (n=20)")
                     for group,color in (("rosina","#662A83"),("melpomene","#555555")):
                         ctrl=subset.loc[subset.group==group]
                         if not ctrl.empty:
-                            mean=ctrl.groupby("position").observed.mean()
+                            mean=ctrl.groupby("position")["observed"].mean()
                             upper.plot(mean.index/1e6,mean.values,color=color,lw=1,ls="--",label=group)
                     arrays={}
                     for side in ("Left","Right"):
@@ -78,7 +78,7 @@ def main():
                     L,R=arrays["Left"],arrays["Right"]
                     if not np.array_equal(L.position.to_numpy(),R.position.to_numpy()):raise RuntimeError("L/R grid mismatch")
                     x=L.position.to_numpy()/1e6
-                    obsL=L.observed.to_numpy(dtype=float);obsR=R.observed.to_numpy(dtype=float)
+                    obsL=L["observed"].to_numpy(dtype=float);obsR=R["observed"].to_numpy(dtype=float)
                     for side in ("Left","Right"):
                         obs=obsL if side=="Left" else obsR
                         lower.plot(x,obs,color=SIDES[side],lw=1.8,label="Observed "+side)
