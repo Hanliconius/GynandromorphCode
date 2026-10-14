@@ -183,13 +183,13 @@ def submit(a):
         return jid
     try:
         a0=job("setup",1,4,"16G","04:00:00")
-        a1=job("download",48,1,"4G","20:00:00",8)
+        a1=job("download",48,1,"4G","20:00:00")
         # Each alignment can start as soon as its own mate pair is validated.
         # setup must be complete for every task, but other downloads need not finish.
-        a2=job("align",48,16,"64G","3-00:00:00",4,[a0],aftercorr=a1)
-        a3=job("haplotype",88,4,"16G","12:00:00",10,[a2])
-        a4=job("joint",2,4,"24G","12:00:00",2,[a3])
-        a5=job("focal",2,2,"12G","06:00:00",2,[a4])
+        a2=job("align",48,16,"64G","3-00:00:00",None,[a0],aftercorr=a1)
+        a3=job("haplotype",88,4,"16G","12:00:00",None,[a2])
+        a4=job("joint",2,4,"24G","12:00:00",None,[a3])
+        a5=job("focal",2,2,"12G","06:00:00",None,[a4])
         job("audit",1,2,"12G","02:00:00",None,[a5],"cpu")
     except Exception:
         for jid in jobs.values():
