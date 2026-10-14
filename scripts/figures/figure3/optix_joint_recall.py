@@ -523,8 +523,8 @@ def main():
     if a.submit:
         raise RuntimeError(
             "DISABLED: this script submits the unapproved GATK/gVCF workflow. "
-            "Use resume_bcftools_optix_joint.py to call the existing BAMs via "
-            "the established bcftools mpileup | bcftools call method."
+            "Use rosina_whole_genome_bcftools.py for the agreed genome-wide "
+            "Rosina bcftools callset shared by Optix and Yb."
         )
     if a.preview:
         if not (a.preflight and a.candidates and a.sweep):
