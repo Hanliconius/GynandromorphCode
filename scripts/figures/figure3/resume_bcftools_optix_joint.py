@@ -221,9 +221,12 @@ def joint(cfg,task):
         raise RuntimeError("Incorrect bcftools VCF sample set or zero sites")
     tmp.replace(dest)
     Path(str(tmp)+".tbi").replace(str(dest)+".tbi")
-    dump(done,dict(caller="bcftools",locus=locus,sites=sites,
-                   samples=names,mpileup_options=MP_OPTIONS,
-                   call_options=CALL_OPTIONS,legacy_VCF_used=False))
+    version=subprocess.check_output([cfg["bcftools"],"--version"],text=True).splitlines()[0]
+    dump(done,dict(caller="bcftools",bcftools_version=version,
+                   locus=locus,sites=sites,samples=names,
+                   mpileup_options=MP_OPTIONS,call_options=CALL_OPTIONS,
+                   source_method="scripts/figures/figure3/extend_PK_optix_Yb.py",
+                   legacy_VCF_used=False,gvcf_used=False))
     print("JOINT_COMPLETE\t"+locus+"\t"+str(sites),flush=True)
 
 
