@@ -123,6 +123,13 @@ def select_samples(preflight,candidates,sweep):
 def submit(a):
     pf,cr,sw=(p.resolve() for p in (a.preflight,a.candidates,a.sweep))
     rows=select_samples(pf,cr,sw)
+    if a.preview:
+        print("COHORT_OK\t44 comparative; 4 focal; 5 cythera; 5 vulcanus")
+        for row in rows:
+            if row["group"] in ("cythera","vulcanus"):
+                print("PICK\t"+row["group"]+"\t"+row["sample"]+"\t"+row["specimen"])
+        print("SUBMITTED\t0")
+        return
     audited=read(pf/"audit.json")["reference"]
     original_fasta=need(audited["reference"]).resolve()
     import pysam
@@ -496,6 +503,8 @@ STAGES=dict(setup=setup,download=download,align=align,
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--submit",action="store_true")
+    p.add_argument("--preview",action="store_true",
+                   help="Validate/present the 44-specimen cohort without submitting")
     p.add_argument("--preflight",type=Path)
     p.add_argument("--candidates",type=Path)
     p.add_argument("--sweep",type=Path)
@@ -504,9 +513,9 @@ def main():
     p.add_argument("--stage",choices=STAGES)
     p.add_argument("--task",type=int)
     a=p.parse_args()
-    if a.submit:
+    if a.submit or a.preview:
         if not (a.preflight and a.candidates and a.sweep):
-            p.error("--submit requires --preflight, --candidates, --sweep")
+            p.error("--submit/--preview needs --preflight, --candidates, --sweep")
         submit(a)
     elif a.config and a.stage and a.task is not None:
         STAGES[a.stage](read(a.config),a.task)
