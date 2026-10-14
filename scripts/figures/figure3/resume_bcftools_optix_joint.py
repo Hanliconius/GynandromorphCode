@@ -119,12 +119,15 @@ def prepare(src):
     original=load(src/"run.json")
     require(original["fasta"])
     require(original["fasta"]+".fai")
-    out=src/"bcftools_joint_recall"
+    out=src/"bcftools_joint_recall_arrayed"
     cfgpath=out/"run.json"
     if out.exists():
-        if not cfgpath.exists() or load(cfgpath)["comparative"]!=[
-                r["sample"] for r in comparisons]:
-            raise RuntimeError("Existing recovery run conflicts with expected samples")
+        if not cfgpath.exists():
+            raise RuntimeError("Existing arrayed directory has no verified config")
+        previous=load(cfgpath)
+        if (previous.get("comparative")!=[r["sample"] for r in comparisons]
+            or previous.get("shards")!=make_shards()):
+            raise RuntimeError("Existing arrayed run conflicts with this cohort or shard plan")
         return out
     out.mkdir()
     for d in ["logs","joint","shards","focal","audit"]:
@@ -522,6 +525,12 @@ def main():
         print("COHORT_OK\t"+str(len(comparisons))+
               " comparative + "+str(len(focal))+" focal; "+EXCLUDED+" excluded")
         print("CALLER\tbcftools mpileup -q30 -Q20 | bcftools call -m -A -f GQ")
+        plan=make_shards()
+        print("ARRAY_PLAN\t"+str(len(plan))+" parallel 43-sample joint-call shards; "+
+              str(sum(x["locus"]=="Optix" for x in plan))+" Optix; "+
+              str(sum(x["locus"]=="Yb" for x in plan))+
+              " Yb; unthrottled")
+        print("DEPENDENCY\t47 selected alignment elements, excluding task 14")
         if a.submit:
             submit(a.source_run)
     elif a.stage and a.config and a.task is not None:
