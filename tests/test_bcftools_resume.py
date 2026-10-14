@@ -50,8 +50,40 @@ class TestBcftoolsResume(unittest.TestCase):
         self.assertEqual(mod.MP_OPTIONS,[
             "-Ou","-a","FORMAT/DP,FORMAT/AD","-q","30","-Q","20"])
         self.assertEqual(mod.CALL_OPTIONS,["-m","-A","-f","GQ","-Oz"])
-        self.assertEqual(set(mod.STAGES),{"joint","focal","audit"})
+        self.assertEqual(set(mod.STAGES),
+                         {"validate","shard","concat","focal","audit"})
         self.assertNotIn("haplotype",mod.STAGES)
+        self.assertNotIn("joint",mod.STAGES)
+
+    def test_full_loci_sharded_without_gaps_or_overlap(self):
+        shards=mod.make_shards()
+        self.assertEqual(len(shards),56)
+        from collections import Counter
+        self.assertEqual(Counter(s["locus"] for s in shards),
+                         {"Optix":36,"Yb":20})
+        for locus,(chrom,left,right) in mod.LOCI.items():
+            chunk=[s for s in shards if s["locus"]==locus]
+            self.assertEqual(chunk[0]["start"],left)
+            self.assertEqual(chunk[-1]["end"],right)
+            self.assertTrue(all(s["chrom"]==chrom for s in chunk))
+            for a,b in zip(chunk,chunk[1:]):
+                self.assertEqual(a["end"]+1,b["start"])
+            self.assertEqual(sum(s["end"]-s["start"]+1 for s in chunk),
+                             right-left+1)
+
+    def test_array_shards_not_per_sample(self):
+        # Every shard calls all comparative BAMs in the single cohort-wide list.
+        import inspect
+        source=inspect.getsource(mod.shard)
+        self.assertIn('"-b",cfg["bam_list"]',source)
+        self.assertIn('"mpileup"',source)
+        self.assertIn('"call"',source)
+
+    def test_new_pipeline_has_explicit_per_locus_concat(self):
+        import inspect
+        source=inspect.getsource(mod.concat)
+        self.assertIn('"concat"',source)
+        self.assertIn('require(str(tmp)+".tbi")',source)
 
     def test_does_not_silently_drop_other_samples(self):
         data=(self.path/"manifest.tsv").read_text().replace("SAMPLE13","SRR11243351")
