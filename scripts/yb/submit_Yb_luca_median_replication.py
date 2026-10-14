@@ -115,12 +115,18 @@ def submit(a):
     (base/"logs").mkdir()
     script=base/Path(__file__).name
     shutil.copy2(__file__,script)
-    cfg={"run_dir":str(base),"source_run":str(a.run),"sources":origins,"samtools":shutil.which("samtools"),
+    source_run_cfg=json.loads(need(a.run/"run.json").read_text())
+    candidate_tools=[shutil.which("samtools"),source_run_cfg.get("samtools")]
+    for source_path in origins.values():
+        source_data=json.loads(need(Path(source_path)/"run.json").read_text())
+        candidate_tools.extend([source_data.get("samtools"),source_data.get("tools",{}).get("samtools")])
+    samtools=next((str(p) for p in candidate_tools if p and Path(p).is_file()),None)
+    cfg={"run_dir":str(base),"source_run":str(a.run),"sources":origins,"samtools":samtools,
          "method":"samtools depth -aa -s -q 0 -Q 30 -G1796; per-base depth median in 50bp absolute reference bins; divide by original own full-scaffold mean",
          "comparison_to_Luca":"Luca used mosdepth; using samtools with equivalent intended MAPQ>=30 and per-base window medians, but not byte-identical mosdepth output",
          "phenotype_labels":STATES,"pk_genotype":"20 PK are homozygous Yb+/Yb+ by user rescoring",
          "tasks":tasks}
-    if not cfg["samtools"]:raise RuntimeError("samtools must be on PATH")
+    if not cfg["samtools"]:raise RuntimeError("Cannot find samtools in PATH or frozen source-run tool paths")
     (base/"run.json").write_text(json.dumps(cfg,indent=2)+"\n")
     py=shlex.quote(sys.executable)
     runner=" ".join((py,shlex.quote(str(script)),"--config",shlex.quote(str(base/"run.json"))))
