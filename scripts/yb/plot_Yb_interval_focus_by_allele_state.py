@@ -95,9 +95,13 @@ def main():
                         if not latent[side]:raise RuntimeError("Mixing grid contains no valid values")
                         arr=np.vstack(latent[side])
                         valid=np.isfinite(arr)
-                        with np.errstate(all="ignore"):
-                            bottom=np.nanmin(np.where(valid,arr,np.nan),axis=0)
-                            top=np.nanmax(np.where(valid,arr,np.nan),axis=0)
+                        bottom=np.full(arr.shape[1],np.nan)
+                        top=np.full(arr.shape[1],np.nan)
+                        supported=valid.any(axis=0)
+                        if supported.any():
+                            selected=np.where(valid[:,supported],arr[:,supported],np.nan)
+                            bottom[supported]=np.nanmin(selected,axis=0)
+                            top[supported]=np.nanmax(selected,axis=0)
                         lower.fill_between(x,bottom,top,color=SIDES[side],alpha=.16,label=side+" sensitivity envelope")
                     for ax in (upper,lower):
                         ax.axvspan(lo/1e6,hi/1e6,color="grey",alpha=.10)
