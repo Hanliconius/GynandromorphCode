@@ -68,7 +68,7 @@ def submit(a):
     shutil.copy2(__file__,base/Path(__file__).name);shutil.copy2(HERE.parents[1]/'yb/submit_Yb_extra_controls.py',base/'download_worker.py')
     shutil.copy2(HERE/'pk_dark_pale_samples.tsv',base/'samples.tsv')
     frozen_reports=base/'code/scripts/figures/figure3';frozen_reports.mkdir(parents=True)
-    for name in ['Fig3_optix_BA099_both_callable.py','Fig3_optix_full_range_frequency.py','replot_optix_pruned.py','replot_optix_DR_callable_PK.py','replot_optix_DR_genoplot.py']:
+    for name in ['Fig3_optix_BA099_both_callable.py','Fig3_optix_full_range_frequency.py','replot_optix_pruned.py','replot_optix_DR_callable_PK.py','replot_optix_DR_genoplot.py','plot_optix_simple_evidence.py']:
         shutil.copy2(HERE/name,frozen_reports/name)
 
     values.to_csv(base/'frozen_optix_values.tsv.gz',sep='\t',index=False)
