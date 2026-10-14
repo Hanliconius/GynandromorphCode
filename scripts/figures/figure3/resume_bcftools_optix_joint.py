@@ -369,36 +369,141 @@ def concat(cfg,task):
 
 
 
-def get_previous_focal_and_audit(cfg):
-    # The previous pipeline used exactly the expected pysam focal pileup/QC.
-    # Reuse only those two functions. NEVER execute its GATK stages.
-    source=Path(cfg["source_run"])/"optix_joint_recall.py"
-    spec=importlib.util.spec_from_file_location("original_focal_counts",source)
-    mod=importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod.focal,mod.audit
-
-
 def focal(cfg,task):
-    method,_=get_previous_focal_and_audit(cfg)
-    method(cfg,task)
+    """Pooled L/R allele depths from four independent, deduplicated tissue BAMs."""
+    import gzip
+    import pysam
+    from collections import defaultdict
+    out=Path(cfg["root"])
+    locus=list(cfg["loci"])[task]
+    chrom,start,end=cfg["loci"][locus]
+    sites={}
+    vcf=require(out/"joint"/(locus+".all_sites.vcf.gz"))
+    with pysam.VariantFile(str(vcf)) as reader:
+        for rec in reader.fetch(chrom,start-1,end):
+            if (len(rec.ref)==1 and rec.ref.upper() in "ACGT" and rec.alts
+                and len(rec.alts)==1 and len(rec.alts[0])==1
+                and rec.alts[0].upper() in "ACGT"):
+                sites[rec.pos]=(rec.ref.upper(),rec.alts[0].upper())
+    if not sites:
+        raise RuntimeError("No newly called biallelic SNPs in "+locus)
+    bylibrary={}
+    old=Path(cfg["source_run"])
+    for sample in cfg["focal"]:
+        count=defaultdict(lambda:[0,0])
+        with pysam.AlignmentFile(
+             str(require(old/"bam"/(sample+".dedup.bam"))),"rb") as bam:
+            for column in bam.pileup(
+                chrom,start-1,end,truncate=True,
+                stepper="samtools",min_base_quality=20,
+                min_mapping_quality=30,ignore_overlaps=True,
+                flag_filter=1796,max_depth=100000
+            ):
+                pos=column.reference_pos+1
+                if pos not in sites:
+                    continue
+                ref,alt=sites[pos]
+                for r in column.pileups:
+                    if r.is_del or r.is_refskip or r.query_position is None:
+                        continue
+                    base=r.alignment.query_sequence[r.query_position].upper()
+                    if base==ref:
+                        count[pos][0]+=1
+                    elif base==alt:
+                        count[pos][1]+=1
+        bylibrary[sample]=count
+    sides={r["sample"]:r["side"] for r in cfg["samples"] if r["role"]=="focal"}
+    path=out/"focal"/(locus+".allele_counts.tsv.gz")
+    with gzip.open(path,"wt",newline="") as stream:
+        writer=csv.writer(stream,delimiter="\t")
+        writer.writerow(["chrom","pos","ref","alt",
+            "Left_ref","Left_alt","Right_ref","Right_alt",
+            "Left_AF","Right_AF","per_library_counts_json"])
+        for pos,(ref,alt) in sorted(sites.items()):
+            left=[0,0]
+            right=[0,0]
+            detail={}
+            for sample in cfg["focal"]:
+                pair=bylibrary[sample].get(pos,[0,0])
+                detail[sample]=pair
+                arr=left if sides[sample]=="Left" else right
+                arr[0]+=pair[0]
+                arr[1]+=pair[1]
+            frac=lambda d:d[1]/sum(d) if sum(d) else ""
+            writer.writerow([chrom,pos,ref,alt,
+                *left,*right,frac(left),frac(right),
+                json.dumps(detail,sort_keys=True)])
+    dump(out/"focal"/(locus+".complete.json"),dict(
+        locus=locus,biallelic_snps=len(sites),focal_samples=cfg["focal"],
+        focal_GT_not_called=True,
+        pooling="T2+T3 separately within Left/Right, after per-library counts",
+        min_mapq=30,min_base_quality=20,
+        markduplicate_reads_excluded=True,read_overlap_handling=True))
+    print("FOCAL_COUNTS_COMPLETE\t"+locus+"\t"+str(len(sites)),flush=True)
 
 
 def audit(cfg,task):
-    _,method=get_previous_focal_and_audit(cfg)
-    method(cfg,task)
-    # The old report contains a literal 44; this recovery excludes P4003.
-    marker=Path(cfg["root"])/"audit.complete.json"
-    record=load(marker)
-    record["comparative"]=43
-    record["caller"]="bcftools mpileup|call"
-    record["excluded_comparative"]=EXCLUDED
-    record["gvcf_used"]=False
-    dump(marker,record)
-    print("BCFTOOLS_AUDIT_COMPLETE\t43 comparative; 4 focal",flush=True)
+    """QC all 43 comparative GTs per locus; no historical genotype import."""
+    import pysam
+    out=Path(cfg["root"])
+    if task!=0:
+        raise RuntimeError("audit task index must be zero")
+    report=[]
+    for locus in cfg["loci"]:
+        require(out/"joint"/(locus+".complete.json"))
+        require(out/"focal"/(locus+".complete.json"))
+        path=require(out/"joint"/(locus+".all_sites.vcf.gz"))
+        totals={sample:Counter() for sample in cfg["comparative"]}
+        with pysam.VariantFile(str(path)) as vf:
+            if set(vf.header.samples)!=set(cfg["comparative"]):
+                raise RuntimeError("Audit sample mismatch "+locus)
+            for variant in vf:
+                for name in cfg["comparative"]:
+                    call=variant.samples[name]
+                    t=totals[name]
+                    t["sites"]+=1
+                    gt=call.get("GT")
+                    if not gt or any(a is None for a in gt):
+                        t["missing"]+=1
+                        continue
+                    t["GT_"+"/".join(map(str,gt))]+=1
+                    dp=call.get("DP")
+                    gq=call.get("GQ")
+                    if dp is None:
+                        t["missing_dp"]+=1
+                    if gq is None:
+                        t["missing_gq"]+=1
+                    if dp is not None and gq is not None and dp>=2 and gq>=20:
+                        t["callable_dp2_gq20"]+=1
+        for name,t in totals.items():
+            report.append(dict(locus=locus,sample=name,
+                all_emitted_sites=t["sites"],
+                GT_00=t["GT_0/0"],
+                GT_01=t["GT_0/1"]+t["GT_1/0"],
+                GT_11=t["GT_1/1"],
+                missing=t["missing"],missing_DP=t["missing_dp"],
+                missing_GQ=t["missing_gq"],
+                callable_DP2_GQ20=t["callable_dp2_gq20"]))
+    if len(report)!=86 or any(r["all_emitted_sites"]==0 for r in report):
+        raise RuntimeError("43 x 2 VCF audit incomplete")
+    path=out/"audit"/"genotype_QC.tsv"
+    with path.open("w",newline="") as h:
+        writer=csv.DictWriter(h,fieldnames=list(report[0]),
+                              delimiter="\t")
+        writer.writeheader()
+        writer.writerows(report)
+    dump(out/"audit"/"complete.json",dict(
+        status="COMPLETE",caller="bcftools mpileup|call",
+        comparative=43,focal=4,excluded=EXCLUDED,gvcf_used=False,
+        imported_legacy_GT=False,
+        report=str(path),
+        note="Post-calling phenotype ascertainment, mixing and figures remain"))
+    print("AUDIT_COMPLETE\t"+str(path),flush=True)
 
 
-STAGES={"joint":joint,"focal":focal,"audit":audit}
+STAGES={"validate":validate,"shard":shard,
+        "concat":concat,"focal":focal,"audit":audit}
+
 
 
 def main():
