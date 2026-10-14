@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused Yb d/v coverage; independently recorded 0/1 states, observed LR with mixing sensitivity."""
+"""Focused Yb d/v coverage for 20 user-rescored homozygous Yb+/Yb+ PK samples."""
 import argparse
 import json
 from pathlib import Path
@@ -25,7 +25,6 @@ def binary(value):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--coverage",required=True,type=Path)
-    p.add_argument("--metadata",required=True,type=Path)
     p.add_argument("--fit-summary",required=True,type=Path)
     p.add_argument("--outdir",required=True,type=Path)
     p.add_argument("--mixing-delta",type=float,default=.05)
@@ -36,25 +35,18 @@ def main():
     if not required.issubset(cov.columns):raise RuntimeError("Coverage table missing "+str(required-set(cov.columns)))
     pk=sorted(cov.loc[cov.group.astype(str).str.startswith("PK "),"sample"].unique())
     if len(pk)!=20:raise RuntimeError("Expected 20 retained PK specimens; found "+str(len(pk)))
-    meta=pd.read_csv(a.metadata,sep="\t",dtype=str).fillna("")
-    cols=["Accession","Yb-dorsal","Yb-ventral"]
-    if not set(cols).issubset(meta.columns):raise RuntimeError("Metadata lacks Yb state columns")
-    states=[]
-    for accession in pk:
-        matched=meta.loc[meta.Accession==accession,cols].drop_duplicates()
-        if len(matched)!=1:raise RuntimeError("Missing/ambiguous allele metadata for "+accession)
-        r=matched.iloc[0]
-        states.append({"sample":accession,"d":binary(r["Yb-dorsal"]),"v":binary(r["Yb-ventral"])})
-    states=pd.DataFrame(states)
+    # User rescoring (2026-10-14): every retained PK is homozygous Yb+/Yb+.
+    # This is independent of Optix B/D/R and PK dark/pale phenotypes.
+    states=pd.DataFrame([{"sample":sample,"Yb_genotype":"Yb+/Yb+","state":1,"source":"user rescoring 2026-10-14"} for sample in pk])
     fit=pd.read_csv(a.fit_summary,sep="\t").set_index("statistic").value
     cL=float(fit["estimated_c_left_from_right"])
     cR=float(fit["estimated_c_right_from_left"])
     if not (0<=cL<.5 and 0<=cR<.5 and cL+cR<1):raise RuntimeError("Invalid fitted mixing fractions")
     a.outdir.mkdir(parents=True,exist_ok=True)
-    states.to_csv(a.outdir/"pk_Yb_states_used.tsv",sep="\t",index=False)
+    states.to_csv(a.outdir/"pk_homozygous_Ybplus_states_used.tsv",sep="\t",index=False)
     plt.rcParams.update({"pdf.fonttype":42,"font.size":9})
-    outfile=a.outdir/"Yb_d_v_allele01_observed_LR_mixing_sensitivity.pdf"
-    audit={"source_coverage":str(a.coverage),"source_metadata":str(a.metadata),
+    outfile=a.outdir/"Yb_d_v_PK_homozygous_Ybplus_observed_LR_mixing_sensitivity.pdf"
+    audit={"source_coverage":str(a.coverage),"genotype_provenance":"User rescored all 20 retained PK specimens as homozygous Yb+/Yb+ on 2026-10-14; not Optix B/D/R",
            "source_fit":str(a.fit_summary),"fitted_mixing":[cL,cR],
            "mixing_delta":a.mixing_delta,"mixing_envelope":"Range of inverted latent profiles for independent rates within +/- delta around saved Optix estimates. Not a confidence interval.",
            "states":states.to_dict("records"),"panels":[]}
@@ -66,15 +58,13 @@ def main():
                 for j,interval in enumerate(("d","v")):
                     lo,hi=WINDOWS[ref][interval]; subset=dataset.loc[dataset.position.between(lo-1000,hi+1000)]
                     upper,lower=axes[:,j]
-                    for state in (0,1):
-                        ids=states.loc[states[interval]==state,"sample"].tolist()
-                        curves=subset.loc[subset["sample"].isin(ids)]
-                        if curves.empty:raise RuntimeError("No coverage rows for Yb state "+str(state))
-                        for _,s in curves.groupby("sample"):
-                            s=s.sort_values("position")
-                            upper.plot(s.position/1e6,s.observed,color=COLORS[state],alpha=.20,lw=.65)
-                        means=curves.groupby("position").observed.mean()
-                        upper.plot(means.index/1e6,means.values,color=COLORS[state],lw=2,label=f"Yb={state} (n={len(ids)})")
+                    curves=subset.loc[subset["sample"].isin(pk)]
+                    if curves.empty:raise RuntimeError("No Yb+/Yb+ PK coverage for "+ref+" "+interval)
+                    for _,sample_data in curves.groupby("sample"):
+                        sample_data=sample_data.sort_values("position")
+                        upper.plot(sample_data.position/1e6,sample_data.observed,color=COLORS[1],alpha=.20,lw=.65)
+                    means=curves.groupby("position").observed.mean()
+                    upper.plot(means.index/1e6,means.values,color=COLORS[1],lw=2.2,label="PK Yb+/Yb+ (n=20)")
                     for group,color in (("rosina","#662A83"),("melpomene","#555555")):
                         ctrl=subset.loc[subset.group==group]
                         if not ctrl.empty:
@@ -118,21 +108,21 @@ def main():
                         ax.set_ylim(0,2)
                         ax.spines[["top","right"]].set_visible(False)
                         ax.set_xlabel("Position (Mb)")
-                    upper.set_title("Yb("+interval+") — PK Yb allele 0 vs 1")
+                    upper.set_title("Yb("+interval+") — homozygous Yb+ PK cohort")
                     if j==0:
                         upper.set_ylabel("PK coverage")
                         lower.set_ylabel("Combined Left/Right coverage")
                     audit["panels"].append({"reference":ref,"interval":interval,"scale":scale,
-                                             "pk0":int((states[interval]==0).sum()),"pk1":int((states[interval]==1).sum())})
+                                             "pk_Ybplus_homozygous":len(pk)})
                 handles,labels=[],[]
                 for ax in (axes[0,0],axes[1,0]):
                     h,l=ax.get_legend_handles_labels();handles+=h;labels+=l
                 fig.legend(handles,labels,ncol=4,loc="upper center",bbox_to_anchor=(.5,.94),fontsize=8)
                 fig.suptitle(ref+" | "+scale,fontsize=13,y=.99)
-                fig.text(.08,.035,f"Solid L/R lines: measured T2+T3 combined coverage. Ribbons: linear-mixing sensitivity, not confidence intervals.\nMixing from saved Optix fit: L<-R={cL:.3f}, R<-L={cR:.3f}; varied independently +/-{a.mixing_delta:.2f}. 1-kb flanks. PK d/v states read separately from metadata.",fontsize=8)
+                fig.text(.08,.035,f"Solid L/R lines: measured T2+T3 combined coverage. Ribbons: linear-mixing sensitivity, not confidence intervals.\nMixing from saved Optix fit: L<-R={cL:.3f}, R<-L={cR:.3f}; varied independently +/-{a.mixing_delta:.2f}. 1-kb flanks. All 20 PK samples: user-rescored homozygous Yb+/Yb+; no Yb-negative PK group.",fontsize=8)
                 fig.tight_layout(rect=(0,.085,1,.87))
                 pdf.savefig(fig);plt.close(fig)
     (a.outdir/"audit.json").write_text(json.dumps(audit,indent=2)+"\n")
     print("PDF",outfile)
-    print("STATE_COUNTS",{"d":states.d.value_counts().to_dict(),"v":states.v.value_counts().to_dict()})
+    print("PK_YBPLUS_HOMOZYGOUS",len(pk))
 if __name__=="__main__":main()
