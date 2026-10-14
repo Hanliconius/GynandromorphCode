@@ -191,6 +191,11 @@ def print_plan(cfg):
     print("FOCAL\t4; T2+T3 left/right maintained individually")
     print("REUSABLE_OLD_ROSINA_BAMS\t"+str(len(cfg["verified_reuse"])))
     print("ORIGINAL_BAM_ALIGNMENTS_STILL_NEEDED\t"+str(len(cfg["pending_alignment_ids"])))
+    reused_indexes=[r["array_task"] for r in cfg["samples"]
+                    if r["origin"]=="reused_old_rosina"]
+    print("POTENTIALLY_REDUNDANT_OLD_ALIGN_TASKS\t"+
+          ",".join(map(str,reused_indexes)))
+    print("REUSE_POLICY\tNo old alignment is automatically cancelled; inspect candidates first")
     print("SNP_ENGINE\tbcftools mpileup | bcftools call")
     print("SHARED_OUTPUT\t"+str(DEST_BASE))
     print("YB_HANDOFF\tChromosome VCF, Yb interval VCF, BAM manifest, focal depths")
