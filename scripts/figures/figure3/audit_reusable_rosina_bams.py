@@ -16,7 +16,8 @@ LOCI=("NC_140406.1","NC_140403.1")
 PREVIOUS=("yb_local_both_references","yb_control_both_references",
           "yb_extra_controls")
 FIELDS=("sample","role","group","candidate","source","status","reason",
-        "optix_mapped","yb_mapped","bam_bytes","has_picard_pg",
+        "optix_mapped","yb_mapped","long_contigs_mapped",
+        "bam_bytes","has_picard_pg","picard_metrics_present",
         "source_ref_explicit_match","run_ref","original_task_index")
 
 
@@ -52,7 +53,8 @@ def locate(root,wanted):
             if config.is_file():
                 try:
                     content=load(config)
-                    options=[x.get("fasta","") for x in content.get("references",[])
+                    options=[x.get("source") or x.get("fasta") or ""
+                             for x in content.get("references",[])
                              if x.get("name")=="HmRos"]
                     if options:refpath=options[0]
                 except (ValueError,KeyError,TypeError):
@@ -94,12 +96,20 @@ def inspect_candidate(path,sample,group,ref_hint,target_sqs,source_fasta):
     answer=dict(sample=sample,candidate=path,source=group,
                 status="REJECT",reason="",optix_mapped=0,yb_mapped=0,
                 bam_bytes=0,has_picard_pg="NO",
+                picard_metrics_present="NO",long_contigs_mapped=0,
                 source_ref_explicit_match="YES" if ref_hint and same_ref(ref_hint,source_fasta) else "NO",
                 run_ref=ref_hint)
     if not p.is_file() or p.stat().st_size==0:
         answer["reason"]="file_absent"
         return answer
     answer["bam_bytes"]=p.stat().st_size
+    # The established Yb BWA/Picard worker writes duplicate metrics to
+    # <sample>.picard_metrics.txt and a <sample>.complete.json in coverage/.
+    # BAM @PG is not guaranteed to include Picard even when it ran.
+    answer["picard_metrics_present"]="YES" if (
+        p.with_name(sample+".picard_metrics.txt").is_file()
+        and p.with_name(sample+".complete.json").is_file()
+    ) else "NO"
     if not Path(str(p)+".bai").is_file() and not p.with_suffix(".bai").is_file():
         answer["reason"]="missing_BAM_index"
         return answer
@@ -124,8 +134,15 @@ def inspect_candidate(path,sample,group,ref_hint,target_sqs,source_fasta):
             yb=mapped.get(LOCI[1],0)
             answer["optix_mapped"]=optix
             answer["yb_mapped"]=yb
+            answer["long_contigs_mapped"]=sum(
+                1 for name,length in target_sqs.items()
+                if length>=100000 and mapped.get(name,0)>=20
+            )
             if not optix or not yb:
                 answer["reason"]="no_mapped_reads_on_both_target_contigs"
+                return answer
+            if answer["long_contigs_mapped"]<10:
+                answer["reason"]="not_proven_genomewide_mapping"
                 return answer
             # This is evidence of compatibility, NOT automatic permission to
             # substitute the BAM: explicit source FASTA provenance, read
@@ -175,13 +192,15 @@ def audit(source):
     strict={s for s,ls in samples.items()
             if any(row["status"]=="POTENTIAL_REUSE" and
                    row["source_ref_explicit_match"]=="YES" and
-                   row["has_picard_pg"]=="YES" for row in ls)}
+                   (row["has_picard_pg"]=="YES" or
+                    row["picard_metrics_present"]=="YES") for row in ls)}
     missing=set(wanted)-good
     summary=dict(
         total_retained=47,
         existing_candidate_files=len(all_candidates),
         potential_reuse_specimens=len(good),
         strong_provenance_specimens=len(strict),
+        note="Older frozen HmRos references use references[].source not fasta; Picard metrics can establish duplicate marking without a @PG line.",
         still_need_alignment_or_manual_review=len(missing),
         rejected_candidate_reasons=dict(Counter(
             row["reason"] for row in all_candidates
