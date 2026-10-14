@@ -532,7 +532,11 @@ def main():
               " Yb; unthrottled")
         print("DEPENDENCY\t47 selected alignment elements, excluding task 14")
         if a.submit:
-            submit(a.source_run)
+            raise RuntimeError(
+                "SUBMISSION DISABLED: this workflow only calls Optix/Yb (~280 kb). "
+                "The agreed goal is a consistent WHOLE-GENOME bcftools call. "
+                "Do not submit this targeted-locus workflow."
+            )
     elif a.stage and a.config and a.task is not None:
         STAGES[a.stage](load(a.config),a.task)
     else:
