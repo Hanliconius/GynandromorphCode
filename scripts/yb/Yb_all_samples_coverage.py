@@ -49,7 +49,7 @@ def report(cfg):
     fit=pd.read_csv(cfg['fit_summary'],sep='\t').set_index('statistic').value;cl=float(fit['estimated_c_left_from_right']);cr=float(fit['estimated_c_right_from_left']);det=1-cl-cr
     if det<=0:raise RuntimeError('Invalid mixing inversion')
     audit={'sources':cfg['sources'],'samples':cfg['samples'],'profile_hashes':{e['profile']:sha(e['profile']) for e in cfg['samples']},'method':'50bp arithmetic mean / own full-contig mean including zeros; MAPQ30 BQ0 samtools -s -G1796','baseline':'per-bin mean of four melpomene on Hmel2.5; four rosina on HmRos; mask baseline below 0.25','mixing':{'left_from_right':cl,'right_from_left':cr,'source':cfg['fit_summary'],'fit_summary_sha256':sha(cfg['fit_summary']),'interpretation':'optix-fit transfer, equal underlying contig dosage and comparable mapping response assumed; no fitted coverage model'},'PK_dark_pale':'manifest phenotype; not inferred Yb genotype','intervals':'legacy annotations; separate Luca primer anchor','grid':'exact shared bin centres; no interpolation','panels':[]};rows=[]
-    output=base/'Yb_all_21PK_4rosina_4melpomene_other_races_LR_coverage.pdf'
+    output=base/'Yb_all_21PK_4rosina_4melpomene_other_races_combined_LR_coverage.pdf'
     with PdfPages(output) as pdf:
         for ref in REFS:
             entries=[e for e in cfg['samples'] if e['reference']==ref];tables={e['sample']:pd.read_csv(e['profile'],sep='\t').set_index('position') for e in entries}
@@ -60,10 +60,24 @@ def report(cfg):
             y={s:t.reindex(x).normalized_depth.to_numpy() for s,t in tables.items()};matched='melpomene' if ref=='Hmel2.5' else 'rosina';ids=[e['sample'] for e in entries if e['group']==matched]
             if len(ids)!=4:raise RuntimeError('Expected four baseline controls')
             baseline=np.mean([y[s] for s in ids],axis=0);den=np.where(np.isfinite(baseline)&(baseline>=.25),baseline,np.nan)
-            focal={e['sample']:e for e in entries if e['group']=='focal'};corrected={}
-            for leg in ('T2','T3'):
-                l=next(s for s,e in focal.items() if e['side']=='Left' and e['leg']==leg);r=next(s for s,e in focal.items() if e['side']=='Right' and e['leg']==leg)
-                corrected[l]=((1-cr)*y[l]-cl*y[r])/det;corrected[r]=((1-cl)*y[r]-cr*y[l])/det
+            library_focal={e['sample']:e for e in entries if e['group']=='focal'}
+            focal={};corrected={}
+            for side in ('Left','Right'):
+                ids=[s for s,e in library_focal.items() if e['side']==side]
+                if len(ids)!=2 or {library_focal[s]['leg'] for s in ids}!={'T2','T3'}:raise RuntimeError('Need T2/T3 for each side')
+                denominators=[];raw=[]
+                for s in ids:
+                    t=tables[s].reindex(x);d=t.mean_depth.to_numpy();v=t.normalized_depth.to_numpy()
+                    valid=np.isfinite(d)&np.isfinite(v)&(v>0)&(d>0)
+                    if not valid.any():raise RuntimeError('Cannot recover contig normalization for '+s)
+                    ratios=d[valid]/v[valid];denominator=float(np.median(ratios))
+                    if not np.allclose(ratios,denominator,rtol=1e-6):raise RuntimeError('Inconsistent contig denominator for '+s)
+                    denominators.append(denominator);raw.append(d)
+                name='TN_'+side+'_combined';y[name]=np.sum(raw,axis=0)/sum(denominators);focal[name]={'side':side}
+                audit.setdefault('combined_focal',[]).append({'reference':ref,'side':side,'libraries':ids,'library_contig_means':denominators,'method':'sum bin mean depths / sum full-contig means'})
+                entries.append({'reference':ref,'sample':name,'group':'focal combined','label':side+' T2+T3'})
+            l='TN_Left_combined';r='TN_Right_combined'
+            corrected[l]=((1-cr)*y[l]-cl*y[r])/det;corrected[r]=((1-cl)*y[r]-cr*y[l])/det
             for scale in ('contig normalized','reference-control relative'):
                 divisor=np.ones(len(x)) if scale=='contig normalized' else den
                 for adjusted in (False,True):
@@ -74,14 +88,14 @@ def report(cfg):
                             ax=axes[i,j];mask=(x>=lo)&(x<=hi)
                             for curve in arr:ax.plot(x[mask]/1e6,curve[mask],color=colors[group],alpha=.23,lw=.5)
                             ax.plot(x[mask]/1e6,mean[mask],color=colors[group],lw=1.5,label=group+' mean')
-                            for s,e in focal.items():ax.plot(x[mask]/1e6,((corrected[s] if adjusted else y[s])/divisor)[mask],color='#1764AB' if e['side']=='Left' else '#D9472D',ls='-' if e['leg']=='T2' else '--',lw=.9,label=e['side']+' '+e['leg'])
+                            for s,e in focal.items():ax.plot(x[mask]/1e6,((corrected[s] if adjusted else y[s])/divisor)[mask],color='#1764AB' if e['side']=='Left' else '#D9472D',ls='-',lw=1.1,label=e['side']+' T2+T3')
                             for aa,bb in INTERVALS[ref]:ax.axvspan(aa/1e6,bb/1e6,color='grey',alpha=.15)
                             aa,bb=PRIMERS[ref];ax.axvspan(aa/1e6,bb/1e6,color='#662A83',alpha=.08);ax.axhline(1,color='grey',lw=.5);ax.set_xlim(lo/1e6,hi/1e6);ax.set_ylim(0,2)
                             if i==0:ax.set_title(['Full plotted range','Yb(d): 1kb flanks','Yb(v): 1kb flanks'][j]);
                             if j==0:ax.set_ylabel(group+f' (n={len(es)})')
                             if i==len(groups)-1:ax.set_xlabel('Position (Mb)')
                     axes[0,2].legend(fontsize=7,loc='upper right');fig.suptitle(ref+' | '+scale+' | '+('LR adjusted using saved optix mixing fit' if adjusted else 'Observed LR')+' | 39 libraries/individuals')
-                    fig.text(.08,.018,'Thin curves: individual controls/PKs; thick curve: group mean. Blue/red: focal Left/Right; solid T2, dashed T3. Display clipped to 0–2.\nGrey: legacy Yb intervals; purple: Luca primer span. Relative baseline: '+matched+' n=4; low baseline bins masked.\nAdjusted coverage is a linear inversion after own-contig scaling, assuming equal dosage/comparable mapping; negatives retained in TSV.',fontsize=8);fig.tight_layout(rect=[0,.07,1,.96]);pdf.savefig(fig);plt.close(fig)
+                    fig.text(.08,.018,'Thin curves: individual controls/PKs; thick curve: group mean. Blue/red: combined Left/Right (T2+T3 pooled by linear depth). Display clipped to 0–2.\nGrey: legacy Yb intervals; purple: Luca primer span. Relative baseline: '+matched+' n=4; low baseline bins masked.\nAdjusted coverage is a linear inversion after own-contig scaling, assuming equal dosage/comparable mapping; negatives retained in TSV.',fontsize=8);fig.tight_layout(rect=[0,.07,1,.96]);pdf.savefig(fig);plt.close(fig)
                     audit['panels'].append({'reference':ref,'scale':scale,'LR_adjusted':adjusted,'baseline_masked_bins':int(np.isnan(den).sum())})
                 for e in entries:
                     vals=y[e['sample']]/divisor
