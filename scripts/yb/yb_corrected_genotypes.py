@@ -58,8 +58,38 @@ def pk_matrix(entries,labels,ref,records,model,pars,out,interval):
     pd.DataFrame(rows).to_csv(out/f'{ref}_Yb{interval}_PK_genotypes.tsv.gz',sep='\t',index=False)
     return matrices,names,audit
 
+
+def race_matrix(source,ref,records,out,interval):
+    from assign_Yb_local_SNP_fragments import observations
+    from collections import Counter,defaultdict
+    cfg=json.loads((source/'run.json').read_text())
+    groups=[('melpomene','amaryllis','H. m. amaryllis | Yb+'),('timareta','thelxinoe','H. t. thelxinoe | Yb+'),('timareta','florencia','H. t. florencia | Yb-')]
+    values=[];labels=[];audit=[];allrows=[]
+    sites={r['pos1']-1 for r in records};chrom=records[0]['contig']
+    for species,race,label in groups:
+        entries=[e for e in cfg['tasks'] if e['reference']['name']==ref and e.get('species')==species and e.get('subspecies')==race and e['role']=='control']
+        if len(entries)!=2:raise RuntimeError('Expected two existing controls for '+race)
+        individuals=[]
+        for e in entries:
+            bam=Path(e['bam'])
+            if not bam.is_file() or not Path(str(bam)+'.bai').is_file():raise RuntimeError('Missing race BAM '+str(bam))
+            counts=defaultdict(Counter)
+            for calls in observations(bam,chrom,min(sites),max(sites)+1,sites).values():
+                for pos,b in calls.items():counts[pos][b]+=1
+            vals=[]
+            for r in records:
+                cnt=counts[r['pos1']-1];ros=cnt[r['rosina_base']];otherallele=r['alt'] if r['rosina_base']==r['ref'] else r['ref'];other=cnt[otherallele];n=ros+other
+                freq=ros/n if n>=8 else np.nan
+                vals.append(freq);allrows.append(dict(reference=ref,interval=interval,species=species,race=race,sample=e['sample'],pos1=r['pos1'],rosina_count=ros,other_selected_allele_count=other,third_allele_count=sum(cnt.values())-n,frequency=freq))
+            individuals.append(vals)
+            audit.append({'reference':ref,'species':species,'race':race,'sample':e['sample'],'bam':str(bam)})
+        arr=np.asarray(individuals,dtype=float);valid=np.isfinite(arr);denom=valid.sum(axis=0);mean=np.divide(np.nansum(arr,axis=0),denom,out=np.full(arr.shape[1],np.nan),where=denom>0)
+        values.append(mean);labels.append(label+' (n=2)')
+    pd.DataFrame(allrows).to_csv(out/f'{ref}_Yb{interval}_extra_race_frequencies.tsv.gz',sep='\t',index=False)
+    return values,labels,audit
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--counts-run',required=True,type=Path);p.add_argument('--fit-summary',required=True,type=Path);p.add_argument('--focal-run',required=True,type=Path);p.add_argument('--add-ready-pks',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--counts-run',required=True,type=Path);p.add_argument('--fit-summary',required=True,type=Path);p.add_argument('--focal-run',required=True,type=Path);p.add_argument('--add-race-strips',action='store_true');p.add_argument('--add-ready-pks',action='store_true');a=p.parse_args()
     import pysam
     import matplotlib
     matplotlib.use('Agg')
@@ -83,7 +113,7 @@ def main():
         pkrun,pkentries,pklabels,metapath=available_pk()
     audit={'caller':str(caller),'caller_sha256':digest(caller),'fit_summary':str(a.fit_summary),'fit_summary_sha256':digest(a.fit_summary),'parameters':dict(zip(keys,pars)),'parameters_refitted':False,'fit_transfer':'saved optix nuisance parameters applied to new Yb counts on both assemblies; not a Yb/reference-specific fit','prior':'equal over nine diploid genotype pairs','posterior_cutoff':.95,'min_count_depth_per_merged_side':2,'aggregation':'T2 and T3 counts summed within side','count_method':'existing MAPQ30/baseQ30 fragment counts; overlapping mates counted once per site','count_method_differs_from_original_VCF_AD':True,'selection_uses_focal':False,'other_alleles':'retained in table; excluded from biallelic likelihood denominator','intervals':'legacy annotations; Luca primer span an anchor, not exact functional boundaries','inputs':[],'panels':[]}
     if a.add_ready_pks:audit['PK']={'run':str(pkrun),'metadata':str(metapath),'metadata_sha256':digest(metapath),'phenotypes':pklabels,'selection_changed':False,'inference':'unmixed diploid control; original error/bias/concentration transferred; posterior95'}
-    pdfpath=out/('Yb_d_v_posterior95_corrected_genotypes_with_ready_PK_phenotypes.pdf' if a.add_ready_pks else 'Yb_d_v_posterior95_corrected_genotypes_both_references.pdf')
+    pdfpath=out/('Yb_d_v_posterior95_corrected_genotypes_extra_race_strips.pdf' if a.add_race_strips else ('Yb_d_v_posterior95_corrected_genotypes_with_ready_PK_phenotypes.pdf' if a.add_ready_pks else 'Yb_d_v_posterior95_corrected_genotypes_both_references.pdf'))
     with PdfPages(pdfpath) as pdf:
         for ref in REFS:
             fasta=a.focal_run/ref/'reference/genome.fa'
@@ -114,10 +144,15 @@ def main():
                     pkvals=[];pknames=[]
                     if a.add_ready_pks and records:
                         pkvals,pknames,pkaudit=pk_matrix(pkentries,pklabels,ref,records,model,pars,out,interval);audit.setdefault('PK_alignments',[]).extend(pkaudit)
-                    fig=plt.figure(figsize=(15,5.5+len(pknames)*.25));heat=fig.add_axes([.18,.40,.70,.36]);locus=fig.add_axes([.18,.16,.70,.12]);chrom,ranges=REGIONS[ref];lo,hi=ranges[idx]
+                    racevals=[];racenames=[]
+                    if a.add_race_strips and records:
+                        source=a.counts_run.parent.parent
+                        racevals,racenames,raceaudit=race_matrix(source,ref,records,out,interval);audit.setdefault('extra_race_alignments',[]).extend(raceaudit)
+                        audit['extra_race_method']='mean of callable individual read frequencies; individual biallelic depth >=8; no marker reselection; n per site may be 1 or 2'
+                    fig=plt.figure(figsize=(15,5.5+(len(pknames)+len(racenames))*.25));heat=fig.add_axes([.18,.40,.70,.36]);locus=fig.add_axes([.18,.16,.70,.12]);chrom,ranges=REGIONS[ref];lo,hi=ranges[idx]
                     if records:
-                        mat=np.vstack([np.array(ctrl).T,table[['left_rosina_dosage','right_rosina_dosage']].to_numpy().T]+([np.array(pkvals)] if pkvals else []));n=len(records);height=mat.shape[0]
-                        image=heat.imshow(mat,cmap=cmap,vmin=0,vmax=1,aspect='auto',interpolation='nearest',extent=(-.5,n-.5,height-.5,-.5));heat.set_yticks(range(height),['rosina controls','melpomene controls','TN Left adjusted','TN Right adjusted']+pknames);heat.set_xticks([])
+                        mat=np.vstack([np.array(ctrl).T,table[['left_rosina_dosage','right_rosina_dosage']].to_numpy().T]+([np.array(pkvals)] if pkvals else [])+([np.array(racevals)] if racevals else []));n=len(records);height=mat.shape[0]
+                        image=heat.imshow(mat,cmap=cmap,vmin=0,vmax=1,aspect='auto',interpolation='nearest',extent=(-.5,n-.5,height-.5,-.5));heat.set_yticks(range(height),['rosina controls','melpomene controls','TN Left adjusted','TN Right adjusted']+pknames+racenames);heat.set_xticks([])
                         for j,row in enumerate(records):fig.add_artist(ConnectionPatch(xyA=(j,height-.5),coordsA=heat.transData,xyB=(row['pos1'],.5),coordsB=locus.transData,color='#89939D',lw=.35,alpha=.2))
                         bar=fig.colorbar(image,cax=fig.add_axes([.91,.40,.012,.36]));bar.set_ticks([0,.5,1]);bar.set_label('Rosina-associated frequency / genotype dosage')
                     else:heat.text(.5,.5,'No compatible selected SNPs',ha='center',transform=heat.transAxes);heat.axis('off')
@@ -126,7 +161,7 @@ def main():
                         aa,bb=PRIMERS[ref];locus.plot([aa,bb],[.3,.3],color='#662A83',lw=4);locus.text((aa+bb)/2,.4,'Luca primer span',ha='center',fontsize=8)
                     locus.set_xlim(lo-1000,hi+1000);locus.set_ylim(-.1,.65);locus.set_yticks([]);locus.ticklabel_format(axis='x',style='plain',useOffset=False);locus.set_xlabel(chrom+' position (bp)')
                     called=int(sum(np.isfinite(row['left_rosina_dosage']) for row in records));fig.suptitle(f'{ref} Yb({interval}): {called}/{len(records)} posterior95 genotype pairs')
-                    fig.text(.18,.035,('PK rows: unmixed diploid posterior95 calls; phenotype labels from metadata; only completed alignments included.\n' if a.add_ready_pks else '')+'Controls: measured read frequencies. Focal: merged T2/T3 diploid dosage; pair posterior >=0.95; grey = unavailable.\nOriginal archived beta-binomial likelihood; saved optix fit transferred without refitting. This is not a Yb-calibrated fit.\nRace-associated SNPs; phase and causal Yb genotype not established. Existing fragment counts differ from original VCF AD.',fontsize=8)
+                    fig.text(.18,.035,('Extra race strips: mean measured read frequency; n per SNP may be 1 or 2 callable controls.\n' if a.add_race_strips else '')+('PK rows: unmixed diploid posterior95 calls; phenotype labels from metadata; only completed alignments included.\n' if a.add_ready_pks else '')+'Controls: measured read frequencies. Focal: merged T2/T3 diploid dosage; pair posterior >=0.95; grey = unavailable.\nOriginal archived beta-binomial likelihood; saved optix fit transferred without refitting. This is not a Yb-calibrated fit.\nRace-associated SNPs; phase and causal Yb genotype not established. Existing fragment counts differ from original VCF AD.',fontsize=8)
                     pdf.savefig(fig);plt.close(fig);audit['panels'].append({'reference':ref,'interval':interval,'selected_compatible':len(records),'posterior95':called})
     (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print('BUNDLE_PDF',pdfpath,sep='\t');print('AUDIT',out/'audit.json',sep='\t')
 if __name__=='__main__':main()
