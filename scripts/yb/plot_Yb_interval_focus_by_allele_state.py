@@ -45,87 +45,102 @@ def main():
     a.outdir.mkdir(parents=True,exist_ok=True)
     states.to_csv(a.outdir/"pk_homozygous_Ybplus_states_used.tsv",sep="\t",index=False)
     plt.rcParams.update({"pdf.fonttype":42,"font.size":9})
-    outfile=a.outdir/"Yb_d_v_PK_homozygous_Ybplus_observed_LR_mixing_sensitivity.pdf"
+    outfile=a.outdir/"Yb_d_v_separate_race_tracks_observed_LR.pdf"
     audit={"source_coverage":str(a.coverage),"genotype_provenance":"User rescored all 20 retained PK specimens as homozygous Yb+/Yb+ on 2026-10-14; not Optix B/D/R",
            "source_fit":str(a.fit_summary),"fitted_mixing":[cL,cR],
            "mixing_delta":a.mixing_delta,"mixing_envelope":"Range of inverted latent profiles for independent rates within +/- delta around saved Optix estimates. Not a confidence interval.",
            "states":states.to_dict("records"),"panels":[]}
+    race_groups=[
+        ("rosina","rosina",4,"#662A83"),
+        ("melpomene","melpomene",4,"#555555"),
+        ("PK Yb+/Yb+","PK",20,"#693D99"),
+        ("amaryllis","amaryllis",2,"#35856D"),
+        ("thelxinoe","thelxinoe",2,"#D09537"),
+        ("florencia","florencia",2,"#A66B94"),
+    ]
     with PdfPages(outfile) as pdf:
-        for scale in ("contig normalized","reference-control relative"):
-            for ref in ("Hmel2.5","HmRos"):
-                dataset=cov.loc[(cov.reference==ref)&(cov.scale==scale)]
-                fig,axes=plt.subplots(2,2,figsize=(12,7),sharey="row")
-                for j,interval in enumerate(("d","v")):
-                    lo,hi=WINDOWS[ref][interval]; subset=dataset.loc[dataset.position.between(lo-1000,hi+1000)]
-                    upper,lower=axes[:,j]
-                    curves=subset.loc[subset["sample"].isin(pk)]
-                    if curves.empty:raise RuntimeError("No Yb+/Yb+ PK coverage for "+ref+" "+interval)
-                    for _,sample_data in curves.groupby("sample"):
-                        sample_data=sample_data.sort_values("position")
-                        upper.plot(sample_data.position/1e6,sample_data["observed"],color=COLORS[1],alpha=.20,lw=.65)
-                    means=curves.groupby("position")["observed"].mean()
-                    upper.plot(means.index/1e6,means.values,color=COLORS[1],lw=2.2,label="PK Yb+/Yb+ (n=20)")
-                    for group,color in (("rosina","#662A83"),("melpomene","#555555")):
-                        ctrl=subset.loc[subset.group==group]
-                        if not ctrl.empty:
-                            mean=ctrl.groupby("position")["observed"].mean()
-                            upper.plot(mean.index/1e6,mean.values,color=color,lw=1,ls="--",label=group)
-                    arrays={}
-                    for side in ("Left","Right"):
-                        data=subset.loc[subset["sample"]=="TN_"+side+"_combined"].sort_values("position")
-                        if data.empty:raise RuntimeError("Missing focal combined "+side+" for "+ref+" "+scale)
-                        arrays[side]=data
-                    L,R=arrays["Left"],arrays["Right"]
-                    if not np.array_equal(L.position.to_numpy(),R.position.to_numpy()):raise RuntimeError("L/R grid mismatch")
-                    x=L.position.to_numpy()/1e6
-                    obsL=L["observed"].to_numpy(dtype=float);obsR=R["observed"].to_numpy(dtype=float)
-                    for side in ("Left","Right"):
-                        obs=obsL if side=="Left" else obsR
-                        lower.plot(x,obs,color=SIDES[side],lw=1.8,label="Observed "+side)
-                    aa=np.linspace(max(0,cL-a.mixing_delta),min(.49,cL+a.mixing_delta),21)
-                    bb=np.linspace(max(0,cR-a.mixing_delta),min(.49,cR+a.mixing_delta),21)
-                    latent={"Left":[],"Right":[]}
-                    for ca in aa:
-                        for cb in bb:
-                            det=1-ca-cb
-                            if det<=.05:continue
-                            latent["Left"].append(((1-cb)*obsL-ca*obsR)/det)
-                            latent["Right"].append(((1-ca)*obsR-cb*obsL)/det)
-                    for side in ("Left","Right"):
-                        if not latent[side]:raise RuntimeError("Mixing grid contains no valid values")
-                        arr=np.vstack(latent[side])
-                        valid=np.isfinite(arr)
-                        bottom=np.full(arr.shape[1],np.nan)
-                        top=np.full(arr.shape[1],np.nan)
-                        supported=valid.any(axis=0)
-                        if supported.any():
-                            selected=np.where(valid[:,supported],arr[:,supported],np.nan)
-                            bottom[supported]=np.nanmin(selected,axis=0)
-                            top[supported]=np.nanmax(selected,axis=0)
-                        lower.fill_between(x,bottom,top,color=SIDES[side],alpha=.16,label=side+" sensitivity envelope")
-                    for ax in (upper,lower):
-                        ax.axvspan(lo/1e6,hi/1e6,color="grey",alpha=.10)
-                        if interval=="d":
-                            a0,b0=PRIMER[ref]
-                            ax.axvspan(a0/1e6,b0/1e6,color="#693D99",alpha=.07)
-                        ax.set_xlim((lo-1000)/1e6,(hi+1000)/1e6)
-                        ax.set_ylim(0,2)
-                        ax.spines[["top","right"]].set_visible(False)
-                        ax.set_xlabel("Position (Mb)")
-                    upper.set_title("Yb("+interval+") — homozygous Yb+ PK cohort")
-                    if j==0:
-                        upper.set_ylabel("PK coverage")
-                        lower.set_ylabel("Combined Left/Right coverage")
-                    audit["panels"].append({"reference":ref,"interval":interval,"scale":scale,
-                                             "pk_Ybplus_homozygous":len(pk)})
-                handles,labels=[],[]
-                for ax in (axes[0,0],axes[1,0]):
-                    h,l=ax.get_legend_handles_labels();handles+=h;labels+=l
-                fig.legend(handles,labels,ncol=4,loc="upper center",bbox_to_anchor=(.5,.94),fontsize=8)
-                fig.suptitle(ref+" | "+scale,fontsize=13,y=.99)
-                fig.text(.08,.035,f"Solid L/R lines: measured T2+T3 combined coverage. Ribbons: linear-mixing sensitivity, not confidence intervals.\nMixing from saved Optix fit: L<-R={cL:.3f}, R<-L={cR:.3f}; varied independently +/-{a.mixing_delta:.2f}. 1-kb flanks. All 20 PK samples: user-rescored homozygous Yb+/Yb+; no Yb-negative PK group.",fontsize=8)
-                fig.tight_layout(rect=(0,.085,1,.87))
-                pdf.savefig(fig);plt.close(fig)
+        for ref in ("Hmel2.5","HmRos"):
+            dataset=cov.loc[(cov["reference"]==ref)&(cov["scale"]=="contig normalized")]
+            if dataset.empty:raise RuntimeError("Missing contig-normalized coverage for "+ref)
+            fig,axes=plt.subplots(len(race_groups)+1,2,figsize=(13,16),sharey=True)
+            for j,interval in enumerate(("d","v")):
+                lo,hi=WINDOWS[ref][interval]
+                subset=dataset.loc[dataset["position"].between(lo-1000,hi+1000)]
+                for i,(label,group,n,color) in enumerate(race_groups):
+                    ax=axes[i,j]
+                    if group=="PK":
+                        traces=subset.loc[subset["sample"].isin(pk)]
+                    else:
+                        traces=subset.loc[subset["group"]==group]
+                    names=sorted(traces["sample"].unique())
+                    if len(names)!=n:
+                        raise RuntimeError(f"{ref} {interval}: {label}: expected {n}, got {len(names)}")
+                    for _,trace in traces.groupby("sample"):
+                        trace=trace.sort_values("position")
+                        ax.plot(trace["position"]/1e6,trace["observed"],color=color,lw=.7,alpha=.3)
+                    mean=traces.groupby("position")["observed"].mean()
+                    ax.plot(mean.index/1e6,mean.values,color=color,lw=2,label=f"{label} mean (n={n})")
+                    if j==0:ax.set_ylabel(f"{label} (n={n})")
+                    if j==1:ax.legend(loc="upper right",fontsize=7,frameon=False)
+                lower=axes[-1,j]
+                arrays={}
+                for side in ("Left","Right"):
+                    data=subset.loc[subset["sample"]=="TN_"+side+"_combined"].sort_values("position")
+                    if data.empty:raise RuntimeError(f"Missing combined {side}: {ref} {interval}")
+                    arrays[side]=data
+                L,R=arrays["Left"],arrays["Right"]
+                if not np.array_equal(L["position"].to_numpy(),R["position"].to_numpy()):
+                    raise RuntimeError("Combined L/R position mismatch")
+                x=L["position"].to_numpy()/1e6
+                obsL=L["observed"].to_numpy(dtype=float)
+                obsR=R["observed"].to_numpy(dtype=float)
+                aa=np.linspace(max(0,cL-a.mixing_delta),min(.49,cL+a.mixing_delta),21)
+                bb=np.linspace(max(0,cR-a.mixing_delta),min(.49,cR+a.mixing_delta),21)
+                latent={"Left":[],"Right":[]}
+                for ca in aa:
+                    for cb in bb:
+                        det=1-ca-cb
+                        if det<=.05:continue
+                        latent["Left"].append(((1-cb)*obsL-ca*obsR)/det)
+                        latent["Right"].append(((1-ca)*obsR-cb*obsL)/det)
+                for side,obs in (("Left",obsL),("Right",obsR)):
+                    if not latent[side]:raise RuntimeError("No valid mixing grid")
+                    arr=np.vstack(latent[side])
+                    good=np.isfinite(arr).any(axis=0)
+                    bottom=np.full(arr.shape[1],np.nan)
+                    top=np.full(arr.shape[1],np.nan)
+                    if good.any():
+                        selected=arr[:,good]
+                        bottom[good]=np.nanmin(selected,axis=0)
+                        top[good]=np.nanmax(selected,axis=0)
+                    lower.fill_between(x,bottom,top,color=SIDES[side],alpha=.16)
+                    lower.plot(x,obs,color=SIDES[side],lw=1.8,label="Observed "+side)
+                if j==0:lower.set_ylabel("Combined Left/Right")
+                if j==1:lower.legend(loc="upper right",fontsize=7,frameon=False)
+                for ax in axes[:,j]:
+                    ax.axvspan(lo/1e6,hi/1e6,color="#BDBDBD",alpha=.15)
+                    if interval=="d":
+                        p0,p1=PRIMER[ref]
+                        ax.axvspan(p0/1e6,p1/1e6,color="#693D99",alpha=.08)
+                    ax.set_xlim((lo-1000)/1e6,(hi+1000)/1e6)
+                    ax.set_ylim(0,2)
+                    ax.spines[["top","right"]].set_visible(False)
+                    ax.tick_params(labelbottom=True,labelsize=7)
+                axes[0,j].set_title("Yb("+interval+")",fontsize=12)
+                axes[-1,j].set_xlabel("Position (Mb)")
+                audit["panels"].append({"reference":ref,"interval":interval,
+                                       "scale":"contig normalized",
+                                       "groups":{name:n for name,_,n,_ in race_groups}})
+            fig.suptitle(ref+" | Yb(d) and Yb(v) | race-specific tracks",fontsize=14)
+            fig.text(.09,.016,
+                f"50-bp mean depth / full-contig mean; 1-kb flanks. PK cohort: 20 user-rescored homozygous Yb+/Yb+. "
+                f"Observed L/R pooled T2+T3; ribbons: mixing sensitivity (not confidence intervals), "
+                f"L<-R={cL:.3f}, R<-L={cR:.3f} +/-{a.mixing_delta:.2f}.",fontsize=8)
+            fig.tight_layout(rect=(0,.032,1,.974),h_pad=.65,w_pad=1.2)
+            pdf.savefig(fig)
+            plt.close(fig)
+    audit["normalization"]="contig normalized only; reference-control-relative pages removed"
+    audit["race_rows"]=[name for name,_,_,_ in race_groups]
     (a.outdir/"audit.json").write_text(json.dumps(audit,indent=2)+"\n")
     print("PDF",outfile)
     print("PK_YBPLUS_HOMOZYGOUS",len(pk))
