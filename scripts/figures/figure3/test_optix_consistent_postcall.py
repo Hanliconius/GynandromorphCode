@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pysam
+import pysam.bcftools
 
 HERE=Path(__file__).parent
 spec=importlib.util.spec_from_file_location('post',HERE/'extend_optix_consistent_postcall.py')
@@ -63,16 +64,23 @@ class PostcallTests(unittest.TestCase):
         commands=[]
         def fake(cmd):
             commands.append(cmd)
+            if cmd[1]=='index':
+                pysam.bcftools.index('-f','-c',cmd[-1])
+                return
             h=pysam.VariantHeader();h.contigs.add('NC_140406.1',length=5000)
             h.formats.add('DP',1,'Integer','depth');h.formats.add('AD','R','Integer','depth')
             h.add_sample('L2')
+            h.info.add('INDEL',0,'Flag','Indel record')
             with pysam.VariantFile(str(self.out/'L2.pileup.bcf'),'wb',header=h) as f:
                 r=f.new_record(contig='NC_140406.1',start=9,alleles=('A','C','G'))
                 r.samples['L2']['AD']=(11,3,7);r.samples['L2']['DP']=21;f.write(r)
+                r=f.new_record(contig='NC_140406.1',start=9,alleles=('AT','A'))
+                r.info['INDEL']=True;r.samples['L2']['AD']=(13,8);r.samples['L2']['DP']=21;f.write(r)
         with patch.object(m,'run',side_effect=fake):m.counts(self.cfg,0)
         with gzip.open(self.out/'L2.counts.tsv.gz','rt') as f:r=next(csv.DictReader(f,delimiter='\t'))
         self.assertEqual([r[k] for k in ['ref_depth','alt_depth','other_depth']],['11','7','3'])
         self.assertIn('-d',commands[0]);self.assertIn('250',commands[0])
+        self.assertEqual(json.loads((self.out/'L2.complete.json').read_text())['skipped_overlapping_indel_records'],1)
     def test_real_archived_model_refits_and_pools(self):
         self.vcf(n=540);m.qc(self.cfg,0)
         shutil.copy2((HERE/m.MODEL) if (HERE/m.MODEL).is_file() else HERE.parents[1]/'reciprocal_mixing'/m.MODEL,self.out/m.MODEL)
