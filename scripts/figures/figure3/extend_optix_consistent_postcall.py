@@ -111,18 +111,27 @@ def counts(cfg, task):
          '-r',f'{chrom}:{max(1,limits[0]-200)}-{limits[1]+200}','-a','FORMAT/DP,FORMAT/AD',
          '-q','30','-Q','20','-d','250',row['bam']]
     run(cmd)
+    run([cfg['bcftools'],'index','-f','-c',str(target)])
     found={}
+    skipped_indels=0
     with pysam.VariantFile(str(target)) as vf:
         if list(vf.header.samples)!=[name]:raise RuntimeError('Focal BAM SM mismatch')
         for rec in vf:
             if rec.pos not in sites:continue
+            # mpileup emits separate SNP and INDEL records at the same POS.
+            # Only the SNP record contains the requested nucleotide counts.
+            if rec.info.get('INDEL',False):
+                skipped_indels+=1
+                continue
             _,ref,alt=sites[rec.pos]
-            if rec.ref!=ref:raise RuntimeError('Focal/reference allele mismatch')
+            if rec.ref.upper()!=ref.upper():
+                raise RuntimeError(f'Focal/reference allele mismatch: {name} {rec.contig}:{rec.pos} pileup={rec.ref} joint={ref}')
+            if rec.pos in found:raise RuntimeError(f'Duplicate SNP pileup at {rec.contig}:{rec.pos}')
             c=rec.samples[name]
             ad=c.get('AD') or ()
-            by_allele=dict(zip(rec.alleles,ad))
-            nr=by_allele.get(ref,0) or 0
-            na=by_allele.get(alt,0) or 0
+            by_allele={allele.upper():depth for allele,depth in zip(rec.alleles,ad)}
+            nr=by_allele.get(ref.upper(),0) or 0
+            na=by_allele.get(alt.upper(),0) or 0
             found[rec.pos]=(nr,na,c.get('DP') or 0,
                            sum(x or 0 for x in ad)-nr-na)
     dest=out/(name+'.counts.tsv.gz')
@@ -132,7 +141,8 @@ def counts(cfg, task):
         for pos,(chrom,ref,alt) in sorted(sites.items()):
             w.writerow([chrom,pos,ref,alt,*found.get(pos,(0,0,0,0))])
     dump(out/(name+'.complete.json'),dict(sample=name,command=cmd,sites=len(sites),
-         counts=str(dest),pileup=str(target),no_diploid_focal_call=True))
+         counts=str(dest),pileup=str(target),no_diploid_focal_call=True,
+         skipped_overlapping_indel_records=skipped_indels))
     print('OPTIX_FOCAL_COUNTS',name,len(sites),flush=True)
 
 
