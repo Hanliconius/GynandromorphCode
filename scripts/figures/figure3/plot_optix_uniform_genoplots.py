@@ -202,6 +202,13 @@ def display_sites(scores,recall,cutoff,interval_only,module,max_sites):
     return t,dict(scored_above_cutoff=n_scored,in_scope=n_interval,focal_callable=n_callable,displayed=len(t))
 
 
+def individual_label(row):
+    """Format pandas itertuples rows, preserving unknown phenotypes as ?."""
+    vals=' '.join(f'{c}{"?" if pd.isna(getattr(row,c)) else int(getattr(row,c))}' for c in ('B','D','R'))
+    group=('PK '+str(row.PK_colour)) if row.is_PK else str(row.group)
+    return f'{row.label} {group} | {vals} | {row.sample}'
+
+
 def draw(t,dosages,recall,meta,names,cohort,module,cutoff,interval_only,out,pdf,counts):
     import matplotlib.pyplot as plt
     from matplotlib.colors import LinearSegmentedColormap
@@ -210,11 +217,7 @@ def draw(t,dosages,recall,meta,names,cohort,module,cutoff,interval_only,out,pdf,
     controls=meta.loc[~meta.is_PK].sort_values(['group','label'])
     individuals=pd.concat([controls,pk],ignore_index=True)
     rows=['present','TN_Left','TN_Right']+individuals['sample'].tolist()+['absent']
-    def label(row):
-        vals=' '.join(f'{c}{"?" if pd.isna(row[c]) else int(row[c])}' for c in ('B','D','R'))
-        group=('PK '+str(row.PK_colour)) if row.is_PK else str(row.group)
-        return f'{row.label} {group} | {vals} | {row.sample}'
-    labels=[f'{module}+ controls','TNLeft corrected','TNRight corrected']+[label(r) for r in individuals.itertuples()]+[f'{module}− controls']
+    labels=[f'{module}+ controls','TNLeft corrected','TNRight corrected']+[individual_label(r) for r in individuals.itertuples()]+[f'{module}− controls']
     nrows=len(rows);fig=plt.figure(figsize=(13,max(8,3+nrows*.29)))
     fig.suptitle(f'optix — {module}',x=.36,ha='left',fontsize=15)
     fig.text(.36,.93,f'BA ≥ {cutoff:.2f} | '+('labelled intervals' if interval_only else 'full window')+
