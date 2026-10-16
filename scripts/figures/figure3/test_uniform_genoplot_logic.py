@@ -10,6 +10,15 @@ spec=importlib.util.spec_from_file_location('plotter',HERE/'plot_optix_uniform_g
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 
 class LogicTests(unittest.TestCase):
+    def test_namedtuple_labels_for_controls_PK_and_missing_annotations(self):
+        rows=pd.DataFrame([
+            dict(sample='ERR1',label='control',group='rosina',is_PK=False,PK_colour=np.nan,B=0,D=1,R=1),
+            dict(sample='SRR1',label='P1001',group='PK_dark',is_PK=True,PK_colour='dark',B=1,D=0,R=0),
+            dict(sample='ERR2',label='new',group='cythera',is_PK=False,PK_colour=np.nan,B=np.nan,D=np.nan,R=np.nan)])
+        labels=[m.individual_label(r) for r in rows.itertuples()]
+        self.assertEqual(labels[0],'control rosina | B0 D1 R1 | ERR1')
+        self.assertEqual(labels[1],'P1001 PK dark | B1 D0 R0 | SRR1')
+        self.assertEqual(labels[2],'new cythera | B? D? R? | ERR2')
     def test_orientation_and_dominant_heterozygotes(self):
         self.assertEqual(m.score([0,0,.5,1],[0,0,1,1])['balanced_accuracy'],1)
         self.assertTrue(m.score([0,0,.5,1],[0,0,1,1])['pattern_is_alt'])
