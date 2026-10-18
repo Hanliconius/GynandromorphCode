@@ -35,6 +35,14 @@ def resource_type(path,field):
  if name.endswith('.json'):return 'configuration'
  return 'other'
 
+def table_schema_kind(header):
+ columns={c.strip().lower() for c in header.split('\t')}
+ coordinates=bool(columns & {'pos','pos1','position','position_1based','start','start0','site_key','site'})
+ alleles=bool(columns & {'gt','ad','ref_count','alt_count','rosina_count','melpomene_count','ref_depth','alt_depth','dosage','display_gt','raw_gt','genotype'})
+ if coordinates and alleles:return 'allele_table_candidate'
+ if columns & {'sample','sample_id','accession','taxon_name','focal_role','sample_type'} and not coordinates:return 'sample_metadata'
+ return 'table_schema_unresolved'
+
 def read_table_paths(path):
  opener=gzip.open if path.suffix=='.gz' else open
  with opener(path,'rt',errors='replace') as h:
@@ -77,7 +85,8 @@ def inspect(path,typ):
  if typ in ('allele_table_candidate','depth_profile') and path.name.endswith(('.tsv','.tsv.gz','.csv','.csv.gz')):
   opener=gzip.open if path.suffix=='.gz' else open
   with opener(path,'rt',errors='replace') as h:result['table_header']=h.readline().strip()[:3000]
-  result['evidence']='Existing table header; coordinates/filter compatibility not yet established'
+  if typ=='allele_table_candidate':result['resource_type']=table_schema_kind(result['table_header'])
+  result['evidence']='Table schema inspected; no allele-data claim based on filename; coordinates/filter compatibility still requires validation'
  return result
 
 def main():
