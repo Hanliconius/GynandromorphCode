@@ -141,17 +141,22 @@ def prepare(a):
                         task=dict(task=len(tasks),sample=s,reference=ref,bam=chosen['resolved_path']);tasks.append(task)
                     selected.append(dict(**m,reference=ref,interval=interval,source='forced_BAM_call',path=str(out/'calls'/f'{task["task"]}.vcf.gz')))
                 else:exclusions.append(dict(sample=s,reference=ref,interval=interval,reason='no_compatible_native_resource',taxon=m['taxon']))
-    # Explicit, locus-wide alias check before adding legacy calls.
+    # Audit the full legacy locus; require exact REF agreement throughout the used dorsal interval.
     legacy=root/'external/krista_genotype_plots_original/Genotype_Plots/Ivory_Hmr15-1627000-1637000_biallelic.vcf'
-    checked=0;mismatches=[]
+    checked=0;mismatches=[];target_checked=0;target_mismatches=[]
+    dlo,dhi=BOUNDS['HmRos']['d']
     with pysam.FastaFile(references['HmRos']) as fa,pysam.VariantFile(str(legacy)) as vf:
         legacy_names=list(vf.header.samples)
         for r in vf:
             if r.contig!='Hmr15':raise RuntimeError('Unexpected legacy contig')
             checked+=1
-            if fa.fetch(CHROMS['HmRos'],r.pos-1,r.pos-1+len(r.ref)).upper()!=r.ref.upper():mismatches.append(r.pos)
-    save(out/'legacy_reference_check.json',dict(path=str(legacy),records_checked=checked,mismatches=len(mismatches),first_mismatches=mismatches[:20],scope='REF agreement across available legacy locus records; not whole-chromosome identity'))
-    if not checked or mismatches:raise RuntimeError('Legacy/native coordinate compatibility failed; no merge submitted')
+            disagrees=fa.fetch(CHROMS['HmRos'],r.pos-1,r.pos-1+len(r.ref)).upper()!=r.ref.upper()
+            if disagrees:mismatches.append(r.pos)
+            if r.pos<=dhi and r.pos+len(r.ref)-1>=dlo:
+                target_checked+=1
+                if disagrees:target_mismatches.append(r.pos)
+    save(out/'legacy_reference_check.json',dict(path=str(legacy),records_checked=checked,mismatches=len(mismatches),first_mismatches=mismatches[:20],target_interval=[dlo,dhi],target_records_checked=target_checked,target_mismatches=target_mismatches,outside_interval_mismatches_excluded=[x for x in mismatches if x not in target_mismatches],scope='Exact REF agreement required across used dorsal interval; outside-interval discrepancies audited and excluded; no whole-chromosome identity claim'))
+    if not target_checked or target_mismatches:raise RuntimeError('Legacy/native coordinate compatibility failed within used dorsal interval; no merge submitted')
     for s in legacy_names:
         m=getmeta(s)
         if m['exclusion'] or m['d'] is None:continue
