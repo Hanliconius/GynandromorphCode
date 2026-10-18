@@ -1,0 +1,41 @@
+{
+  "review_date": "2026-10-18",
+  "input_results_commit": "main/results/yb_manifest_reconciliation_v1",
+  "targets": 448,
+  "source_configs_read": 186,
+  "resources": 1145,
+  "scope": "Audited project resource files and explicit paths traced from source configurations; not a claim about undocumented storage elsewhere",
+  "prior_target_matches": {
+    "alignment": [],
+    "FASTQ": [],
+    "depth_profile": []
+  },
+  "previous_coverage_cohort_per_reference": {
+    "total": 38,
+    "comparative_controls": 14,
+    "PK": 20,
+    "focal_libraries": 4
+  },
+  "previous_coverage_targets_overlap": 0,
+  "legacy_Ivory": {
+    "dorsal_interval_records": 474,
+    "ventral_interval_records": 0
+  },
+  "false_positive_allele_tables": [
+    "analysis/checkpoints/original_plot_callset_samples.tsv",
+    "analysis/original_502/checkpoints/optix_D_R_expected_site_genotype_samples.tsv"
+  ],
+  "missing_path_review": {
+    "total": 14,
+    "template_placeholders": 12,
+    "previously_excluded_BAMs": 2
+  },
+  "decision": "Continue existing expansion; reuse its completed validated outputs and download only missing mates; preserve all dorsal controls",
+  "held_jobs": {
+    "download": 138522353,
+    "align": 138522354,
+    "call": 138522355,
+    "report": 138522356
+  },
+  "cluster_jobs_changed_by_this_review": false
+}
