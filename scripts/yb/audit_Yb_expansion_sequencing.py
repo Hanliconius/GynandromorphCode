@@ -45,7 +45,7 @@ def main():
  result=[]
  for t in tasks:
   s=t['sample'];mm=meta[meta['Accession'].str.contains(r'(?<!\d)'+re.escape(s)+r'(?!\d)',regex=True)]
-  cols=[c for c in meta.columns if re.search(r'data.?type|sequenc|library',c,re.I)]
+  cols=[c for c in meta.columns if re.search(r'data.?type|sequenc.*(?:type|method|strategy)|library',c,re.I)]
   original='; '.join(sorted({str(v).strip() for c in cols for v in mm[c] if str(v).strip()}))
   row=lookup.get(s,{});category=classify(original,row)
   # Actual reuse selection from the submitted manifest; no assumption that a
