@@ -46,6 +46,11 @@ with tempfile.TemporaryDirectory() as td:
  m.report(json.loads((out/'run.json').read_text()))
  result=json.loads((out/'complete.json').read_text());assert result['focal_calls_unchanged']
  members=pd.read_csv(out/'control_membership.tsv',sep='\t');assert len(members)==8 and members.included.all()
+ # An unused discrepant record must be audited, not block the target interval.
+ outside=legacy.read_text()+'Hmr15\t1631523\t.\tC\tG\t.\tPASS\t.\tGT:DP:GQ\t'+ '\t'.join(['0/0:10:40']*4)+'\n'
+ legacy.write_text(outside)
+ m.prepare(SimpleNamespace(root=root,output=root/'outside',source=source,rosina_reference=None,hmel_reference=None,submit=False))
+ check=json.loads((root/'outside/legacy_reference_check.json').read_text());assert check['outside_interval_mismatches_excluded']==[1631523] and check['target_mismatches']==[]
  # Check REF mismatch aborts rather than merging by position.
  legacy.write_text(legacy.read_text().replace('\tA\tG\t','\tC\tG\t'))
  try:m.prepare(SimpleNamespace(root=root,output=root/'bad',source=source,rosina_reference=None,hmel_reference=None,submit=False))
