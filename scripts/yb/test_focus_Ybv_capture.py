@@ -8,7 +8,7 @@ with tempfile.TemporaryDirectory() as tmp:
  seq={s:dict(library_strategy='WGS',library_selection='RANDOM') for s in samples}
  seq['capture']=dict(library_strategy='Targeted-Capture',library_selection='Hybrid Selection')
  plan=m.decisions(tasks,seq,{'10_2':'RUNNING'},root,dict(download=10))
- assert [r['keep'] for r in plan]==[True,False,True,True]
- assert plan[1]['reason']=='deferred_WGS_no_new_download'
- assert plan[2]['reason']=='WGS_transfer_already_running'
- print('PASS: retain capture and available/in-flight WGS, defer pending WGS, preserve array indices')
+ assert [r['keep'] for r in plan]==[True,False,False,True]
+ assert plan[1]['reason']=='excluded_WGS_download_incomplete'
+ assert plan[2]['reason']=='excluded_WGS_download_incomplete'
+ print('PASS: retain capture and completed/local WGS; cancel unfinished WGS, defer pending WGS, preserve array indices')
