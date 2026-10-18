@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Narrow a submitted expansion to capture plus completed/in-flight WGS; preserve data."""
-import argparse,csv,hashlib,importlib.util,json,shlex,subprocess,sys,time
+import argparse,csv,hashlib,importlib.util,json,shlex,subprocess,sys,time,os
 from pathlib import Path
 def save(p,x):p.write_text(json.dumps(x,indent=2)+'\n')
 def command(args,check=True):return subprocess.run(list(map(str,args)),check=check,capture_output=True,text=True)
@@ -17,8 +17,14 @@ def decisions(tasks,seq,states,root,jobs):
   capture=r['library_strategy'].upper()=='TARGETED-CAPTURE' and r['library_selection'].lower()=='hybrid selection'
   complete=(root/'raw'/sample/'complete.json').is_file()
   inflight=state in {'RUNNING','COMPLETING','R','CG'}
-  keep=capture or complete or inflight
-  result.append(dict(index=i,sample=sample,keep=keep,reason='confirmed_targeted_capture' if capture else 'WGS_download_completed' if complete else 'WGS_transfer_already_running' if inflight else 'deferred_WGS_no_new_download',download_state=state))
+  fq=t.get('fastq_candidates',{})
+  local=bool(t.get('reuse_bam')) and Path(t['reuse_bam']).is_file()
+  for mate in (1,2):
+   candidates=fq.get(str(mate),fq.get(mate,[]))
+   if not any(Path(x).is_file() and Path(x).stat().st_size>0 for x in candidates):break
+  else:local=True
+  keep=capture or complete or local
+  result.append(dict(index=i,sample=sample,keep=keep,reason='confirmed_targeted_capture' if capture else 'WGS_download_completed' if complete else 'WGS_complete_local_inputs' if local else 'excluded_WGS_download_incomplete',download_state=state))
  return result
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--run',type=Path,required=True);p.add_argument('--sequencing-report',type=Path);p.add_argument('--apply',action='store_true');p.add_argument('--report-config',type=Path);a=p.parse_args();root=a.run.resolve()
@@ -35,6 +41,8 @@ def main():
  # Hold before snapshotting; running transfers continue.
  if a.apply:
   for stage in ('download','align','call','report'):
+   present=command(['squeue','--noheader','--jobs='+str(jobs[stage]),'--format=%i'],False).stdout.strip()
+   if not present:continue
    r=command(['scontrol','hold',jobs[stage]],False)
    if r.returncode and not all('already finished' in line.lower() or 'no error' in line.lower() for line in r.stderr.splitlines() if line.strip()):raise RuntimeError('Could not hold '+stage+': '+r.stderr)
  snapshot=command(['squeue','--noheader','--array','--jobs='+','.join(str(jobs[k]) for k in ('download','align','call','report')),'--format=%i|%T']).stdout
@@ -50,19 +58,43 @@ def main():
  callids={t['call_task'] for t in narrowed['new_tasks']};origids={t['task'] for t in cfg['original_tasks']}
  narrowed['tasks']=[t for t in cfg['tasks'] if t['task'] in callids|origids]
  save(stage/'run.json',narrowed)
- scope=dict(capture_tasks=338,retained_WGS=sum(r['keep'] and r['reason']!='confirmed_targeted_capture' for r in plan),deferred_WGS=len(exclude),deferred_samples=[r['sample'] for r in plan if not r['keep']],parent_run=str(root),original_run_manifest_unchanged=True,existing_data_deleted=False,selection_independent_of_genotype=True,sequencing_manifest=str(a.sequencing_report.resolve()),sequencing_manifest_sha256=hashlib.sha256(a.sequencing_report.read_bytes()).hexdigest())
+ scope=dict(policy='capture_or_completed_WGS_or_complete_local_inputs; unfinished WGS cancelled',capture_tasks=338,retained_WGS=sum(r['keep'] and r['reason']!='confirmed_targeted_capture' for r in plan),deferred_WGS=len(exclude),deferred_samples=[r['sample'] for r in plan if not r['keep']],parent_run=str(root),original_run_manifest_unchanged=True,existing_data_deleted=False,selection_independent_of_genotype=True,sequencing_manifest=str(a.sequencing_report.resolve()),sequencing_manifest_sha256=hashlib.sha256(a.sequencing_report.read_bytes()).hexdigest())
  save(stage/'scope.json',scope)
  print('KEEP\t'+str(len(keep))+'\nDEFER\t'+str(len(exclude))+'\nPLAN\t'+str(stage))
  if not a.apply:return
  # Refuse to alter a report already running.
  if any(states.get(str(jobs['report'])+suffix) in {'RUNNING','COMPLETING'} for suffix in ('','_0')):raise RuntimeError('Original report running; arrays remain held')
- # Cancel only queued excluded tasks, and replace the held original report.
+ # Cancel unfinished WGS work and all superseded focus reports before cleanup.
+ for previous in (root/'capture_focus').glob('*/jobs.json'):
+  oldjob=json.loads(previous.read_text()).get('report')
+  if oldjob:
+   state=command(['squeue','--noheader','--jobs='+str(oldjob),'--format=%T'],False).stdout.strip()
+   if state in {'RUNNING','COMPLETING'}:raise RuntimeError('Previous focus report running; arrays remain held')
+   if state:command(['scancel',str(oldjob)])
  for k in ('download','align','call'):
-  pending=[i for i in exclude if states.get(f'{jobs[k]}_{i}') in {'PENDING','PD'}]
+  pending=[i for i in exclude if states.get(f'{jobs[k]}_{i}')]
   if pending:command(['scancel',str(jobs[k])+'_['+expression(pending)+']'])
  reportstate=states.get(str(jobs['report']),states.get(str(jobs['report'])+'_0',''))
  if reportstate in {'PENDING','PD'}:command(['scancel',jobs['report']])
  elif reportstate:raise RuntimeError('Unexpected original report state '+reportstate)
+ # Wait for excluded writers to stop before removing only their raw download files.
+ excluded_jobs={f'{jobs[k]}_{i}' for k in ('download','align','call') for i in exclude}
+ for attempt in range(30):
+  current=command(['squeue','--noheader','--array','--jobs='+','.join(str(jobs[k]) for k in ('download','align','call')),'--format=%i'],False).stdout.split()
+  if not excluded_jobs.intersection(current):break
+  time.sleep(1)
+ else:raise RuntimeError('Excluded tasks still present; cleanup skipped and arrays remain held')
+ cleaned=[]
+ for t in cfg['new_tasks']:
+  if t['index'] not in exclude:continue
+  d=root/'raw'/t['sample']
+  if (d/'complete.json').exists():raise RuntimeError('WGS finished during scope change; retain data and review '+t['sample'])
+  for mate in (1,2):
+   for suffix in ('','.part','.partial'):
+    path=d/f"{t['sample']}_{mate}.fastq.gz{suffix}"
+    if path.is_file() and not path.is_symlink():
+     cleaned.append(dict(path=str(path),bytes=path.stat().st_size));path.unlink()
+ save(stage/'removed_incomplete_WGS_downloads.json',cleaned)
  # A wrapper applies the filtered manifest without editing frozen code or original run.json.
  script=stage/'focus_Ybv_capture.py';script.write_bytes(Path(__file__).read_bytes())
  wrap=shlex.join(['micromamba','run','-n','gynandrocalling','python',str(script),'--run',str(root),'--report-config',str(stage/'run.json')])
@@ -73,6 +105,6 @@ def main():
  for k in ('download','align','call'):
   pending=[i for i in keep if states.get(f'{jobs[k]}_{i}') in {'PENDING','PD'}]
   if pending:command(['scontrol','release',str(jobs[k])+'_['+expression(pending)+']'])
- command(['scontrol','update','JobId='+str(jobs['download']),'ArrayTaskThrottle=48'])
+ # Retain the scheduler's existing throttle; no parent-array update needed.
  print('REPORT\t'+reportjob+'\nPDF\t'+str(root/'Yb_expanded_existing_controls_Rosina.pdf'))
 if __name__=='__main__':main()
