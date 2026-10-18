@@ -1,0 +1,17 @@
+{
+  "status": "RECONCILIATION_REQUIRES_REVIEW",
+  "source_configs_read": 186,
+  "resources": 1145,
+  "explicit_missing_paths": 14,
+  "read_errors": 0,
+  "targets": 448,
+  "decisions": {
+    "unresolved_not_evidence_of_absence": 433,
+    "inspect_existing_allele_tables": 15
+  },
+  "jobs_changed": false,
+  "downloads": 0,
+  "alignments": 0,
+  "calling": 0,
+  "warning": "Unresolved entries do not authorize downloads; candidate resources still require reference/allele/filter compatibility checks"
+}
