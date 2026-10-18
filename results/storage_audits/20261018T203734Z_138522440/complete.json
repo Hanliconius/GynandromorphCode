@@ -1,0 +1,30 @@
+{
+  "status": "READ_ONLY_AUDIT_COMPLETE_REQUIRES_REVIEW",
+  "root": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling",
+  "output": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/storage_audits/20261018T203734Z_138522440",
+  "started_utc": "2026-10-18T20:37:46.029533+00:00",
+  "finished_utc": "2026-10-18T20:40:07.670550+00:00",
+  "files_and_symlinks": 66369,
+  "directories": 4931,
+  "allocated_unique_bytes": 1538008070656,
+  "apparent_bytes": 1543596590443,
+  "active_project_runs": [
+    "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1"
+  ],
+  "explicit_protected_runs": [
+    "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1"
+  ],
+  "protected_paths": 759,
+  "unresolved_active_job_ids": [],
+  "slurm_snapshot_error": "",
+  "read_errors": 0,
+  "review_candidate_files": 0,
+  "review_candidate_allocated_bytes_upper_bound": 0,
+  "candidate_bytes_are_not_approved_deletion_savings": true,
+  "duplicate_evidence": "edge signatures only; full-file confirmation required",
+  "duplicate_signature_bytes_read_budget": 67108864,
+  "duplicate_signature_bytes_read": 4325376,
+  "mutations": "New report files only; no project files deleted, moved, or edited",
+  "live_file_sizes": "Point-in-time and provisional; no content hashing for protected or recently modified files",
+  "script_sha256": "a942e65e81aa398d2f5368f082bc12894872ed42b1005521f9b28e1099f240ba"
+}

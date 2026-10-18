@@ -1,0 +1,27 @@
+{
+  "status": "COMPLETE",
+  "targets": 448,
+  "ENA_resolved": 448,
+  "original_data_type": {
+    "WGS": 110,
+    "CS": 338
+  },
+  "sequencing_categories": {
+    "reported_WGS": 110,
+    "selective_capture_or_amplicon": 338
+  },
+  "ENA_strategies": {
+    "OTHER": 1,
+    "WGS": 109,
+    "Targeted-Capture": 338
+  },
+  "ENA_selections": {
+    "unspecified": 4,
+    "RANDOM": 106,
+    "Hybrid Selection": 338
+  },
+  "reused_Rosina_BAMs": 0,
+  "paired_local_FASTQ_candidates": 0,
+  "completed_downloads": 3,
+  "warning": "Capture/RAD labels do not establish ventral coverage; inspect targets or observed reads. No tasks excluded or jobs changed."
+}

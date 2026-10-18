@@ -1,0 +1,7 @@
+job_id	name	state	project_related	protected_runs
+138522353	Ybv_download	PENDING	True	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1
+138522354	Ybv_align	PENDING	True	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1
+138522355	Ybv_call	PENDING	True	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1
+138522356	Ybv_report	PENDING	True	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1
+138522434	JcoGeneExt	RUNNING	False	
+138522438	mc_pipeline	RUNNING	False	
