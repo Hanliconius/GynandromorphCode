@@ -1,0 +1,19 @@
+{
+  "source_matrix": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/rosina_genomewide_joint_recall/20261014T223341Z_f956c8bc/Optix_Arnaud_review_nonPK_v2/merged/Dennis_BA90_intervals_frequencies.tsv",
+  "producer_branch": "optix-joint-recall-20261014",
+  "producer": "scripts/figures/figure3/plot_optix_publication_nonPK.py",
+  "producer_function": "draw_frequency",
+  "producer_blob_sha": "4842d1c578cf98dae7803ab940b9beb561e7406a",
+  "driver": "scripts/figures/figure3/optix_arnaud_review_nonPK.py",
+  "module": "Dennis",
+  "BA_cutoff": 0.9,
+  "scope": "labelled intervals",
+  "expected_SNPs": 24,
+  "control_n": {
+    "positive": 142,
+    "negative": 281
+  },
+  "orientation": "Dennis-associated allele frequency / corrected focal dosage",
+  "phase_inferred": false,
+  "output": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Dennis_barebones_v1/Dennis_barebones.pdf"
+}
