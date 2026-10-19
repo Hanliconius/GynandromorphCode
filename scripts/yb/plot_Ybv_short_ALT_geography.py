@@ -89,8 +89,9 @@ def run(a):
  # fraction; the REF genotype itself never triggers exclusion.
  import re
  cydno_group=np.asarray([bool(set(re.findall('[a-z]+',r['race'].lower()))&{'cydno','pachinus'}) for r in members.to_dict('records')])
- keep=np.asarray([r['sample'] not in unknown_local for r in members.to_dict('records')]) & ~cydno_group & (full_callable>=a.min_callable)
- excluded=members.loc[~keep].copy();excluded['reason']=['; '.join(reason for flag,reason in [(r['sample'] in unknown_local,'unknown melpomene locality'),(bool(cydno_group[i]),'cydno/pachinus group excluded by request'),(full_callable[i]<a.min_callable,'full-window callability below '+str(a.min_callable))] if flag) for i,r in members.loc[~keep].iterrows()]
+ excluded_races=np.asarray([bool(set(re.findall('[a-z]+',r['race'].lower()))&{'nanna','burchelli','amaryllis'}) for r in members.to_dict('records')])
+ keep=np.asarray([r['sample'] not in unknown_local for r in members.to_dict('records')]) & ~cydno_group & ~excluded_races & (full_callable>=a.min_callable)
+ excluded=members.loc[~keep].copy();excluded['reason']=['; '.join(reason for flag,reason in [(r['sample'] in unknown_local,'unknown melpomene locality'),(bool(cydno_group[i]),'cydno/pachinus group excluded by request'),(bool(excluded_races[i]),'nanna/burchelli/amaryllis excluded by request'),(full_callable[i]<a.min_callable,'full-window callability below '+str(a.min_callable))] if flag) for i,r in members.loc[~keep].iterrows()]
  excluded.to_csv(out/'excluded_samples.tsv',sep='\t',index=False)
  members=members.loc[keep].reset_index(drop=True);matrix=matrix[keep]
  # Export the actual sheet records for provisional Ecuadorian assignments.
@@ -106,10 +107,9 @@ def run(a):
   x=matrix[ids];n=np.isfinite(x).sum(axis=0);f=np.divide(np.nansum(x,axis=0),n,out=np.full(len(positions),np.nan),where=n>0)
   labels.append(label+f' (n={len(ids)})');freq.append(f);fractions.append(n/len(ids) if ids else np.full(len(positions),np.nan));styles.append(style)
   for j,pos in enumerate(positions):records.append(dict(row=label,pos1=pos,n_individuals=len(ids),n_called=int(n[j]),ALT_frequency=f[j]))
- for geo in ('West','East','Unresolved'):
-  for v in (1,0):
-   ids=members.index[members.geography.eq(geo)&members.v.eq(v)].tolist()
-   if ids or geo!='Unresolved':add(f'All {geo.lower()} population group | v{"+" if v else "-"}',ids,'summary')
+ for v in (1,0):
+  ids=members.index[members.v.eq(v)].tolist()
+  add(f'All retained populations | v{"+" if v else "-"}',ids,'summary')
  for label,col in [('TNLeft','left_rosina_dosage'),('TNRight','right_rosina_dosage')]:
   x=old[col].to_numpy(dtype=float,copy=True);flip=old.rosina_base.eq(old.ref).to_numpy();x[flip]=1-x[flip]
   labels.append(label);freq.append(x);fractions.append(np.where(np.isfinite(x),1.,np.nan));styles.append('focal')
@@ -125,10 +125,10 @@ def run(a):
   ns['draw'](np.asarray(freq),labels,styles,positions,out,pdf)
   ns['draw'](np.asarray(fractions),labels,styles,positions,out,pdf,True)
  shutil.copy2(__file__,out/Path(__file__).name)
- audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 positions and ALT definitions; full joint VCF allele mapping audited; incompatible calls missing',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,cydno_pachinus_excluded=True,Venezuela_melpomene_population='East',unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
+ audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 positions and ALT definitions; full joint VCF allele mapping audited; incompatible calls missing',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,cydno_pachinus_excluded=True,excluded_races=['nanna','burchelli','amaryllis'],top_rows='All retained populations pooled by recorded ventral phenotype',Venezuela_melpomene_population='East',unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
  (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print(json.dumps(audit,indent=2));print('PDF\t'+str(out/pdfname))
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v6');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v7');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
  if not a.submit:
   run(a)
   if a.min_callable==0:
