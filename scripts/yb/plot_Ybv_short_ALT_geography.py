@@ -109,7 +109,7 @@ def run(a):
    ids=members.index[members.geography.eq(geo)&members.v.eq(v)].tolist()
    if ids or geo!='Unresolved':add(f'All {geo.lower()} population group | v{"+" if v else "-"}',ids,'summary')
  for label,col in [('TNLeft','left_rosina_dosage'),('TNRight','right_rosina_dosage')]:
-  x=old[col].to_numpy(float);flip=old.rosina_base.eq(old.ref).to_numpy();x[flip]=1-x[flip]
+  x=old[col].to_numpy(dtype=float,copy=True);flip=old.rosina_base.eq(old.ref).to_numpy();x[flip]=1-x[flip]
   labels.append(label);freq.append(x);fractions.append(np.where(np.isfinite(x),1.,np.nan));styles.append('focal')
  for (geo,race,d,v),g in members.groupby(['geography','race','d','v'],sort=True,dropna=False):
   ds='?' if str(d)=='' else '+' if float(d)==1 else '-'
@@ -126,7 +126,7 @@ def run(a):
  audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 positions and ALT definitions; full joint VCF allele mapping audited; incompatible calls missing',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
  (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print(json.dumps(audit,indent=2));print('PDF\t'+str(out/pdfname))
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v4');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v5');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
  if not a.submit:
   run(a)
   if a.min_callable==0:
