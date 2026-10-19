@@ -5,39 +5,32 @@ from pathlib import Path
 ROOT=Path('/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis')
 RUN=ROOT/'rosina_genomewide_joint_recall/20261014T223341Z_f956c8bc'
 
+SOURCE=RUN/'Optix_Arnaud_review_nonPK_v2/merged/Dennis_BA90_intervals_frequencies.tsv'
+
 def extract(path):
+ import re
  import pandas as pd
- t=pd.read_csv(path,sep='\t')
- aliases={'pos1':'pos','position':'pos','value':'frequency','allele_frequency':'frequency','plot_row':'row'}
- t=t.rename(columns={k:v for k,v in aliases.items() if k in t and v not in t})
- if not {'pos','row','frequency'}<=set(t):return None
- for col in ['module','trait','panel']:
-  if col in t and t[col].astype(str).str.fullmatch('Dennis',case=False).any():t=t[t[col].astype(str).str.fullmatch('Dennis',case=False)]
- for col in ['cutoff','BA_cutoff','ba_cutoff']:
-  if col in t:t=t[pd.to_numeric(t[col],errors='coerce').sub(.9).abs().lt(1e-8)]
- for col in ['scope']:
-  if col in t:
-   mask=t[col].astype(str).str.contains('label|interval',case=False)
-   if mask.any():t=t[mask]
- # Canonical biological row names, not arbitrary row indices.
- def row(x):
-  s=str(x).lower().replace('_','').replace(' ','')
-  if s in ['present','dennis+','d+','positive']:return 'present'
-  if s in ['absent','dennis−','dennis-','d-','negative']:return 'absent'
-  if s.startswith('tnleft'):return 'TN_Left'
-  if s.startswith('tnright'):return 'TN_Right'
-  return '?'
- t['row']=t['row'].map(row);t=t[t.row.ne('?')].copy()
- t=t[t.pos.between(1215210,1216124)|t.pos.between(1218557,1221494)]
- if len(t.pos.unique())!=24 or set(t.row)!=set(['present','TN_Left','TN_Right','absent']):return None
- if t.duplicated(['pos','row']).any():return None
- m=t.pivot(index='row',columns='pos',values='frequency').reindex(['present','TN_Left','TN_Right','absent'])
- if m.shape!=(4,24):return None
- # Fingerprint from the supplied figure. Do not silently select another cohort.
- if 'total' not in t:return None
- for r,n in [('present',142),('absent',281)]:
-  if set(t.loc[t.row.eq(r),'total'].dropna().astype(int))!={n}:return None
- return t,m
+ wide=pd.read_csv(path,sep='\t',index_col=0)
+ labels=list(wide.index.astype(str))
+ if len(labels)!=4 or not labels[0].startswith('Dennis+') or labels[1:3]!=['TNLeft','TNRight'] or not labels[3].startswith('Dennis−'):
+  raise RuntimeError('Unexpected source row labels: '+repr(labels))
+ for label,n in [(labels[0],142),(labels[3],281)]:
+  match=re.search(r'n\s*=\s*(\d+)',label)
+  if match is None or int(match.group(1))!=n:raise RuntimeError('Source cohort differs from supplied figure: '+label)
+ keys=[]
+ for col in wide.columns:
+  chrom,pos,ref,alt=col.rsplit(':',3);keys.append((chrom,int(pos),ref,alt))
+ if len(keys)!=24 or len(set(keys))!=24:raise RuntimeError('Expected exactly 24 distinct original SNPs')
+ # Preserve the source column order and every frequency/dosage unchanged.
+ m=wide.apply(pd.to_numeric,errors='raise').copy()
+ if ((m<0)|(m>1)).any().any():raise RuntimeError('Dosage outside [0,1]')
+ m.index=['present','TN_Left','TN_Right','absent'];m.columns=[k[1] for k in keys]
+ if m.columns.duplicated().any():raise RuntimeError('Multiple selected variants at one position')
+ records=[]
+ for label,row in zip(labels,m.index):
+  for key,x in zip(keys,m.loc[row]):
+   records.append(dict(chrom=key[0],pos=key[1],ref=key[2],alt=key[3],row=row,original_label=label,frequency=x))
+ return pd.DataFrame(records),m
 
 def run(a):
  import numpy as np
@@ -46,17 +39,10 @@ def run(a):
  import matplotlib.pyplot as plt
  from matplotlib.patches import Ellipse,Rectangle,ConnectionPatch
  from matplotlib.colors import LinearSegmentedColormap
- candidates=[a.values] if a.values else sorted({p for pattern in ['*values*.tsv.gz','*values*.tsv'] for p in RUN.rglob(pattern) if p.stat().st_size<30_000_000})
- found=[]
- for path in candidates:
-  try:
-   x=extract(path)
-   if x is not None:found.append((path,*x))
-  except (ValueError,KeyError):continue
- if not found:raise RuntimeError('No exact 24-SNP Dennis table with n=142/281 found. Supply --values PATH to its exported frequency table; no cohorts or calls changed.')
- fingerprints={hashlib.sha256(m.to_csv().encode()).hexdigest() for _,_,m in found}
- if len(fingerprints)!=1:raise RuntimeError('Multiple differing matching tables; supply --values explicitly: '+str([str(p) for p,_,_ in found]))
- source,t,m=found[0];a.output.mkdir(parents=True,exist_ok=False)
+ source=a.values
+ if not source.is_file():raise FileNotFoundError('Recorded original plot matrix missing: '+str(source))
+ t,m=extract(source)
+ a.output.mkdir(parents=True,exist_ok=False)
  plt.rcParams.update({'pdf.fonttype':42,'font.size':8,'font.family':'DejaVu Sans'})
  fig=plt.figure(figsize=(8.5,3.5));heat=fig.add_axes([.38,.26,.57,.38]);locus=fig.add_axes([.38,.77,.57,.09]);wing=fig.add_axes([.02,.26,.12,.38]);wing.set_xlim(-1,1);wing.set_ylim(3.5,-.5);wing.axis('off')
  # Small generic forewing cartoons, explicitly phenotype schematics.
@@ -85,7 +71,7 @@ def run(a):
  print('SOURCE\t'+str(source));print('PDF\t'+str(dest))
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--values',type=Path);p.add_argument('--output',type=Path,default=ROOT/'Dennis_barebones_v1');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--values',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_barebones_v1');p.add_argument('--submit',action='store_true');a=p.parse_args()
  if a.submit:
   stage=ROOT/'Dennis_barebones_code';stage.mkdir(parents=True,exist_ok=True);f=stage/('plot_'+hashlib.sha256(Path(__file__).read_bytes()).hexdigest()[:12]+'.py');shutil.copy2(__file__,f)
   args=[sys.executable,str(f),'--output',str(a.output)]
