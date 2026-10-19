@@ -13,7 +13,7 @@ def combine(vectors):
  mat=np.asarray(vectors,dtype=float);n=np.isfinite(mat).sum(axis=0)
  lo=np.min(np.where(np.isfinite(mat),mat,np.inf),axis=0);hi=np.max(np.where(np.isfinite(mat),mat,-np.inf),axis=0)
  return np.where((n>0)&(lo==hi),lo,np.nan)
-def draw(matrix,labels,styles,positions,out,pdf,callability=False):
+def draw(matrix,labels,styles,positions,out,pdf,callability=False,individual=False):
  import numpy as np,matplotlib.pyplot as plt
  from matplotlib.colors import LinearSegmentedColormap
  from matplotlib.patches import ConnectionPatch,Rectangle
@@ -38,14 +38,14 @@ def draw(matrix,labels,styles,positions,out,pdf,callability=False):
  for j,pos in enumerate(positions):fig.add_artist(ConnectionPatch(xyA=(pos,0),coordsA=locus.transData,xyB=(j,-.5),coordsB=ax.transData,color='#9ca2a8',alpha=.24,lw=.3,clip_on=False))
  for aa in (ax,locus):
   for sp in aa.spines.values():sp.set_visible(False)
- fig.text(.025,.97,'Yb(v) | frequencies by race' if not callability else 'Yb(v) | callable individuals by race',fontsize=11,weight='bold',va='top')
+ fig.text(.025,.97,'Yb(v) | individual cydno genotypes' if individual else 'Yb(v) | frequencies by race' if not callability else 'Yb(v) | callable individuals by race',fontsize=11,weight='bold',va='top')
  fig.text(.97,.97,'Rosina | NC_140403.1',fontsize=7,ha='right',va='top')
  cb=fig.colorbar(im,cax=fig.add_axes([left/9.4,.61/height,.31,.10/height]),orientation='horizontal')
  cb.set_ticks([0,.5,1]);cb.ax.tick_params(labelsize=6,length=2);cb.outline.set_visible(False)
- cb.set_label('Fraction callable at each SNP' if callability else 'Rosina allele frequency / focal dosage',fontsize=6.5,labelpad=1)
+ cb.set_label('Rosina genotype dosage' if individual else 'Fraction callable at each SNP' if callability else 'Rosina allele frequency / focal dosage',fontsize=6.5,labelpad=1)
  note='27 unchanged SNP columns; DP >= 2, reported GQ or recorded PL-derived Q >= 20; PK excluded.'
  fig.text(.025,.09/height,note,fontsize=5.8)
- fig.text(.025,.24/height,'n = unique individuals with >=1 callable marker; per-SNP denominators vary. d/v labels describe each wing surface.',fontsize=5.8)
+ fig.text(.025,.24/height,'Each row is one individual; 0 / 0.5 / 1 = qualified Rosina genotype dosage; grey = unavailable.' if individual else 'n = unique individuals with >=1 callable marker; per-SNP denominators vary. d/v labels describe each wing surface.',fontsize=5.8)
  pdf.savefig(fig);plt.close(fig)
 def build(a):
  import numpy as np,pandas as pd
