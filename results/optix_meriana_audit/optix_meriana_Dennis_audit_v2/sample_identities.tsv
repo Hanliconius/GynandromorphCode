@@ -1,0 +1,1197 @@
+sample	group	raw_taxon	normal_taxon	Country	B	D	R	metadata_line	Latitude	Longitude	SequenceID	EarthCapeID
+ERR055404	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	2	4.175	-73.6781	CS000CH9	CS000CH9
+ERR1143560	other_comparative	"Heliconius cydno
+ ssp. cordula"	Heliconius cydno ssp. cordula	Venezuela	0.0	0.0	0.0	3	7.798	-72.2047	cor.STRI7	STRI_007
+ERR1143566	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	4	3.9394	-77.3689	zel.CS2262	CS002262
+ERR1143584	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	5	4.175	-73.6781	heu.STRI2	STRI_002
+ERR1143591	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	6	-0.3197	-79.337	"CAM002856_ER
+ R1143591"	CAM002856
+ERR1143605	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	7	-1.398	-78.1781	ple.CJ9156	CAM009156
+ERR1143606	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	8	-1.46	-78.0728	ple.CJ16293	CAM016293
+ERR1143609	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	PanamÃ¡	1.0	0.0	0.0	9	8.6136	-78.1398	vul.CJ14632	CAM014632
+ERR1303880	other_comparative	"Heliconius numata
+ ssp. numata"	Heliconius numata ssp. numata	"French
+ Guiana"	0.0	0.0	0.0	10	4.0833	-52.6753	nu_sil.MJ09-4125	MJ09-4125
+ERR1303882	other_comparative	"Heliconius numata
+ ssp. silvana"	Heliconius numata ssp. silvana	Peru	0.0	0.0	0.0	11	-6.4782	-76.3258	nu_sil.MJ05-1240	JM-05-1240
+ERR1303884	other_comparative	"Heliconius numata
+ ssp. silvana"	Heliconius numata ssp. silvana	Peru	0.0	0.0	0.0	12	-6.4782	-76.3258	nu_sil.MJ05-124	MJ05-124
+ERR1303885	other_comparative	"Heliconius numata
+ ssp. silvana"	Heliconius numata ssp. silvana	"French
+ Guiana"	0.0	0.0	0.0	13	4.0833	-52.6753	nu_sil.MJ09-4184	MJ09-4184
+ERR1307105	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	14	3.9	-76.6325	vul.CS10	CS000710
+ERR1307107	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	15	4.2133	-73.8028	melC.CS3	CS000CM3
+ERR1307108	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	16	5.6169	-72.3	melC.CS6	CS000CM6
+ERR1307111	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	17	1.8136	-75.6686	mal.CS21	CS002311
+ERR1307112	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	18	1.6097	-75.6669	mal.CS22	CS001286
+ERR1307113	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	19	1.7506	-75.6319	mal.CS24	CS001321
+ERR1307114	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	20	4.2133	-73.8028	melC.CS25	CS000CM4
+ERR1307115	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	21	4.2133	-73.8028	melC.CS26	CS000CM5
+ERR1307116	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	22	5.6169	-72.3	melC.CS27	CS00CM10
+ERR1994782	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	23	3.9394	-77.3689	zel.CS1	CS002242
+ERR1994784	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	24	3.9394	-77.3689	zel.CS2	CS002261
+ERR1994785	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	25	3.9394	-77.3689	zel.CS30	CS002260
+ERR2298196	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	26	9.1366	-79.7236	chi.CAM580	CAM000580
+ERR2298197	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	27	9.1366	-79.7236	chi.CAM582	CAM000582
+ERR2298198	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	28	9.1366	-79.7236	chi.CAM584	CAM000584
+ERR2298199	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	29	9.1366	-79.7236	chi.CAM585	CAM000585
+ERR2298200	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	30	9.1366	-79.7236	chi.CAM586	CAM000586
+ERR2298201	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	31	4.9632	-52.42	melG.CAM1349	CAM001349
+ERR2298203	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	32	4.9632	-52.42	melG.CAM1422	CAM001422
+ERR2298204	melpomene_melpomene	Heliconius melpomene spp. melpomene	Heliconius melpomene spp. melpomene		1.0	0.0	0.0	33				
+ERR2298205	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	34	9.076	-79.659	ros.CAM1841	CAM001841
+ERR2298206	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	35	9.076	-79.659	ros.CAM1880	CAM001880
+ERR2298207	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	36	4.9632	-52.42	melG.CAM2035	CAM002035
+ERR2298208	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	37	9.1103	-79.6907	ros.CAM2045	CAM002045
+ERR2298209	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	38	9.1103	-79.6907	ros.CAM2059	CAM002059
+ERR2298210	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	39	9.0109	-79.5477	ros.CAM2519	CAM002519
+ERR2298211	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	40	9.0109	-79.5477	ros.CAM2552	CAM002552
+ERR2298214	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	41	4.9632	-52.42	melG.CAM8171	CAM008171
+ERR2298215	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	42	4.789	-52.404	melG.CAM8215	CAM008215
+ERR2298216	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	43	4.789	-52.404	melG.CAM8216	CAM008216
+ERR2298217	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	44	4.789	-52.404	melG.CAM8218	CAM008218
+ERR2298218	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	PanamÃ¡	1.0	0.0	0.0	45	8.6136	-78.1398	nan.CAM14673	CAM014673
+ERR2298219	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina		1.0	0.0	0.0	46				
+ERR2298220	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	47	9.12	-79.702	chi.CAM25091	CAM025091
+ERR2298221	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina		1.0	0.0	0.0	48				
+ERR2298222	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	49	9.12	-79.702	chi.CAM25137	CAM025137
+ERR2298223	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	50	1.8033	-75.6553	mal.CS1002	CS001002
+ERR2298224	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	51	1.8033	-75.6553	mal.CS1011	CS001011
+ERR2298225	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	52	3.9394	-77.3689	zel.CS1028	CS001028
+ERR2298226	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	53	3.9583	-77.3733	zel.CS1029	CS001029
+ERR2298227	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	54	3.9583	-77.3733	zel.CS1030	CS001030
+ERR2298228	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	55	3.9394	-77.3689	zel.CS1033	CS001033
+ERR2298229	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	56	3.9394	-77.3689	zel.CS1035	CS001035
+ERR2298230	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti		0.0	1.0	1.0	57				
+ERR2298231	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	58	1.8033	-75.6553	mal.CS1815	CS001815
+ERR2298232	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	59	1.7097	-75.6976	flo.CS12	CS002395
+ERR2298233	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia		0.0	1.0	1.0	60				
+ERR2298234	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	61	1.7097	-75.6976	flo.CS13	CS002402
+ERR2298235	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	62	1.7097	-75.6976	flo.CS14	CS002403
+ERR2298236	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	63	1.7097	-75.6976	flo.CS15	CS002406
+ERR2298237	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	64	1.7108	-75.7089	flo.CS2337	CS002337
+ERR2298238	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	65	1.7108	-75.7089	flo.CS2338	CS002338
+ERR2298239	other_comparative	"Heliconius cydno
+ ssp. zelinde"	Heliconius cydno ssp. zelinde	Colombia	0.0	0.0	0.0	66	3.9394	-77.3689	zel.CS273	CS000273
+ERR2298240	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	67	3.5175	-76.7572	vul.CS3603	CS003603
+ERR2298241	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	68	3.5175	-76.7572	vul.CS3605	CS003605
+ERR2298242	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	69	3.5175	-76.7572	vul.CS3606	CS003606
+ERR2298244	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	70	3.5175	-76.7572	vul.CS3614	CS003614
+ERR2298245	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	71	3.5175	-76.7572	vul.CS3615	CS003615
+ERR2298247	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	72	3.5175	-76.7572	vul.CS3618	CS003618
+ERR2298250	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	73	1.8033	-75.6553	mal.CS586	CS000586
+ERR2298251	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	74	1.8033	-75.6553	mal.CS594	CS000594
+ERR2298252	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	75	1.8033	-75.6553	mal.CS604	CS000604
+ERR2298253	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	76	1.8033	-75.6553	mal.CS615	CS000615
+ERR2298254	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	77	-5.6728	-77.7195	ama.MJ11-3188	MJ11-3188
+ERR2298255	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	78	-5.6728	-77.7195	ama.MJ11-3189	MJ11-3189
+ERR2298256	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	79	-5.6745	-77.6711	ama.MJ11-3202	MJ11-3202
+ERR2298257	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	80	-6.4547	-76.2994	ama.MJ12-3217	MJ12-3217
+ERR2298258	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	81	-6.4519	-76.2985	thxn.MJ12-3221	MJ12-3221
+ERR2298259	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	82	-5.6546	-77.6938	thxn.MJ12-3233	MJ12-3233
+ERR2298260	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	83	-6.453	-76.2876	ama.MJ12-3258	MJ12-3258
+ERR2298261	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	84	-6.4528	-76.2862	ama.MJ12-3301	MJ12-3301
+ERR2298262	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	85	-6.4519	-76.2985	thxn.MJ12-3308	MJ12-3308
+ERR2298263	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	86	-5.6546	-77.6938	txn.MJ11-3339	MJ12-3339
+ERR2298264	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	87	-5.6546	-77.6938	txn.MJ11-3340	MJ12-3340
+ERR2298265	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	88	-5.6546	-77.6938	txn.MJ12-3460	MJ12-3460
+ERR2298266	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe		1.0	0.0	0.0	89				
+ERR2298267	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	90	4.175	-73.6781	heu.CS20	CS00CH21
+ERR2298268	other_comparative	"Heliconius cydno
+ ssp. cordula"	Heliconius cydno ssp. cordula	Venezuela	0.0	0.0	0.0	91	7.9406	-72.3406	cor.CS3	CS002167
+ERR2298269	other_comparative	"Heliconius cydno
+ ssp. cordula"	Heliconius cydno ssp. cordula	Venezuela	0.0	0.0	0.0	92	7.9406	-72.3406	cor.CS4	CS002258
+ERR2298270	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	93	1.8136	-75.6686	flo.CS2341	CS002341
+ERR2298271	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	94	1.7108	-75.7089	flo.CS2350	CS002350
+ERR2298272	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	95	1.7108	-75.7089	flo.CS2358	CS002358
+ERR2298273	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	96	1.7108	-75.7089	flo.CS2359	CS002359
+ERR260277	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	97	9.1103	-79.6907	ros.CJ531	CAM000531
+ERR260278	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	98	9.1103	-79.6907	ros.CJ533	CAM000533
+ERR260279	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	99	9.1253	-79.6932	ros.CJ546	CAM000546
+ERR260280	rosina	"Heliconius
+ melpomene ssp.
+ rosina"	Heliconius melpomene ssp. rosina	PanamÃ¡	1.0	0.0	0.0	100	9.1103	-79.6907	ros.CJ2071	CAM002071
+ERR260281	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	101	4.9632	-52.42	melG.CJ9315	CAM009315
+ERR260282	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	102	4.9632	-52.42	melG.CJ9316	CAM009316
+ERR260283	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	103	4.9632	-52.42	melG.CJ9317	CAM009317
+ERR260284	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	"French
+ Guiana"	1.0	0.0	0.0	104	4.9632	-52.42	melG.CJ13435	CAM013435
+ERR260285	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	PanamÃ¡	1.0	0.0	0.0	105	8.6136	-78.1398	melP.CJ18038	CAM018038
+ERR260286	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	PanamÃ¡	1.0	0.0	0.0	106	8.2797	-77.8098	melP.CJ18097	CAM018097
+ERR260287	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	107	-6.096	-76.9774	ama.JM48	JM-11-48
+ERR260288	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	108	-6.4645	-76.3514	ama.JM160	JM-11-160
+ERR260289	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	109	-5.6745	-77.6748	ama.JM216	JM-09-216
+ERR260290	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	110	-6.4667	-76.3347	ama.JM293	JM-11-293
+ERR260291	other_comparative	"Heliconius
+ melpomene ssp.
+ aglaope"	Heliconius melpomene ssp. aglaope	Peru	0.0	1.0	1.0	111	-5.9103	-76.2256	agl.JM108	JM-09-108
+ERR260292	other_comparative	"Heliconius
+ melpomene ssp.
+ aglaope"	Heliconius melpomene ssp. aglaope	Peru	0.0	1.0	1.0	112	-5.9103	-76.2256	agl.JM112	JM-09-112
+ERR260293	other_comparative	"Heliconius
+ melpomene ssp.
+ aglaope"	Heliconius melpomene ssp. aglaope	Peru	0.0	1.0	1.0	113	-5.9717	-76.2319	agl.JM569	JM-11-569
+ERR260294	other_comparative	"Heliconius
+ melpomene ssp.
+ aglaope"	Heliconius melpomene ssp. aglaope	Peru	0.0	1.0	1.0	114	-5.9717	-76.2319	agl.JM572	JM-11-572
+ERR260295	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	115	9.1366	-79.7236	chi.CJ553	CAM000553
+ERR260296	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	116	9.1366	-79.7236	chi.CJ560	CAM000560
+ERR260297	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	117	9.1366	-79.7236	chi.CJ564	CAM000564
+ERR260298	other_comparative	"Heliconius cydno
+ ssp. chioneus"	Heliconius cydno ssp. chioneus	PanamÃ¡	0.0	0.0	0.0	118	9.1714	-79.7573	chi.CJ565	CAM000565
+ERR260299	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	119	-6.4528	-76.2987	thxn.JM57	JM-09-57
+ERR260300	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	120	-6.4528	-76.2987	thxn.JM84	JM-09-84
+ERR260301	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	121	-6.4528	-76.2987	thxn.JM86	JM-09-86
+ERR260302	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	122	-6.4584	-76.2877	thxn.JM313	JM-09-313
+ERR260303	other_comparative	"Heliconius
+ pardalinus ssp.
+ ssp.nov.P"	Heliconius pardalinus ssp. ssp.nov.P	Peru				123	-8.3422	-74.5922	par.JM371	JM-09-371
+ERR260304	other_comparative	"Heliconius
+ pardalinus ssp.
+ sergestus"	Heliconius pardalinus ssp. sergestus	Peru				124	-6.4667	-76.3347	ser.JM202	JM-09-202
+ERR3650386	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	125	-11.1745	-75.4035	MJ12-3608	MJ12-3608
+ERR3650387	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	126	-11.0338	-75.4091	MJ12-3651	MJ12-3651
+ERR3650388	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	127	-11.0338	-75.4091	MJ12-3648	MJ12-3648
+ERR3650414	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	128	-11.0338	-75.4091	MJ12-3763	MJ12-3763
+ERR3650415	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	129	-11.0338	-75.4091	MJ12-3653	MJ12-3653
+ERR3650416	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	130	-11.1745	-75.4035	MJ12-3605	MJ12-3605
+ERR3650417	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	131	-11.1745	-75.4035	MJ12-3606	MJ12-3606
+ERR3650418	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	132	-11.0338	-75.4091	MJ12-3636	MJ12-3636
+ERR3650468	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	133	-11.0364	-75.408	MJ12-3638	MJ12-3638
+ERR3650469	other_comparative	"Heliconius
+ melpomene ssp.
+ xenoclea"	Heliconius melpomene ssp. xenoclea	Peru	1.0	0.0	0.0	134	-11.0446	-75.4133	MJ12-3647	MJ12-3647
+ERR3650470	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	135	-6.4528	-76.2862	MJ12-3074	MJ12-3074
+ERR3650471	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	136	-6.4528	-76.2862	MJ12-3483	MJ12-3483
+ERR3650472	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	137	-6.4528	-76.2862	MJ12-3585	MJ12-3585
+ERR3650474	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	138	-6.4515	-76.2977	MJ12-3220	MJ12-3220
+ERR3650477	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	139	-6.4515	-76.2977	MJ12-3223	MJ12-3223
+ERR3650478	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	140	-6.4515	-76.2977	MJ12-3231	MJ12-3231
+ERR3650479	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	141	-6.4519	-76.2985	MJ12-3310	MJ12-3310
+ERR3650480	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	142	-6.4567	-76.2845	MJ11-3018	MJ11-3018
+ERR3650481	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	143	-6.4555	-76.2843	MJ11-3021	MJ11-3021
+ERR3650482	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	144	-6.4555	-76.2843	MJ11-3023	MJ11-3023
+ERR3650483	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	145	-6.4555	-76.2843	MJ11-3024	MJ11-3024
+ERR3650485	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	146	-6.4572	-76.2986	MJ12-3130	MJ12-3130
+ERR3650486	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	147	-6.4547	-76.2994	MJ12-3137	MJ12-3137
+ERR3650487	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	148	-6.4528	-76.2862	MJ12-3302	MJ12-3302
+ERR3650488	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	149	-6.4572	-76.2986	MJ12-3306	MJ12-3306
+ERR3650489	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	150	1.8033	-75.6553	CS1009	CS001009
+ERR3650490	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	151	-6.4547	-76.2994	MJ12-3135	MJ12-3135
+ERR3650491	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	152	-6.4547	-76.2994	MJ12-3136	MJ12-3136
+ERR3650492	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	153	1.8033	-75.6553	CS473	CS000473
+ERR3650493	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	154	-6.4547	-76.2994	MJ12-3138	MJ12-3138
+ERR3650494	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	155	-6.4519	-76.2985	MJ12-3160	MJ12-3160
+ERR3650495	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	156	1.7108	-75.7089	CS2327	CS002327
+ERR3650496	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	157	-6.4547	-76.2994	MJ12-3174	MJ12-3174
+ERR3650497	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	158	-6.4547	-76.2994	MJ12-3212	MJ12-3212
+ERR3650498	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	159	1.7108	-75.7089	CS2333	CS002333
+ERR3650499	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	160	-6.4519	-76.2985	MJ12-3219	MJ12-3219
+ERR3650512	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	161	-6.4519	-76.2985	MJ12-3222	MJ12-3222
+ERR3650513	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	162	-6.4528	-76.2862	MJ12-3371	MJ12-3371
+ERR3650514	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	163	1.8136	-75.6686	CS2343	CS002343
+ERR3650515	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	164	-6.4528	-76.2862	MJ12-3392	MJ12-3392
+ERR3650516	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	165	-6.4528	-76.2862	MJ12-3393	MJ12-3393
+ERR3650517	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	166	1.7108	-75.7089	CS2349	CS002349
+ERR3650518	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	167	-6.4528	-76.2862	MJ12-3394	MJ12-3394
+ERR3650519	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	168	-6.4528	-76.2862	MJ12-3396	MJ12-3396
+ERR3650520	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	169	-1.4371	-78.1229	PS16910	CAM016910
+ERR3650521	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	170	-6.4528	-76.2862	MJ12-3397	MJ12-3397
+ERR3650522	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	171	-6.454	-76.3002	MJ12-3414	MJ12-3414
+ERR3650523	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	172	-1.4371	-78.1229	PS16913	CAM016913
+ERR3650524	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	173	-6.4537	-76.2981	MJ12-3416	MJ12-3416
+ERR3650525	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	174	-1.1156	-77.7783	PS16626	CAM016626
+ERR3650526	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	175	-6.4537	-76.2981	MJ12-3417	MJ12-3417
+ERR3650527	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	176	-6.4537	-76.2981	MJ12-3418	MJ12-3418
+ERR3650528	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	177	-1.0614	-77.6684	PS17098	CAM017098
+ERR3650529	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	178	-6.4547	-76.2994	MJ12-3442	MJ12-3442
+ERR3650579	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	179	-6.4537	-76.2981	MJ12-3453	MJ12-3453
+ERR3650580	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	180	-1.0157	-77.5975	PS17411	CAM017411
+ERR3650581	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	181	-6.453	-76.2876	MJ12-3466	MJ12-3466
+ERR3650582	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	182	-1.2908	-77.8419	PS17434	CAM017434
+ERR3650583	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	183	-6.4528	-76.2862	MJ12-3467	MJ12-3467
+ERR3650584	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	184	-6.4537	-76.2981	MJ12-3474	MJ12-3474
+ERR3650585	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	185	-1.1156	-77.7783	PS16209	CAM016209
+ERR3650586	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	186	-6.4524	-76.2869	MJ12-3482	MJ12-3482
+ERR3650587	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	187	-1.1878	-77.8311	PS16439	CAM016439
+ERR3650588	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	188	-6.4515	-76.2977	MJ12-3232	MJ12-3232
+ERR3650673	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	189	-6.4547	-76.2994	MJ12-3313	MJ12-3313
+ERR3650677	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	190	-6.4547	-76.2994	MJ12-3318	MJ12-3318
+ERR3650679	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	191	-1.1156	-77.7783	PS16596	CAM016596
+ERR3650692	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	192	-6.4528	-76.2862	MJ12-3370	MJ12-3370
+ERR3650705	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	193	-1.3382	-77.8354	PS16781	CAM016781
+ERR3650708	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	194	-6.4519	-76.2985	MJ12-3378	MJ12-3378
+ERR3650728	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	195	-6.4515	-76.2977	MJ12-3388	MJ12-3388
+ERR3650738	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	196	-1.3333	-77.9341	PS16011	CAM016011
+ERR3650748	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	197	-6.4528	-76.2862	MJ12-3390	MJ12-3390
+ERR3651361	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	198	-6.4515	-76.2977	MJ12-3398	MJ12-3398
+ERR3651362	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	199	-1.2408	-77.9609	PS16173	CAM016173
+ERR3651364	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	200	-6.4515	-76.2977	MJ12-3400	MJ12-3400
+ERR3651366	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	201	-1.1156	-77.7783	PS16201	CAM016201
+ERR3651367	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	202	-6.4528	-76.2862	MJ12-3401	MJ12-3401
+ERR3651368	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	203	-6.4528	-76.2862	MJ12-3402	MJ12-3402
+ERR3651369	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	204	-1.251	-77.6989	PS16269	CAM016269
+ERR3651370	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	205	-6.454	-76.3002	MJ12-3404	MJ12-3404
+ERR3651371	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	206	-6.454	-76.3002	MJ12-3405	MJ12-3405
+ERR3651374	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	207	-4.0653	-78.9587	CAM002417	CAM002417
+ERR3651375	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	208	-6.4537	-76.2981	MJ12-3406	MJ12-3406
+ERR3651412	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	209	-6.4519	-76.2985	MJ12-3408	MJ12-3408
+ERR3651415	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	210	-4.0653	-78.9587	CAM002432	CAM002432
+ERR3651416	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	211	-6.4537	-76.2981	MJ12-3409	MJ12-3409
+ERR3651417	timareta	"Heliconius timareta
+ ssp. thelxinoe"	Heliconius timareta ssp. thelxinoe	Peru	1.0	0.0	0.0	212	-6.4537	-76.2981	MJ12-3412	MJ12-3412
+ERR3651418	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	213	-4.0439	-78.9861	CAM009113	CAM009113
+ERR3651419	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	214	1.8033	-75.6553	CS470	CS000470
+ERR3651426	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	215	1.8033	-75.6553	CS583	CS000583
+ERR3651427	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	216	4.175	-73.6781	CS3423	CS003423
+ERR3651428	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	217	0.1659	-78.8882	14N594	14N594
+ERR3651475	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	218	4.175	-73.6781	CS3391	CS003391
+ERR3651476	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	219	1.8033	-75.6553	CS399	CS000399
+ERR3651477	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	220	1.8033	-75.6553	CS419	CS000419
+ERR3651478	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	221	4.175	-73.6781	CS3397	CS003397
+ERR3651479	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	222	4.175	-73.6781	CS3007	CS003007
+ERR3651482	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	223	4.175	-73.6781	CS2012	CS002012
+ERR3651483	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	224	4.175	-73.6781	CS1352	CS001352
+ERR3651484	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	225	0.1753	-78.9075	s15N004	15N004
+ERR3651485	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	226	4.175	-73.6781	CS2013	CS002013
+ERR3651486	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	227	0.1753	-78.9075	s15N005	15N005
+ERR3651487	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	228	4.175	-73.6781	CS3393	CS003393
+ERR3651488	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	229	0.1937	-78.8587	s15N006	15N006
+ERR3651489	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	230	4.175	-73.6781	CS2014	CS002014
+ERR3651491	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	231	0.185	-78.853	s15N008	15N008
+ERR3651492	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	232	4.175	-73.6781	CS1353	CS001353
+ERR3652193	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	233	1.7108	-75.7089	CS2394	CS002394
+ERR3652194	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	234	0.1753	-78.9075	s15N009	15N009
+ERR3652346	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	235	1.8033	-75.6553	CS3447	CS003447
+ERR3652347	timareta	"Heliconius timareta
+ ssp. florencia"	Heliconius timareta ssp. florencia	Colombia	0.0	1.0	1.0	236	1.7108	-75.7089	CS2354	CS002354
+ERR3652348	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	237	0.185	-78.853	s15N020	15N020
+ERR3652349	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	238	1.7506	-75.6319	CS3541	CS003541
+ERR3652350	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	239	-1.4224	-78.1729	PS16001	CAM016001
+ERR3652351	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	240	0.1937	-78.8587	s15N023	15N023
+ERR3652352	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	241	1.7506	-75.6319	CS3542	CS003542
+ERR3652353	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	242	-1.4224	-78.1729	PS17613	CAM017613
+ERR3652354	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	243	4.2133	-73.8028	CS1059	CS001059
+ERR3652355	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	244	1.7506	-75.6319	CS3543	CS003543
+ERR3652356	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	245	-1.398	-78.1781	PS16691	CAM016691
+ERR3652357	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	246	4.2133	-73.8028	CS1061	CS001061
+ERR3652358	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	247	1.8033	-75.6553	CS3706	CS003706
+ERR3652359	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	248	-1.46	-78.0728	PS17357	CAM017357
+ERR3652360	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	249	4.0052	-73.7775	CS1055	CS001055
+ERR3652361	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	250	1.8033	-75.6553	CS3709	CS003709
+ERR3652362	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	251	-1.46	-78.0728	PS17363	CAM017363
+ERR3652363	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	252	4.1789	-73.6494	CS1456	CS001456
+ERR3652364	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	253	1.8033	-75.6553	CS3728	CS003728
+ERR3652365	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	254	-1.46	-78.0728	PS17373	CAM017373
+ERR3652366	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	255	4.2133	-73.8028	CS1058	CS001058
+ERR3652368	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	256	1.8033	-75.6553	CS3730	CS003730
+ERR3652372	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	257	-4.0653	-78.9587	CAM002430	CAM002430
+ERR3652374	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	258	1.8033	-75.6553	CS3815	CS003815
+ERR3652375	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Venezuela	1.0	0.0	0.0	259	7.5878	-72.1275	CS2174	CS002174
+ERR3652376	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	260	-4.0439	-78.9861	CAM009114	CAM009114
+ERR3652377	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	261	3.4834	-76.6158	CS960	CS000960
+ERR3652378	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	262	4.2133	-73.8028	CS1062	CS001062
+ERR3652379	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	263	-4.0439	-78.9861	CAM009115	CAM009115
+ERR3652380	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	264	3.4834	-76.6158	CS939	CS000939
+ERR3652381	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	265	4.2133	-73.8028	CS1057	CS001057
+ERR3652382	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	266	-4.0439	-78.9861	CAM009116	CAM009116
+ERR3652383	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	267	3.4834	-76.6158	CS982	CS000982
+ERR3652384	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	268	4.2133	-73.8028	CS1669	CS001669
+ERR3652385	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	269	-4.0439	-78.9861	CAM009118	CAM009118
+ERR3652386	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	270	3.4834	-76.6158	CS2996	CS002996
+ERR3652387	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	271	-4.0439	-78.9861	CAM009119	CAM009119
+ERR3652388	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	272	4.0052	-73.7775	CS1120	CS001120
+ERR3652389	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	273	-1.1156	-77.7783	PS16200	CAM016200
+ERR3652390	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	274	2.6844	-74.8881	CS3367	CS003367
+ERR3652391	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	275	-1.8176	-77.9601	PS16252	CAM016252
+ERR3652392	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	276	2.6844	-74.8881	CS3014	CS003014
+ERR3652394	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	277	-1.4021	-77.7974	PS16857	CAM016857
+ERR3652395	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	278	2.6844	-74.8881	CS3050	CS003050
+ERR3652396	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	279	-1.3712	-77.8574	PS16870	CAM016870
+ERR3652397	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	280	4.2133	-73.8028	CS3757	CS003757
+ERR3652398	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	281	2.6844	-74.8881	CS3086	CS003086
+ERR3652399	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	282	1.7108	-75.7089	CS3109	CS003109
+ERR3652400	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	283	4.2133	-73.8028	CS3758	CS003758
+ERR3652401	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	284	2.6844	-74.8881	CS3009	CS003009
+ERR3652402	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	1.0	0.0	0.0	285	-1.4161	-77.729	PS16144	CAM016144
+ERR3652403	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	286	4.175	-73.6781	CS3392	CS003392
+ERR3652404	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	287	2.6844	-74.8881	CS3013	CS003013
+ERR3652405	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	288	-1.1878	-77.8311	PS16465	CAM016465
+ERR3652406	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	289	4.175	-73.6781	CS3696	CS003696
+ERR3652407	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	290	3.8665	-76.3834	CS2738	CS002738
+ERR3652408	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	291	-1.2519	-77.8196	PS16766	CAM016766
+ERR3652409	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	292	4.175	-73.6781	CS1510	CS001510
+ERR3652410	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	293	3.8525	-76.4269	CS2732	CS002732
+ERR3652411	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	294	-1.2519	-77.8196	PS16772	CAM016772
+ERR3652412	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	295	4.175	-73.6781	CS3424	CS003424
+ERR3652413	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	296	3.8665	-76.3834	CS2737	CS002737
+ERR3652414	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	297	-1.0983	-77.5839	PS17381	CAM017381
+ERR3652415	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	298	4.175	-73.6781	CS3394	CS003394
+ERR3652416	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	299	3.8525	-76.4269	CS2724	CS002724
+ERR3652417	other_comparative	"Heliconius
+ melpomene ssp.
+ vicina"	Heliconius melpomene ssp. vicina	Colombia	0.0	1.0	1.0	300	-4.1334	-69.9415	CS31744	CS031744
+ERR3652418	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	301	4.175	-73.6781	CS2618	CS002618
+ERR3652419	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	302	3.8665	-76.3834	CS2740	CS002740
+ERR3652420	other_comparative	"Heliconius
+ melpomene ssp.
+ vicina"	Heliconius melpomene ssp. vicina	Colombia	0.0	1.0	1.0	303	-4.1003	-70.0417	CS32533	CS032533
+ERR3652421	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	304	4.175	-73.6781	CS2204	CS002204
+ERR3652422	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	305	3.8665	-76.3834	CS2748	CS002748
+ERR3652575	timareta	"Heliconius timareta
+ ssp. nov. 'vicina'"	Heliconius timareta ssp. nov. 'vicina'	Colombia	0.0	1.0	1.0	306	-3.7701	-70.3398	CS31809	CS031809
+ERR3652576	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	307	3.8525	-76.4269	CS2727	CS002727
+ERR3652577	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	308	3.5667	-74.0761	CS3844	CS003844
+ERR3652579	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	309	-1.4224	-78.1729	PS16004	CAM016004
+ERR3652580	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	310	3.8525	-76.4269	CS2731	CS002731
+ERR3652584	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	311	3.5667	-74.0761	CS3843	CS003843
+ERR3652585	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	312	-1.2519	-77.8196	PS16776	CAM016776
+ERR3652586	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	313	3.8665	-76.3834	CS2739	CS002739
+ERR3652587	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	314	2.6844	-74.8881	CS3046	CS003046
+ERR3652588	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	315	-1.1156	-77.7783	PS16216	CAM016216
+ERR3652589	other_comparative	"Heliconius cydno
+ ssp. cydnides"	Heliconius cydno ssp. cydnides	Colombia	0.0	0.0	0.0	316	3.8525	-76.4269	CS2729	CS002729
+ERR3652590	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	317	2.6844	-74.8881	CS3051	CS003051
+ERR3652591	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	318	3.4834	-76.6158	CS953	CS000953
+ERR3652592	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	319	-1.0916	-77.72	PS17030	CAM017030
+ERR3652593	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	320	2.6844	-74.8881	CS3032	CS003032
+ERR3652594	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	321	-1.1684	-77.7811	PS17049	CAM017049
+ERR3652595	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	322	2.5133	-76.5942	CS1914	CS001914
+ERR3652596	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	323	2.609	-74.7776	CS2422	CS002422
+ERR3652597	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	324	3.4834	-76.6158	CS950	CS000950
+ERR3652598	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	325	-1.1684	-77.7811	PS17073	CAM017073
+ERR3652599	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	326	2.609	-74.7776	CS2436	CS002436
+ERR3652600	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	327	3.4834	-76.6158	CS936	CS000936
+ERR3652601	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	328	-1.0916	-77.72	PS17120	CAM017120
+ERR3652602	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	329	2.6844	-74.8881	CS3763	CS003763
+ERR3652603	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	330	3.3242	-76.6364	CS2492	CS002492
+ERR3652604	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	331	2.6844	-74.8881	CS3762	CS003762
+ERR3652605	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	332	2.5133	-76.5942	CS1926	CS001926
+ERR3652606	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	333	2.6844	-74.8881	CS3761	CS003761
+ERR3652607	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	334	2.5133	-76.5942	CS2503	CS002503
+ERR3652608	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	335	2.6844	-74.8881	CS3760	CS003760
+ERR3652609	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	336	3.6106	-76.5986	CS2504	CS002504
+ERR3652611	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	337	3.4834	-76.6158	CS951	CS000951
+ERR3652613	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	338	3.6106	-76.5986	CS2506	CS002506
+ERR3652615	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ gustavi"	Heliconius cydno ssp. weymeri f. gustavi	Colombia	0.0	0.0	0.0	339	3.6106	-76.5986	CS2511	CS002511
+ERR3652616	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	340	-1.1156	-77.7783	PS16207	CAM016207
+ERR3652617	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	341	3.3242	-76.6364	CS2542	CS002542
+ERR3652618	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	342	-1.1156	-77.7783	PS16607	CAM016607
+ERR3652619	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	343	3.4834	-76.6158	CS2998	CS002998
+ERR3652620	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	344	-1.1156	-77.7783	PS16933	CAM016933
+ERR3652621	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	345	3.4834	-76.6158	CS942	CS000942
+ERR3652622	other_comparative	Heliconius elevatus	Heliconius elevatus	Ecuador	0.0	1.0	1.0	346	-1.1878	-77.8311	PS16984	CAM016984
+ERR3652624	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	347	3.4834	-76.6158	CS945	CS000945
+ERR3652626	timareta	"Heliconius timareta
+ ssp. nov. 'vicina'"	Heliconius timareta ssp. nov. 'vicina'	Colombia	0.0	1.0	1.0	348	-3.8833	-70.1881	CS32537	CS032537
+ERR3652628	timareta	"Heliconius timareta
+ ssp. nov. 'vicina'"	Heliconius timareta ssp. nov. 'vicina'	Colombia	0.0	1.0	1.0	349	-4.0406	-70.0997	CS32535	CS032535
+ERR3652629	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	350	-19.8226	-43.6762	GM89_2	CAM019813
+ERR3652630	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	351	-20.1515	-44.2011	GM90_3	CAM019814
+ERR3652631	timareta	"Heliconius timareta
+ ssp. nov. 'vicina'"	Heliconius timareta ssp. nov. 'vicina'	Colombia	0.0	1.0	1.0	352	-3.7701	-70.3398	CS31711	CS031711
+ERR3652632	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	353	-25.0462	-51.5395	GM81_3	CAM019815
+ERR3652633	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	354	-29.4423	-50.5798	GM123_2	CAM019816
+ERR3652634	timareta	"Heliconius timareta
+ ssp. nov. 'vicina'"	Heliconius timareta ssp. nov. 'vicina'	Colombia	0.0	1.0	1.0	355	-3.7701	-70.3398	CS31733	CS031733
+ERR3652635	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	356	-26.25	-49.3836	GM110_82	CAM019817
+ERR3652637	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	357	-26.25	-49.3836	GM110_83	CAM019818
+ERR3652638	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	358	-26.25	-49.3836	GM110_86	CAM019819
+ERR3652639	timareta	"Heliconius timareta
+ ssp. nov. 'vicina'"	Heliconius timareta ssp. nov. 'vicina'	Colombia	0.0	1.0	1.0	359	-4.1334	-69.9415	CS31766	CS031766
+ERR3652640	other_comparative	"Heliconius
+ melpomene ssp.
+ burchelli"	Heliconius melpomene ssp. burchelli	Brazil	1.0	0.0	0.0	360	-6.9639	-46.6799	GM184_1	CAM019820
+ERR3652641	meriana_unquoted	"Heliconius
+ melpomene ssp.
+ meriana"	Heliconius melpomene ssp. meriana	Suriname	0.0	1.0	0.0	361	5.0818	-54.9791	SHM21055	CAM021055
+ERR3652642	meriana_quoted	"Heliconius
+ melpomene ssp.
+ 'meriana'"	Heliconius melpomene ssp. 'meriana'	England	0.0	1.0	0.0	362	52.1905	-1.7037	RW4	CAM019800
+ERR3652643	other_comparative	"Heliconius
+ melpomene ssp.
+ burchelli"	Heliconius melpomene ssp. burchelli	Brazil	1.0	0.0	0.0	363	-6.9639	-46.6799	GM184_3	CAM019821
+ERR3652644	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	364	-3.8692	-41.0192	GM183_15	CAM019806
+ERR3652645	other_comparative	"Heliconius
+ melpomene ssp.
+ burchelli"	Heliconius melpomene ssp. burchelli	Brazil	1.0	0.0	0.0	365	-6.9639	-46.6799	GM184_4	CAM019822
+ERR3652646	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	366	-3.8692	-41.0192	GM183_19	CAM019807
+ERR3652647	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	PanamÃ¡	1.0	0.0	0.0	367	8.6136	-78.1398	CAM014654	CAM014654
+ERR3652648	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	368	-15.4201	-39.4964	GM209_26	CAM019808
+ERR3652649	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	PanamÃ¡	1.0	0.0	0.0	369	7.6362	-78.1897	CAM008954	CAM008954
+ERR3652650	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	370	-19.8853	-43.6644	GM88_1	CAM019809
+ERR3652651	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	371	-19.8853	-43.6644	GM88_7	CAM019810
+ERR3652652	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	PanamÃ¡	1.0	0.0	0.0	372	8.6136	-78.1398	CAM014662	CAM014662
+ERR3652653	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	373	-25.0462	-51.5395	GM81_4	CAM019811
+ERR3652654	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	PanamÃ¡	1.0	0.0	0.0	374	7.7568	-77.6841	CAM008887	CAM008887
+ERR3652655	besckei	Heliconius besckei	Heliconius besckei	Brazil	1.0	0.0	0.0	375	-26.25	-49.3836	GM110_84	CAM019812
+ERR3652656	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	PanamÃ¡	1.0	0.0	0.0	376	7.6362	-78.1897	CAM008956	CAM008956
+ERR3652657	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	377	8.8388	-82.7148	CAM008033	CAM008033
+ERR3652658	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	378	8.8388	-82.7148	CAM008062	CAM008062
+ERR3652659	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	379	8.8388	-82.7148	CAM008032	CAM008032
+ERR3652660	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	380	8.8388	-82.7148	CAM008019	CAM008019
+ERR3652661	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	381	8.8388	-82.7148	CAM008022	CAM008022
+ERR3653097	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	382	8.8388	-82.7148	CAM008034	CAM008034
+ERR3653098	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	383	8.8388	-82.7148	CAM008023	CAM008023
+ERR3653117	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	384	8.8388	-82.7148	CAM008036	CAM008036
+ERR3653118	meriana_quoted	"Heliconius
+ melpomene ssp.
+ 'meriana'"	Heliconius melpomene ssp. 'meriana'	England	0.0	1.0	0.0	385	52.1905	-1.7037	RW12	CAM019804
+ERR3653119	meriana_quoted	"Heliconius
+ melpomene ssp.
+ 'meriana'"	Heliconius melpomene ssp. 'meriana'	England	0.0	1.0	0.0	386	52.1905	-1.7037	RW9	CAM019803
+ERR3653120	meriana_quoted	"Heliconius
+ melpomene ssp.
+ 'meriana'"	Heliconius melpomene ssp. 'meriana'	England	0.0	1.0	0.0	387	52.1905	-1.7037	RW5	CAM019801
+ERR3653121	other_comparative	Heliconius hecale	Heliconius hecale	PanamÃ¡	0.0	0.0	0.0	388	7.7568	-77.6841	CAM008861	CAM008861
+ERR3653122	other_comparative	Heliconius hecale	Heliconius hecale	Peru	0.0	0.0	0.0	389	-6.2897	-76.2289	CAM008683	CAM008683
+ERR3653123	other_comparative	Heliconius ismenius	Heliconius ismenius	PanamÃ¡	0.0	0.0	0.0	390	9.1366	-79.7236	CAM002700	CAM002700
+ERR3653124	other_comparative	Heliconius ismenius	Heliconius ismenius	PanamÃ¡	0.0	0.0	0.0	391	9.1366	-79.7236	CAM002517	CAM002517
+ERR3653125	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	392	-1.398	-78.1781	CAM009419	CAM009419
+ERR3653292	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	393	-1.398	-78.1781	CAM009440	CAM009440
+ERR3653293	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	394	-1.398	-78.1781	CAM009421	CAM009421
+ERR3653294	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	395	4.175	-73.6781	heu.CS18	CS00CH18
+ERR3653295	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	396	-1.398	-78.1781	CAM009426	CAM009426
+ERR3653296	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	397	-1.398	-78.1781	CAM009169	CAM009169
+ERR3653297	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	398	-1.398	-78.1781	CAM011439	CAM011439
+ERR3653298	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	399	-1.398	-78.1781	CAM009183	CAM009183
+ERR3653299	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	400	-1.453	-78.107	CAM009227	CAM009227
+ERR3653300	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	401	-1.398	-78.1781	CAM009185	CAM009185
+ERR3653301	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	402	-1.398	-78.1781	CAM009187	CAM009187
+ERR3653302	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	403	-1.398	-78.1781	CAM016716	CAM016716
+ERR3653303	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	404	-1.398	-78.1781	CAM016715	CAM016715
+ERR3653304	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	405	-3.8692	-41.0192	nan.183-18	CAM019828
+ERR3653305	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	406	-1.398	-78.1781	CAM009186	CAM009186
+ERR3653306	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	407	-1.398	-78.1781	CAM009177	CAM009177
+ERR3653307	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	408	-1.398	-78.1781	CAM009175	CAM009175
+ERR3653308	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	0.0	409	-1.398	-78.1781	CAM011413	CAM011413
+ERR3653309	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	410	-1.398	-78.1781	CAM016719	CAM016719
+ERR3653310	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	411	-1.1156	-77.7783	CAM016214	CAM016214
+ERR3653311	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	412	-1.1156	-77.7783	CAM016600	CAM016600
+ERR3653392	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	413	-1.1156	-77.7783	CAM016603	CAM016603
+ERR3653393	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	414	-3.8692	-41.0192	nan.183-16	CAM019827
+ERR3653394	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	415	-1.2908	-77.8419	CAM016502	CAM016502
+ERR3653395	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	416	-1.2908	-77.8419	CAM016501	CAM016501
+ERR3653396	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	417	-1.1878	-77.8311	CAM016442	CAM016442
+ERR3653397	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	418	-1.3333	-77.9341	CAM016304	CAM016304
+ERR3653398	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	419	-1.251	-77.6989	CAM016260	CAM016260
+ERR3653399	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	420	-1.251	-77.6989	CAM016257	CAM016257
+ERR3653400	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	421	-3.8692	-41.0192	nan.183-14	CAM019826
+ERR3653401	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	422	-1.251	-77.6989	CAM016255	CAM016255
+ERR3653402	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	423	-1.1156	-77.7783	CAM016605	CAM016605
+ERR3653403	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	424	-1.1878	-77.8311	CAM016443	CAM016443
+ERR3653404	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	425	-3.8692	-41.0192	nan.183-11	CAM019825
+ERR3653405	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	426	-1.1156	-77.7783	CAM016593	CAM016593
+ERR3653406	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	427	-1.1156	-77.7783	CAM016218	CAM016218
+ERR3653407	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	428	-1.2908	-77.8419	CAM016037	CAM016037
+ERR3653408	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	429	-3.8692	-41.0192	nan.183-10	CAM019824
+ERR3653409	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	430	-1.251	-77.6989	CAM016267	CAM016267
+ERR3653410	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	431	-1.0614	-77.6684	CAM017091	CAM017091
+ERR3653411	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	432	-1.0614	-77.6684	CAM017089	CAM017089
+ERR3653412	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	433	-1.1684	-77.7811	CAM017070	CAM017070
+ERR3653413	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	434	-1.1684	-77.7811	CAM017069	CAM017069
+ERR3653414	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	435	-1.1684	-77.7811	CAM017064	CAM017064
+ERR3653415	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	436	-1.1156	-77.7783	CAM016956	CAM016956
+ERR3653416	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	437	-1.1156	-77.7783	CAM016955	CAM016955
+ERR3653417	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	438	-1.1156	-77.7783	CAM016954	CAM016954
+ERR3653419	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	439	-1.1156	-77.7783	CAM016611	CAM016611
+ERR3653420	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	440	-1.1156	-77.7783	CAM016610	CAM016610
+ERR3653421	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	441	-1.1156	-77.7783	CAM016609	CAM016609
+ERR3653422	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	442	-1.1156	-77.7783	CAM016606	CAM016606
+ERR3653423	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	443	-1.1156	-77.7783	CAM016599	CAM016599
+ERR3653424	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	444	-1.0614	-77.6684	CAM016549	CAM016549
+ERR3653425	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	445	-1.0614	-77.6684	CAM016547	CAM016547
+ERR3653427	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	446	-1.0614	-77.6684	CAM016546	CAM016546
+ERR3653428	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	447	-1.0614	-77.6684	CAM016544	CAM016544
+ERR3653429	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	448	-1.0614	-77.6684	CAM016541	CAM016541
+ERR3653430	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Ecuador	0.0	1.0	1.0	449	-1.1156	-77.7783	CAM016224	CAM016224
+ERR3653529	other_comparative	"Heliconius
+ melpomene ssp.
+ ecuadoriensis"	Heliconius melpomene ssp. ecuadoriensis	Ecuador	0.0	1.0	1.0	450	-4.0439	-78.9861	CAM009112	CAM009112
+ERR3653530	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	451	-1.1878	-77.8311	PS16425	CAM016425
+ERR3653531	timareta	"Heliconius timareta
+ ssp. nov. ECU"	Heliconius timareta ssp. nov. ECU	Ecuador	0.0	1.0	1.0	452	-1.0983	-77.5839	PS17380	CAM017380
+ERR3653532	meriana_unquoted	"Heliconius
+ melpomene ssp.
+ meriana"	Heliconius melpomene ssp. meriana	"French
+ Guiana"	0.0	1.0	0.0	453	3.6883	-54.0825	CAM013715	CAM013715
+ERR3653533	meriana_unquoted	"Heliconius
+ melpomene ssp.
+ meriana"	Heliconius melpomene ssp. meriana	"French
+ Guiana"	0.0	1.0	0.0	454	3.6883	-54.0825	CAM013819	CAM013819
+ERR3653534	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	455	-19.0984	-40.1862	MK000062	MK000062
+ERR3653535	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	456	2.609	-74.7776	CS2435	CS002435
+ERR3653536	other_comparative	Heliconius pachinus	Heliconius pachinus	PanamÃ¡	0.0	0.0	0.0	457	8.8388	-82.7148	CAM008035	CAM008035
+ERR3653537	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	458	-1.398	-78.1781	CAM008533	CAM008533
+ERR3653539	timareta	"Heliconius timareta
+ ssp. timareta f.
+ timareta"	Heliconius timareta ssp. timareta f. timareta	Ecuador	0.0	0.0	0.0	459	-1.398	-78.1781	CAM009178	CAM009178
+ERR3653543	timareta	"Heliconius timareta
+ ssp. timareta f.
+ contigua"	Heliconius timareta ssp. timareta f. contigua	Ecuador	0.0	0.0	1.0	460	-1.398	-78.1781	CAM009180	CAM009180
+ERR3656073	other_comparative	"Heliconius
+ melpomene ssp.
+ amaryllis"	Heliconius melpomene ssp. amaryllis	Peru	1.0	0.0	0.0	461	-6.4528	-76.2862	MJ12-3267	MJ12-3267
+ERR3656232	other_comparative	"Heliconius
+ melpomene ssp.
+ plesseni"	Heliconius melpomene ssp. plesseni	Ecuador	1.0	0.0	0.0	462	-1.4224	-78.1729	PS16003	CAM016003
+ERR3656233	other_comparative	"Heliconius
+ melpomene ssp.
+ vicina"	Heliconius melpomene ssp. vicina	Colombia	0.0	1.0	1.0	463	-4.1334	-69.9415	CS31755	CS031755
+ERR3656234	other_comparative	"Heliconius
+ melpomene ssp.
+ cythera"	Heliconius melpomene ssp. cythera	Ecuador	1.0	0.0	0.0	464	0.185	-78.853	s15N022	15N022
+ERR3656235	other_comparative	"Heliconius cydno
+ ssp. weymeri f.
+ weymeri"	Heliconius cydno ssp. weymeri f. weymeri	Colombia	0.0	0.0	0.0	465	3.4834	-76.6158	CS943	CS000943
+ERR3656282	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	466	2.6844	-74.8881	CS3012	CS003012
+ERR3656283	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	467	2.6844	-74.8881	CS3372	CS003372
+ERR3656288	timareta	"Heliconius timareta
+ ssp. linaresi"	Heliconius timareta ssp. linaresi	Colombia	0.0	0.0	0.0	468	2.609	-74.7776	CS2429	CS002429
+ERR3656289	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	469	4.2133	-73.8028	CS1060	CS001060
+ERR3656290	other_comparative	Heliconius heurippa	Heliconius heurippa	Colombia	1.0	0.0	0.0	470	4.175	-73.6781	CS2420	CS002420
+ERR3656291	melpomene_melpomene	"Heliconius
+ melpomene ssp.
+ melpomene"	Heliconius melpomene ssp. melpomene	Colombia	1.0	0.0	0.0	471	4.2133	-73.8028	CS3255	CS003255
+ERR3656292	other_comparative	"Heliconius
+ melpomene ssp.
+ malleti"	Heliconius melpomene ssp. malleti	Colombia	0.0	1.0	1.0	472	1.7108	-75.7089	CS3366	CS003366
+ERR3789739	timareta	Heliconius timareta spp. tristero	Heliconius timareta spp. tristero		1.0	0.0	0.0	473				
+ERR3789746	timareta	Heliconius timareta spp. tristero	Heliconius timareta spp. tristero		1.0	0.0	0.0	474				
+ERR3789751	timareta	Heliconius timareta spp. tristero	Heliconius timareta spp. tristero		1.0	0.0	0.0	475				
+ERR3789759	timareta	Heliconius timareta spp. tristero	Heliconius timareta spp. tristero		1.0	0.0	0.0	476				
+ERR3790006	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	477	3.5175	-76.7572	vul.CS3612	CS003612
+ERR3790010	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	478	3.5175	-76.7572	vul.CS3617	CS003617
+ERR3790012	other_comparative	"Heliconius
+ melpomene ssp.
+ vulcanus"	Heliconius melpomene ssp. vulcanus	Colombia	1.0	0.0	0.0	479	3.5175	-76.7572	vul.CS3621	CS003621
+ERR3790118	other_comparative	"Heliconius
+ melpomene ssp. bellula"	Heliconius melpomene ssp. bellula					480				
+ERR3790119	other_comparative	"Heliconius
+ melpomene ssp. bellula"	Heliconius melpomene ssp. bellula					481				
+ERR3790120	other_comparative	"Heliconius
+ melpomene ssp. bellula"	Heliconius melpomene ssp. bellula					482				
+ERR3790121	other_comparative	"Heliconius
+ melpomene ssp. bellula"	Heliconius melpomene ssp. bellula					483				
+ERR3790122	other_comparative	"Heliconius
+ melpomene ssp. bellula"	Heliconius melpomene ssp. bellula					484				
+ERR3790123	other_comparative	"Heliconius
+ melpomene ssp. bellula"	Heliconius melpomene ssp. bellula					485				
+ERR3790124	other_comparative	"Heliconius
+ melpomene ssp. bellula"	Heliconius melpomene ssp. bellula					486				
+ERR3790125	other_comparative	"Heliconius
+ melpomene ssp. bellula"	Heliconius melpomene ssp. bellula					487				
+SRR1057604	other_comparative	Heliconius pachinus	Heliconius pachinus	Costa Rica	0.0	0.0	0.0	488	9.85	-84.3167	MK000516	MK000516
+SRR3101790	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	494	-19.0984	-40.1862	MK000014	MK000014
+SRR3101792	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	495	-19.0984	-40.1862	MK000063	MK000063
+SRR3101794	other_comparative	"Heliconius
+ melpomene ssp.
+ nanna"	Heliconius melpomene ssp. nanna	Brazil	1.0	0.0	0.0	496	-19.0984	-40.1862	MK000064	MK000064
+SRR424576	other_comparative	"Heliconius
+ melpomene
+ reference genome"	Heliconius melpomene reference genome	-	1.0	0.0	0.0	497	-	-	melP.HGC1	gen_ref

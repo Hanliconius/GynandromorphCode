@@ -1,0 +1,20 @@
+{
+  "status": "AUDIT_COMPLETE_REQUIRES_IDENTITY_AND_SITE_REVIEW",
+  "metadata_sha256": "bf281659e9432760ea8100a32ed0d556f98d7ac8136e3edd0e88db45ae4a2d2b",
+  "metadata_group_counts": {
+    "other_comparative": 287,
+    "melpomene_melpomene": 39,
+    "rosina": 12,
+    "timareta": 135,
+    "besckei": 11,
+    "meriana_unquoted": 3,
+    "meriana_quoted": 4
+  },
+  "requested_position": null,
+  "candidate_sites": 68,
+  "reference_alleles_are_not_ancestral_or_causal_labels": true,
+  "unquoted_taxon_is_provisional_identity_not_independent_verification": true,
+  "selection_and_calls_unchanged": true,
+  "comparison": "Dennis region 1.214-1.2225Mb; raw calls exported at published Dennis intervals plus optional requested position",
+  "no_causality_or_introgression_claim": true
+}

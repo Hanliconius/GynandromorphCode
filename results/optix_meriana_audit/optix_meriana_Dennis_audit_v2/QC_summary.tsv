@@ -1,0 +1,12 @@
+source	metric	count
+legacy	GQ	810051
+legacy	missing_or_DP_below_2	50822
+legacy	quality_below_20	12125
+merged	GQ	167884
+merged	missing_or_DP_below_2	15335
+merged	quality_below_20	7780
+overlapping_raw_GT	compared	179918
+overlapping_raw_GT	discordant	53
+recalled	GQ	12064
+recalled	missing_or_DP_below_2	835
+recalled	quality_below_20	633
