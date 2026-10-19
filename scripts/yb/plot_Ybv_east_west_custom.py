@@ -34,14 +34,14 @@ def run(a):
    import re
    words=set(re.findall('[a-z]+',r['original_race'].lower()))
    western_positive=r['original_v']==1 and ('melpomene' in words or r['original_race'].lower() in ('cythera','vulcanus')) and bool(words&{'rosina','cythera','vulcanus'})
-   r['v']=int(western_positive or REGION.get(r['sample'])=='East (French Guiana)')
-   r['display_group']='Western melpomene v+ + French Guiana (mixed phenotype)' if r['v'] else 'All remaining individuals'
+   r['v']=int(western_positive or REGION.get(r['sample'])=='West (other known localities)')
+   r['display_group']='Western melpomene v+ + West melpomene (mixed phenotype)' if r['v'] else 'All remaining individuals'
    r['race']=r['display_group'];r['d']=None
  if not membership:raise RuntimeError('Empty requested cohort')
  labels=[];freq=[];callable_fraction=[];styles=[];counts=[];rows=[]
  for v in (1,0):
   ss=[r['sample'] for r in membership if r['v']==v]
-  if ss:add((('Western melpomene v+ + FG (mixed phenotype)' if v else 'All remaining individuals') if VIEW=='custom_pool' else ('All recorded v+' if v else 'All recorded v-'))+f' (n={len(ss)})',ss,'summary',v=v)
+  if ss:add((('Western v+ + West melpomene (mixed phenotype)' if v else 'All remaining individuals') if VIEW=='custom_pool' else ('All recorded v+' if v else 'All recorded v-'))+f' (n={len(ss)})',ss,'summary',v=v)
  groups=defaultdict(list)
  for r in membership:
   if VIEW!='custom_pool':groups[(r['race'],r['d'],r['v'])].append(r['sample'])
@@ -53,13 +53,13 @@ def run(a):
  base=base.replace("'Yb(v) | frequencies by race'","'Yb(v) | '+TITLE")
  base=base.replace("Rosina allele frequency / focal dosage","Rosina allele frequency / focal dosage")
  a.output.mkdir(parents=True,exist_ok=False)
- titles={'race':'Races: melpomene East / West','custom_pool':'Custom pool: western v+ + French Guiana vs others'}
+ titles={'race':'Races: melpomene East / West','custom_pool':'Custom pool: western v+ + West melpomene vs others'}
  for view,title in titles.items():
   ns={'__name__':'yb_sensitivity','__file__':str(helper),'choose':choose,'VIEW':view,'TITLE':title,'REGION':region,'UNKNOWN':unknown}
   exec(compile(base,str(helper),'exec'),ns)
   folder=a.output/view
   ns['build'](argparse.Namespace(source=a.source,baseline=ROOT/'analysis/yb_matched_cohort_v1',output=folder))
-  audit=json.loads((folder/'audit.json').read_text());audit.update(view=view,cohort_title=title,genotype_based_individual_exclusions=False,selection_rule={'race':'Full eligible cohort, unknown melpomene locality omitted; melpomene split FG East versus other known localities West. User-defined geographic bins.','custom_pool':'Custom mixed-phenotype pool: western melpomene v-positive plus all French Guiana melpomene, versus all remaining eligible individuals. Original phenotypes retained in original_v; v is display group only.'}[view])
+  audit=json.loads((folder/'audit.json').read_text());audit.update(view=view,cohort_title=title,genotype_based_individual_exclusions=False,selection_rule={'race':'Full eligible cohort, unknown melpomene locality omitted; melpomene split FG East versus other known localities West. User-defined geographic bins.','custom_pool':'Custom mixed-phenotype pool: western melpomene v-positive plus West melpomene, versus all remaining eligible individuals including French Guiana. Original phenotypes retained in original_v; v is display group only.'}[view])
   audit['pooled_frequencies_match_completed_figure']=False; audit['original_phenotypes_preserved_in_membership_column']='original_v'; audit['unknown_locality_excluded']=sorted(unknown);audit['full_source_cohort_verified_before_subsetting']=True
   (folder/'audit.json').write_text(json.dumps(audit,indent=2)+'\n')
   (folder/'Ybv_frequency_by_race_Rosina.pdf').rename(a.output/f'Ybv_{view}_Rosina.pdf')
