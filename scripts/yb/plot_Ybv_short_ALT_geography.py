@@ -47,6 +47,7 @@ def run(a):
    members.loc[i,'race']=r['race']+' | '+('Guianan (FG)' if country=='French Guiana' else 'Colombian' if country=='Colombia' else country.replace('PanamÃ¡','Panama'))
   if 'nov. ECU' in r['race']:
    members.loc[i,'geography_evidence']='Provisional East: timareta eastern Ecuador range; exact accessions need locality confirmation'
+ pdfname='Ybv_short_ALT_geography_race.pdf' if a.min_callable==0 else 'Ybv_short_ALT_geography_race_callable80.pdf'
  out=a.output;out.mkdir(parents=True,exist_ok=False)
  qc.to_csv(out/'full_window_sample_quality.tsv',sep='\t',index=False)
  # Primary retains all genotype states. Separate sensitivity uses only callable
@@ -83,12 +84,12 @@ def run(a):
  ns={'__name__':'geo_display','__file__':str(helper)};exec(compile(code,str(helper),'exec'),ns)
  import matplotlib;matplotlib.use('Agg');matplotlib.rcParams.update({'pdf.fonttype':42})
  from matplotlib.backends.backend_pdf import PdfPages
- with PdfPages(out/'Ybv_short_ALT_geography_race.pdf') as pdf:
+ with PdfPages(out/pdfname) as pdf:
   ns['draw'](np.asarray(freq),labels,styles,positions,out,pdf)
   ns['draw'](np.asarray(fractions),labels,styles,positions,out,pdf,True)
  shutil.copy2(__file__,out/Path(__file__).name)
  audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 markers; exact REF/ALT checked against new joint calls',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
- (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print(json.dumps(audit,indent=2));print('PDF\t'+str(out/'Ybv_short_ALT_geography_race.pdf'))
+ (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print(json.dumps(audit,indent=2));print('PDF\t'+str(out/pdfname))
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v2');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
  if not a.submit:
