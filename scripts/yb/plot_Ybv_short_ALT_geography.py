@@ -27,10 +27,33 @@ def run(a):
  qc['flag_callable_below_80pct']=full_callable<.8
  qc['REF_homozygotes_are_valid_calls']=True
  old=pd.read_csv(ROOT/'analysis/yb_completed_reads_recovery_v1/frozen/HmRos_Ybv_unchanged_focal_calls.tsv.gz',sep='\t').sort_values('pos1')
- fullsites=pd.read_csv(source/'SNPs.tsv',sep='\t').set_index('pos1')
- for r in old.itertuples():
-  if r.pos1 not in fullsites.index or str(fullsites.loc[r.pos1,'ref'])!=r.ref or str(fullsites.loc[r.pos1,'alt'])!=r.alt:raise RuntimeError('Original marker not identically represented in joint calls: '+str(r.pos1))
- dos=dos[[str(int(x)) for x in old.pos1]];positions=list(map(int,dos.columns));matrix=dos.to_numpy(float)
+ # The SNP-only export omits reference-only records and may use a different
+ # ALT. Read the complete joint VCF, keeping old columns and auditing mapping.
+ import pysam,importlib.util
+ spec=importlib.util.spec_from_file_location('yb_quality',ROOT/'analysis/yb_completed_reads_recovery_v1/engine.py');engine=importlib.util.module_from_spec(spec);spec.loader.exec_module(engine)
+ positions=old.pos1.astype(int).tolist();matrix=np.full((len(members),len(old)),np.nan)
+ wanted={int(r.pos1):(j,r) for j,r in enumerate(old.itertuples())};seen=set();marker_audit=[];raw_audit=[]
+ with pysam.VariantFile(str(source/'full_window.vcf.gz')) as vf:
+  for rec in vf.fetch('NC_140403.1',min(positions)-1,max(positions)):
+   if rec.pos not in wanted:continue
+   j,r=wanted[rec.pos]
+   if rec.pos in seen:raise RuntimeError('Duplicate VCF position at original marker '+str(rec.pos))
+   seen.add(rec.pos)
+   if rec.ref!=r.ref:raise RuntimeError('Reference mismatch at original marker '+str(rec.pos))
+   alleles=rec.alleles
+   status='exact_old_REF_ALT' if tuple(rec.alts or ())==(r.alt,) else 'reference_only' if not rec.alts else 'different_or_multiple_ALT'
+   for i,member in enumerate(members.to_dict('records')):
+    vals=[]
+    for alias in member['aliases'].split(';'):
+     c=rec.samples[alias];value,quality=engine.quality(c,allow_pl=True)
+     gt=c.get('GT') or ();bases=[alleles[k] for k in gt if k is not None and k<len(alleles)]
+     compatible=len(gt)==2 and len(bases)==2 and all(x in (r.ref,r.alt) for x in bases)
+     alt_value=sum(x==r.alt for x in bases)/2 if compatible and value is not None else np.nan
+     if np.isfinite(alt_value):vals.append(alt_value)
+     raw_audit.append(dict(sample=alias,representative=member['sample'],pos1=rec.pos,old_REF=r.ref,old_ALT=r.alt,joint_alleles=','.join(alleles),GT=str(gt),DP=c.get('DP'),GQ=c.get('GQ'),quality=quality,target_ALT_dosage=alt_value))
+    if vals and len(set(vals))==1:matrix[i,j]=vals[0]
+   marker_audit.append(dict(pos1=rec.pos,REF=r.ref,old_ALT=r.alt,joint_ALT=','.join(rec.alts or ()),status=status,n_called=int(np.isfinite(matrix[:,j]).sum())))
+ for pos in set(positions)-seen:marker_audit.append(dict(pos1=pos,status='absent_from_complete_VCF_kept_missing',n_called=0))
  if len(members)!=complete['individuals'] or len(positions)!=len(old):raise RuntimeError('Source count mismatch')
  local={};unknown_local=set();countries_by_sample={}
  for r in pd.read_csv(ROOT/'analysis/ybv_melpomene_localities_v1/melpomene_individual_localities.tsv',sep='\t').fillna('').to_dict('records'):
@@ -49,6 +72,8 @@ def run(a):
    members.loc[i,'geography_evidence']='Provisional East: timareta eastern Ecuador range; exact accessions need locality confirmation'
  pdfname='Ybv_short_ALT_geography_race.pdf' if a.min_callable==0 else 'Ybv_short_ALT_geography_race_callable80.pdf'
  out=a.output;out.mkdir(parents=True,exist_ok=False)
+ pd.DataFrame(marker_audit).sort_values('pos1').to_csv(out/'original_marker_joint_allele_audit.tsv',sep='\t',index=False)
+ pd.DataFrame(raw_audit).to_csv(out/'original_marker_raw_GT_audit.tsv.gz',sep='\t',index=False,compression='gzip',na_rep='NA')
  qc.to_csv(out/'full_window_sample_quality.tsv',sep='\t',index=False)
  # Primary retains all genotype states. Separate sensitivity uses only callable
  # fraction; the REF genotype itself never triggers exclusion.
@@ -88,10 +113,10 @@ def run(a):
   ns['draw'](np.asarray(freq),labels,styles,positions,out,pdf)
   ns['draw'](np.asarray(fractions),labels,styles,positions,out,pdf,True)
  shutil.copy2(__file__,out/Path(__file__).name)
- audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 markers; exact REF/ALT checked against new joint calls',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
+ audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 positions and ALT definitions; full joint VCF allele mapping audited; incompatible calls missing',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
  (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print(json.dumps(audit,indent=2));print('PDF\t'+str(out/pdfname))
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v2');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v3');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
  if not a.submit:
   run(a)
   if a.min_callable==0:
