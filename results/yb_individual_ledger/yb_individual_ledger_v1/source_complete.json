@@ -1,0 +1,2025 @@
+{
+  "status": "COMPLETE_WITH_FAILED_TASKS",
+  "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_previous_calls_new_samples/20261016T183402Z",
+  "focal_calls_unchanged": true,
+  "marker_selection_unchanged": true,
+  "PK_in_controls": false,
+  "comparative_statistic": "Equal individual genotype dosage/2, DP>=2 and reported GQ>=20; all sources may use explicitly recorded PL-derived likelihood Q>=20 when GQ absent",
+  "legacy_and_native_calling_methods_identical": false,
+  "legacy_reference_check": {
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/external/krista_genotype_plots_original/Genotype_Plots/Ivory_Hmr15-1627000-1637000_biallelic.vcf",
+    "records_checked": 2083,
+    "mismatches": 2,
+    "first_mismatches": [
+      1631523,
+      1631526
+    ],
+    "target_interval": [
+      1633041,
+      1635646
+    ],
+    "target_records_checked": 474,
+    "target_mismatches": [],
+    "outside_interval_mismatches_excluded": [
+      1631523,
+      1631526
+    ],
+    "scope": "Exact REF agreement required across used dorsal interval; outside-interval discrepancies audited and excluded; no whole-chromosome identity claim"
+  },
+  "source_sensitivity_pdf": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/Yb_call_source_sensitivity.pdf",
+  "pages": [
+    {
+      "reference": "HmRos",
+      "interval": "d",
+      "markers": 53,
+      "positive_n": 149,
+      "negative_n": 324,
+      "focal_identical": true
+    },
+    {
+      "reference": "HmRos",
+      "interval": "v",
+      "markers": 27,
+      "positive_n": 18,
+      "negative_n": 12,
+      "focal_identical": true
+    },
+    {
+      "reference": "Hmel2.5",
+      "interval": "d",
+      "markers": 46,
+      "positive_n": 8,
+      "negative_n": 6,
+      "focal_identical": true
+    },
+    {
+      "reference": "Hmel2.5",
+      "interval": "v",
+      "markers": 27,
+      "positive_n": 8,
+      "negative_n": 6,
+      "focal_identical": true
+    }
+  ],
+  "focal_hashes": {
+    "HmRos_Ybd_unchanged_focal_calls.tsv.gz": "d0ec9c62e44c84a607b8b6025b2ae3d1677913e604f674479412c4eac03bc57e",
+    "HmRos_Ybv_unchanged_focal_calls.tsv.gz": "288bb4dc8aa57fdfda835a230301646eba853b724501e20958f766b973f30833",
+    "Hmel2.5_Ybd_unchanged_focal_calls.tsv.gz": "6f06a50739c0e1667e30637ee596c34fb1a1285cd9f42b7d3a768b2cc41f0761",
+    "Hmel2.5_Ybv_unchanged_focal_calls.tsv.gz": "3bb12c0df42af4770cbf7b1263622e3323db3b9ad288af2965f5de2501a95a43"
+  },
+  "phenotype_overrides": {
+    "cythera": {
+      "d": 0,
+      "v": 1
+    },
+    "vulcanus": {
+      "d": 0,
+      "v": 1
+    }
+  },
+  "references": {
+    "HmRos": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/optix_joint_all_samples/20261014T211057Z/ref/genome.fa",
+    "Hmel2.5": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_exact_coordinate_transfer/reference/hmel2_5.chromosomes.fa"
+  },
+  "concordance_review_flags": 0,
+  "parent": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2",
+  "dorsal_cohort_preserved": true,
+  "dorsal_frequencies_identical": true,
+  "ventral_tasks_planned": 371,
+  "ventral_tasks_completed": 5,
+  "failed_tasks": [
+    {
+      "sample": "ERR2298196",
+      "reason": "call_stage_not_completed",
+      "index": 13
+    },
+    {
+      "sample": "ERR2298197",
+      "reason": "call_stage_not_completed",
+      "index": 14
+    },
+    {
+      "sample": "ERR2298198",
+      "reason": "call_stage_not_completed",
+      "index": 15
+    },
+    {
+      "sample": "ERR2298199",
+      "reason": "call_stage_not_completed",
+      "index": 16
+    },
+    {
+      "sample": "ERR2298200",
+      "reason": "call_stage_not_completed",
+      "index": 17
+    },
+    {
+      "sample": "ERR2298203",
+      "reason": "call_stage_not_completed",
+      "index": 18
+    },
+    {
+      "sample": "ERR2298207",
+      "reason": "call_stage_not_completed",
+      "index": 19
+    },
+    {
+      "sample": "ERR2298209",
+      "reason": "call_stage_not_completed",
+      "index": 20
+    },
+    {
+      "sample": "ERR2298211",
+      "reason": "call_stage_not_completed",
+      "index": 22
+    },
+    {
+      "sample": "ERR2298217",
+      "reason": "call_stage_not_completed",
+      "index": 24
+    },
+    {
+      "sample": "ERR2298218",
+      "reason": "call_stage_not_completed",
+      "index": 25
+    },
+    {
+      "sample": "ERR2298219",
+      "reason": "call_stage_not_completed",
+      "index": 26
+    },
+    {
+      "sample": "ERR2298222",
+      "reason": "call_stage_not_completed",
+      "index": 28
+    },
+    {
+      "sample": "ERR2298223",
+      "reason": "call_stage_not_completed",
+      "index": 29
+    },
+    {
+      "sample": "ERR2298224",
+      "reason": "call_stage_not_completed",
+      "index": 30
+    },
+    {
+      "sample": "ERR2298226",
+      "reason": "call_stage_not_completed",
+      "index": 32
+    },
+    {
+      "sample": "ERR2298227",
+      "reason": "call_stage_not_completed",
+      "index": 33
+    },
+    {
+      "sample": "ERR2298228",
+      "reason": "call_stage_not_completed",
+      "index": 34
+    },
+    {
+      "sample": "ERR2298230",
+      "reason": "call_stage_not_completed",
+      "index": 36
+    },
+    {
+      "sample": "ERR2298231",
+      "reason": "call_stage_not_completed",
+      "index": 37
+    },
+    {
+      "sample": "ERR2298232",
+      "reason": "call_stage_not_completed",
+      "index": 38
+    },
+    {
+      "sample": "ERR2298233",
+      "reason": "call_stage_not_completed",
+      "index": 39
+    },
+    {
+      "sample": "ERR2298234",
+      "reason": "call_stage_not_completed",
+      "index": 40
+    },
+    {
+      "sample": "ERR2298237",
+      "reason": "call_stage_not_completed",
+      "index": 41
+    },
+    {
+      "sample": "ERR2298238",
+      "reason": "call_stage_not_completed",
+      "index": 42
+    },
+    {
+      "sample": "ERR2298239",
+      "reason": "call_stage_not_completed",
+      "index": 43
+    },
+    {
+      "sample": "ERR2298242",
+      "reason": "call_stage_not_completed",
+      "index": 45
+    },
+    {
+      "sample": "ERR2298244",
+      "reason": "call_stage_not_completed",
+      "index": 46
+    },
+    {
+      "sample": "ERR2298245",
+      "reason": "call_stage_not_completed",
+      "index": 47
+    },
+    {
+      "sample": "ERR2298247",
+      "reason": "call_stage_not_completed",
+      "index": 48
+    },
+    {
+      "sample": "ERR3650386",
+      "reason": "call_stage_not_completed",
+      "index": 93
+    },
+    {
+      "sample": "ERR3650387",
+      "reason": "call_stage_not_completed",
+      "index": 94
+    },
+    {
+      "sample": "ERR3650388",
+      "reason": "call_stage_not_completed",
+      "index": 95
+    },
+    {
+      "sample": "ERR3650414",
+      "reason": "call_stage_not_completed",
+      "index": 96
+    },
+    {
+      "sample": "ERR3650415",
+      "reason": "call_stage_not_completed",
+      "index": 97
+    },
+    {
+      "sample": "ERR3650416",
+      "reason": "call_stage_not_completed",
+      "index": 98
+    },
+    {
+      "sample": "ERR3650417",
+      "reason": "call_stage_not_completed",
+      "index": 99
+    },
+    {
+      "sample": "ERR3650418",
+      "reason": "call_stage_not_completed",
+      "index": 100
+    },
+    {
+      "sample": "ERR3650468",
+      "reason": "call_stage_not_completed",
+      "index": 101
+    },
+    {
+      "sample": "ERR3650469",
+      "reason": "call_stage_not_completed",
+      "index": 102
+    },
+    {
+      "sample": "ERR3650470",
+      "reason": "call_stage_not_completed",
+      "index": 103
+    },
+    {
+      "sample": "ERR3650471",
+      "reason": "call_stage_not_completed",
+      "index": 104
+    },
+    {
+      "sample": "ERR3650472",
+      "reason": "call_stage_not_completed",
+      "index": 105
+    },
+    {
+      "sample": "ERR3650474",
+      "reason": "call_stage_not_completed",
+      "index": 106
+    },
+    {
+      "sample": "ERR3650477",
+      "reason": "call_stage_not_completed",
+      "index": 107
+    },
+    {
+      "sample": "ERR3650478",
+      "reason": "call_stage_not_completed",
+      "index": 108
+    },
+    {
+      "sample": "ERR3650479",
+      "reason": "call_stage_not_completed",
+      "index": 109
+    },
+    {
+      "sample": "ERR3650480",
+      "reason": "call_stage_not_completed",
+      "index": 110
+    },
+    {
+      "sample": "ERR3650481",
+      "reason": "call_stage_not_completed",
+      "index": 111
+    },
+    {
+      "sample": "ERR3650482",
+      "reason": "call_stage_not_completed",
+      "index": 112
+    },
+    {
+      "sample": "ERR3650483",
+      "reason": "call_stage_not_completed",
+      "index": 113
+    },
+    {
+      "sample": "ERR3650485",
+      "reason": "call_stage_not_completed",
+      "index": 114
+    },
+    {
+      "sample": "ERR3650486",
+      "reason": "call_stage_not_completed",
+      "index": 115
+    },
+    {
+      "sample": "ERR3650487",
+      "reason": "call_stage_not_completed",
+      "index": 116
+    },
+    {
+      "sample": "ERR3650488",
+      "reason": "call_stage_not_completed",
+      "index": 117
+    },
+    {
+      "sample": "ERR3650489",
+      "reason": "call_stage_not_completed",
+      "index": 118
+    },
+    {
+      "sample": "ERR3650490",
+      "reason": "call_stage_not_completed",
+      "index": 119
+    },
+    {
+      "sample": "ERR3650491",
+      "reason": "call_stage_not_completed",
+      "index": 120
+    },
+    {
+      "sample": "ERR3650492",
+      "reason": "call_stage_not_completed",
+      "index": 121
+    },
+    {
+      "sample": "ERR3650493",
+      "reason": "call_stage_not_completed",
+      "index": 122
+    },
+    {
+      "sample": "ERR3650494",
+      "reason": "call_stage_not_completed",
+      "index": 123
+    },
+    {
+      "sample": "ERR3650495",
+      "reason": "call_stage_not_completed",
+      "index": 124
+    },
+    {
+      "sample": "ERR3650496",
+      "reason": "call_stage_not_completed",
+      "index": 125
+    },
+    {
+      "sample": "ERR3650497",
+      "reason": "call_stage_not_completed",
+      "index": 126
+    },
+    {
+      "sample": "ERR3650498",
+      "reason": "call_stage_not_completed",
+      "index": 127
+    },
+    {
+      "sample": "ERR3650499",
+      "reason": "call_stage_not_completed",
+      "index": 128
+    },
+    {
+      "sample": "ERR3650512",
+      "reason": "call_stage_not_completed",
+      "index": 129
+    },
+    {
+      "sample": "ERR3650513",
+      "reason": "call_stage_not_completed",
+      "index": 130
+    },
+    {
+      "sample": "ERR3650514",
+      "reason": "call_stage_not_completed",
+      "index": 131
+    },
+    {
+      "sample": "ERR3650515",
+      "reason": "call_stage_not_completed",
+      "index": 132
+    },
+    {
+      "sample": "ERR3650516",
+      "reason": "call_stage_not_completed",
+      "index": 133
+    },
+    {
+      "sample": "ERR3650517",
+      "reason": "call_stage_not_completed",
+      "index": 134
+    },
+    {
+      "sample": "ERR3650518",
+      "reason": "call_stage_not_completed",
+      "index": 135
+    },
+    {
+      "sample": "ERR3650519",
+      "reason": "call_stage_not_completed",
+      "index": 136
+    },
+    {
+      "sample": "ERR3650520",
+      "reason": "call_stage_not_completed",
+      "index": 137
+    },
+    {
+      "sample": "ERR3650521",
+      "reason": "call_stage_not_completed",
+      "index": 138
+    },
+    {
+      "sample": "ERR3650522",
+      "reason": "call_stage_not_completed",
+      "index": 139
+    },
+    {
+      "sample": "ERR3650523",
+      "reason": "call_stage_not_completed",
+      "index": 140
+    },
+    {
+      "sample": "ERR3650524",
+      "reason": "call_stage_not_completed",
+      "index": 141
+    },
+    {
+      "sample": "ERR3650525",
+      "reason": "call_stage_not_completed",
+      "index": 142
+    },
+    {
+      "sample": "ERR3650526",
+      "reason": "call_stage_not_completed",
+      "index": 143
+    },
+    {
+      "sample": "ERR3650527",
+      "reason": "call_stage_not_completed",
+      "index": 144
+    },
+    {
+      "sample": "ERR3650528",
+      "reason": "call_stage_not_completed",
+      "index": 145
+    },
+    {
+      "sample": "ERR3650529",
+      "reason": "call_stage_not_completed",
+      "index": 146
+    },
+    {
+      "sample": "ERR3650579",
+      "reason": "call_stage_not_completed",
+      "index": 147
+    },
+    {
+      "sample": "ERR3650580",
+      "reason": "call_stage_not_completed",
+      "index": 148
+    },
+    {
+      "sample": "ERR3650581",
+      "reason": "call_stage_not_completed",
+      "index": 149
+    },
+    {
+      "sample": "ERR3650582",
+      "reason": "call_stage_not_completed",
+      "index": 150
+    },
+    {
+      "sample": "ERR3650583",
+      "reason": "call_stage_not_completed",
+      "index": 151
+    },
+    {
+      "sample": "ERR3650584",
+      "reason": "call_stage_not_completed",
+      "index": 152
+    },
+    {
+      "sample": "ERR3650585",
+      "reason": "call_stage_not_completed",
+      "index": 153
+    },
+    {
+      "sample": "ERR3650586",
+      "reason": "call_stage_not_completed",
+      "index": 154
+    },
+    {
+      "sample": "ERR3650587",
+      "reason": "call_stage_not_completed",
+      "index": 155
+    },
+    {
+      "sample": "ERR3650588",
+      "reason": "call_stage_not_completed",
+      "index": 156
+    },
+    {
+      "sample": "ERR3650673",
+      "reason": "call_stage_not_completed",
+      "index": 157
+    },
+    {
+      "sample": "ERR3650677",
+      "reason": "call_stage_not_completed",
+      "index": 158
+    },
+    {
+      "sample": "ERR3650679",
+      "reason": "call_stage_not_completed",
+      "index": 159
+    },
+    {
+      "sample": "ERR3650692",
+      "reason": "call_stage_not_completed",
+      "index": 160
+    },
+    {
+      "sample": "ERR3650705",
+      "reason": "call_stage_not_completed",
+      "index": 161
+    },
+    {
+      "sample": "ERR3650708",
+      "reason": "call_stage_not_completed",
+      "index": 162
+    },
+    {
+      "sample": "ERR3650728",
+      "reason": "call_stage_not_completed",
+      "index": 163
+    },
+    {
+      "sample": "ERR3650738",
+      "reason": "call_stage_not_completed",
+      "index": 164
+    },
+    {
+      "sample": "ERR3650748",
+      "reason": "call_stage_not_completed",
+      "index": 165
+    },
+    {
+      "sample": "ERR3651361",
+      "reason": "call_stage_not_completed",
+      "index": 166
+    },
+    {
+      "sample": "ERR3651362",
+      "reason": "call_stage_not_completed",
+      "index": 167
+    },
+    {
+      "sample": "ERR3651364",
+      "reason": "call_stage_not_completed",
+      "index": 168
+    },
+    {
+      "sample": "ERR3651366",
+      "reason": "call_stage_not_completed",
+      "index": 169
+    },
+    {
+      "sample": "ERR3651367",
+      "reason": "call_stage_not_completed",
+      "index": 170
+    },
+    {
+      "sample": "ERR3651368",
+      "reason": "call_stage_not_completed",
+      "index": 171
+    },
+    {
+      "sample": "ERR3651369",
+      "reason": "call_stage_not_completed",
+      "index": 172
+    },
+    {
+      "sample": "ERR3651370",
+      "reason": "call_stage_not_completed",
+      "index": 173
+    },
+    {
+      "sample": "ERR3651371",
+      "reason": "call_stage_not_completed",
+      "index": 174
+    },
+    {
+      "sample": "ERR3651374",
+      "reason": "call_stage_not_completed",
+      "index": 175
+    },
+    {
+      "sample": "ERR3651375",
+      "reason": "call_stage_not_completed",
+      "index": 176
+    },
+    {
+      "sample": "ERR3651412",
+      "reason": "call_stage_not_completed",
+      "index": 177
+    },
+    {
+      "sample": "ERR3651415",
+      "reason": "call_stage_not_completed",
+      "index": 178
+    },
+    {
+      "sample": "ERR3651416",
+      "reason": "call_stage_not_completed",
+      "index": 179
+    },
+    {
+      "sample": "ERR3651417",
+      "reason": "call_stage_not_completed",
+      "index": 180
+    },
+    {
+      "sample": "ERR3651418",
+      "reason": "call_stage_not_completed",
+      "index": 181
+    },
+    {
+      "sample": "ERR3651419",
+      "reason": "call_stage_not_completed",
+      "index": 182
+    },
+    {
+      "sample": "ERR3651426",
+      "reason": "call_stage_not_completed",
+      "index": 183
+    },
+    {
+      "sample": "ERR3651427",
+      "reason": "call_stage_not_completed",
+      "index": 184
+    },
+    {
+      "sample": "ERR3651428",
+      "reason": "call_stage_not_completed",
+      "index": 185
+    },
+    {
+      "sample": "ERR3651475",
+      "reason": "call_stage_not_completed",
+      "index": 186
+    },
+    {
+      "sample": "ERR3651476",
+      "reason": "call_stage_not_completed",
+      "index": 187
+    },
+    {
+      "sample": "ERR3651477",
+      "reason": "call_stage_not_completed",
+      "index": 188
+    },
+    {
+      "sample": "ERR3651478",
+      "reason": "call_stage_not_completed",
+      "index": 189
+    },
+    {
+      "sample": "ERR3651479",
+      "reason": "call_stage_not_completed",
+      "index": 190
+    },
+    {
+      "sample": "ERR3651482",
+      "reason": "call_stage_not_completed",
+      "index": 191
+    },
+    {
+      "sample": "ERR3651483",
+      "reason": "call_stage_not_completed",
+      "index": 192
+    },
+    {
+      "sample": "ERR3651484",
+      "reason": "call_stage_not_completed",
+      "index": 193
+    },
+    {
+      "sample": "ERR3651485",
+      "reason": "call_stage_not_completed",
+      "index": 194
+    },
+    {
+      "sample": "ERR3651486",
+      "reason": "call_stage_not_completed",
+      "index": 195
+    },
+    {
+      "sample": "ERR3651487",
+      "reason": "call_stage_not_completed",
+      "index": 196
+    },
+    {
+      "sample": "ERR3651488",
+      "reason": "call_stage_not_completed",
+      "index": 197
+    },
+    {
+      "sample": "ERR3651489",
+      "reason": "call_stage_not_completed",
+      "index": 198
+    },
+    {
+      "sample": "ERR3651491",
+      "reason": "call_stage_not_completed",
+      "index": 199
+    },
+    {
+      "sample": "ERR3651492",
+      "reason": "call_stage_not_completed",
+      "index": 200
+    },
+    {
+      "sample": "ERR3652193",
+      "reason": "call_stage_not_completed",
+      "index": 201
+    },
+    {
+      "sample": "ERR3652194",
+      "reason": "call_stage_not_completed",
+      "index": 202
+    },
+    {
+      "sample": "ERR3652346",
+      "reason": "call_stage_not_completed",
+      "index": 203
+    },
+    {
+      "sample": "ERR3652347",
+      "reason": "call_stage_not_completed",
+      "index": 204
+    },
+    {
+      "sample": "ERR3652348",
+      "reason": "call_stage_not_completed",
+      "index": 205
+    },
+    {
+      "sample": "ERR3652349",
+      "reason": "call_stage_not_completed",
+      "index": 206
+    },
+    {
+      "sample": "ERR3652350",
+      "reason": "call_stage_not_completed",
+      "index": 207
+    },
+    {
+      "sample": "ERR3652351",
+      "reason": "call_stage_not_completed",
+      "index": 208
+    },
+    {
+      "sample": "ERR3652352",
+      "reason": "call_stage_not_completed",
+      "index": 209
+    },
+    {
+      "sample": "ERR3652353",
+      "reason": "call_stage_not_completed",
+      "index": 210
+    },
+    {
+      "sample": "ERR3652354",
+      "reason": "call_stage_not_completed",
+      "index": 211
+    },
+    {
+      "sample": "ERR3652355",
+      "reason": "call_stage_not_completed",
+      "index": 212
+    },
+    {
+      "sample": "ERR3652356",
+      "reason": "call_stage_not_completed",
+      "index": 213
+    },
+    {
+      "sample": "ERR3652357",
+      "reason": "call_stage_not_completed",
+      "index": 214
+    },
+    {
+      "sample": "ERR3652358",
+      "reason": "call_stage_not_completed",
+      "index": 215
+    },
+    {
+      "sample": "ERR3652359",
+      "reason": "call_stage_not_completed",
+      "index": 216
+    },
+    {
+      "sample": "ERR3652360",
+      "reason": "call_stage_not_completed",
+      "index": 217
+    },
+    {
+      "sample": "ERR3652361",
+      "reason": "call_stage_not_completed",
+      "index": 218
+    },
+    {
+      "sample": "ERR3652362",
+      "reason": "call_stage_not_completed",
+      "index": 219
+    },
+    {
+      "sample": "ERR3652363",
+      "reason": "call_stage_not_completed",
+      "index": 220
+    },
+    {
+      "sample": "ERR3652364",
+      "reason": "call_stage_not_completed",
+      "index": 221
+    },
+    {
+      "sample": "ERR3652365",
+      "reason": "call_stage_not_completed",
+      "index": 222
+    },
+    {
+      "sample": "ERR3652366",
+      "reason": "call_stage_not_completed",
+      "index": 223
+    },
+    {
+      "sample": "ERR3652368",
+      "reason": "call_stage_not_completed",
+      "index": 224
+    },
+    {
+      "sample": "ERR3652372",
+      "reason": "call_stage_not_completed",
+      "index": 225
+    },
+    {
+      "sample": "ERR3652374",
+      "reason": "call_stage_not_completed",
+      "index": 226
+    },
+    {
+      "sample": "ERR3652375",
+      "reason": "call_stage_not_completed",
+      "index": 227
+    },
+    {
+      "sample": "ERR3652376",
+      "reason": "call_stage_not_completed",
+      "index": 228
+    },
+    {
+      "sample": "ERR3652377",
+      "reason": "call_stage_not_completed",
+      "index": 229
+    },
+    {
+      "sample": "ERR3652378",
+      "reason": "call_stage_not_completed",
+      "index": 230
+    },
+    {
+      "sample": "ERR3652379",
+      "reason": "call_stage_not_completed",
+      "index": 231
+    },
+    {
+      "sample": "ERR3652380",
+      "reason": "call_stage_not_completed",
+      "index": 232
+    },
+    {
+      "sample": "ERR3652381",
+      "reason": "call_stage_not_completed",
+      "index": 233
+    },
+    {
+      "sample": "ERR3652382",
+      "reason": "call_stage_not_completed",
+      "index": 234
+    },
+    {
+      "sample": "ERR3652383",
+      "reason": "call_stage_not_completed",
+      "index": 235
+    },
+    {
+      "sample": "ERR3652384",
+      "reason": "call_stage_not_completed",
+      "index": 236
+    },
+    {
+      "sample": "ERR3652385",
+      "reason": "call_stage_not_completed",
+      "index": 237
+    },
+    {
+      "sample": "ERR3652386",
+      "reason": "call_stage_not_completed",
+      "index": 238
+    },
+    {
+      "sample": "ERR3652387",
+      "reason": "call_stage_not_completed",
+      "index": 239
+    },
+    {
+      "sample": "ERR3652388",
+      "reason": "call_stage_not_completed",
+      "index": 240
+    },
+    {
+      "sample": "ERR3652389",
+      "reason": "call_stage_not_completed",
+      "index": 241
+    },
+    {
+      "sample": "ERR3652390",
+      "reason": "call_stage_not_completed",
+      "index": 242
+    },
+    {
+      "sample": "ERR3652391",
+      "reason": "call_stage_not_completed",
+      "index": 243
+    },
+    {
+      "sample": "ERR3652392",
+      "reason": "call_stage_not_completed",
+      "index": 244
+    },
+    {
+      "sample": "ERR3652394",
+      "reason": "call_stage_not_completed",
+      "index": 245
+    },
+    {
+      "sample": "ERR3652395",
+      "reason": "call_stage_not_completed",
+      "index": 246
+    },
+    {
+      "sample": "ERR3652396",
+      "reason": "call_stage_not_completed",
+      "index": 247
+    },
+    {
+      "sample": "ERR3652397",
+      "reason": "call_stage_not_completed",
+      "index": 248
+    },
+    {
+      "sample": "ERR3652398",
+      "reason": "call_stage_not_completed",
+      "index": 249
+    },
+    {
+      "sample": "ERR3652399",
+      "reason": "call_stage_not_completed",
+      "index": 250
+    },
+    {
+      "sample": "ERR3652400",
+      "reason": "call_stage_not_completed",
+      "index": 251
+    },
+    {
+      "sample": "ERR3652401",
+      "reason": "call_stage_not_completed",
+      "index": 252
+    },
+    {
+      "sample": "ERR3652402",
+      "reason": "call_stage_not_completed",
+      "index": 253
+    },
+    {
+      "sample": "ERR3652403",
+      "reason": "call_stage_not_completed",
+      "index": 254
+    },
+    {
+      "sample": "ERR3652404",
+      "reason": "call_stage_not_completed",
+      "index": 255
+    },
+    {
+      "sample": "ERR3652405",
+      "reason": "call_stage_not_completed",
+      "index": 256
+    },
+    {
+      "sample": "ERR3652406",
+      "reason": "call_stage_not_completed",
+      "index": 257
+    },
+    {
+      "sample": "ERR3652407",
+      "reason": "call_stage_not_completed",
+      "index": 258
+    },
+    {
+      "sample": "ERR3652408",
+      "reason": "call_stage_not_completed",
+      "index": 259
+    },
+    {
+      "sample": "ERR3652409",
+      "reason": "call_stage_not_completed",
+      "index": 260
+    },
+    {
+      "sample": "ERR3652410",
+      "reason": "call_stage_not_completed",
+      "index": 261
+    },
+    {
+      "sample": "ERR3652411",
+      "reason": "call_stage_not_completed",
+      "index": 262
+    },
+    {
+      "sample": "ERR3652412",
+      "reason": "call_stage_not_completed",
+      "index": 263
+    },
+    {
+      "sample": "ERR3652413",
+      "reason": "call_stage_not_completed",
+      "index": 264
+    },
+    {
+      "sample": "ERR3652414",
+      "reason": "call_stage_not_completed",
+      "index": 265
+    },
+    {
+      "sample": "ERR3652415",
+      "reason": "call_stage_not_completed",
+      "index": 266
+    },
+    {
+      "sample": "ERR3652416",
+      "reason": "call_stage_not_completed",
+      "index": 267
+    },
+    {
+      "sample": "ERR3652417",
+      "reason": "call_stage_not_completed",
+      "index": 268
+    },
+    {
+      "sample": "ERR3652418",
+      "reason": "call_stage_not_completed",
+      "index": 269
+    },
+    {
+      "sample": "ERR3652419",
+      "reason": "call_stage_not_completed",
+      "index": 270
+    },
+    {
+      "sample": "ERR3652420",
+      "reason": "call_stage_not_completed",
+      "index": 271
+    },
+    {
+      "sample": "ERR3652421",
+      "reason": "call_stage_not_completed",
+      "index": 272
+    },
+    {
+      "sample": "ERR3652422",
+      "reason": "call_stage_not_completed",
+      "index": 273
+    },
+    {
+      "sample": "ERR3652575",
+      "reason": "call_stage_not_completed",
+      "index": 274
+    },
+    {
+      "sample": "ERR3652576",
+      "reason": "call_stage_not_completed",
+      "index": 275
+    },
+    {
+      "sample": "ERR3652577",
+      "reason": "call_stage_not_completed",
+      "index": 276
+    },
+    {
+      "sample": "ERR3652579",
+      "reason": "call_stage_not_completed",
+      "index": 277
+    },
+    {
+      "sample": "ERR3652580",
+      "reason": "call_stage_not_completed",
+      "index": 278
+    },
+    {
+      "sample": "ERR3652584",
+      "reason": "call_stage_not_completed",
+      "index": 279
+    },
+    {
+      "sample": "ERR3652585",
+      "reason": "call_stage_not_completed",
+      "index": 280
+    },
+    {
+      "sample": "ERR3652586",
+      "reason": "call_stage_not_completed",
+      "index": 281
+    },
+    {
+      "sample": "ERR3652587",
+      "reason": "call_stage_not_completed",
+      "index": 282
+    },
+    {
+      "sample": "ERR3652588",
+      "reason": "call_stage_not_completed",
+      "index": 283
+    },
+    {
+      "sample": "ERR3652589",
+      "reason": "call_stage_not_completed",
+      "index": 284
+    },
+    {
+      "sample": "ERR3652590",
+      "reason": "call_stage_not_completed",
+      "index": 285
+    },
+    {
+      "sample": "ERR3652591",
+      "reason": "call_stage_not_completed",
+      "index": 286
+    },
+    {
+      "sample": "ERR3652592",
+      "reason": "call_stage_not_completed",
+      "index": 287
+    },
+    {
+      "sample": "ERR3652593",
+      "reason": "call_stage_not_completed",
+      "index": 288
+    },
+    {
+      "sample": "ERR3652594",
+      "reason": "call_stage_not_completed",
+      "index": 289
+    },
+    {
+      "sample": "ERR3652595",
+      "reason": "call_stage_not_completed",
+      "index": 290
+    },
+    {
+      "sample": "ERR3652596",
+      "reason": "call_stage_not_completed",
+      "index": 291
+    },
+    {
+      "sample": "ERR3652597",
+      "reason": "call_stage_not_completed",
+      "index": 292
+    },
+    {
+      "sample": "ERR3652598",
+      "reason": "call_stage_not_completed",
+      "index": 293
+    },
+    {
+      "sample": "ERR3652599",
+      "reason": "call_stage_not_completed",
+      "index": 294
+    },
+    {
+      "sample": "ERR3652600",
+      "reason": "call_stage_not_completed",
+      "index": 295
+    },
+    {
+      "sample": "ERR3652601",
+      "reason": "call_stage_not_completed",
+      "index": 296
+    },
+    {
+      "sample": "ERR3652602",
+      "reason": "call_stage_not_completed",
+      "index": 297
+    },
+    {
+      "sample": "ERR3652603",
+      "reason": "call_stage_not_completed",
+      "index": 298
+    },
+    {
+      "sample": "ERR3652604",
+      "reason": "call_stage_not_completed",
+      "index": 299
+    },
+    {
+      "sample": "ERR3652605",
+      "reason": "call_stage_not_completed",
+      "index": 300
+    },
+    {
+      "sample": "ERR3652606",
+      "reason": "call_stage_not_completed",
+      "index": 301
+    },
+    {
+      "sample": "ERR3652607",
+      "reason": "call_stage_not_completed",
+      "index": 302
+    },
+    {
+      "sample": "ERR3652608",
+      "reason": "call_stage_not_completed",
+      "index": 303
+    },
+    {
+      "sample": "ERR3652609",
+      "reason": "call_stage_not_completed",
+      "index": 304
+    },
+    {
+      "sample": "ERR3652611",
+      "reason": "call_stage_not_completed",
+      "index": 305
+    },
+    {
+      "sample": "ERR3652613",
+      "reason": "call_stage_not_completed",
+      "index": 306
+    },
+    {
+      "sample": "ERR3652615",
+      "reason": "call_stage_not_completed",
+      "index": 307
+    },
+    {
+      "sample": "ERR3652616",
+      "reason": "call_stage_not_completed",
+      "index": 308
+    },
+    {
+      "sample": "ERR3652617",
+      "reason": "call_stage_not_completed",
+      "index": 309
+    },
+    {
+      "sample": "ERR3652618",
+      "reason": "call_stage_not_completed",
+      "index": 310
+    },
+    {
+      "sample": "ERR3652619",
+      "reason": "call_stage_not_completed",
+      "index": 311
+    },
+    {
+      "sample": "ERR3652620",
+      "reason": "call_stage_not_completed",
+      "index": 312
+    },
+    {
+      "sample": "ERR3652621",
+      "reason": "call_stage_not_completed",
+      "index": 313
+    },
+    {
+      "sample": "ERR3652622",
+      "reason": "call_stage_not_completed",
+      "index": 314
+    },
+    {
+      "sample": "ERR3652624",
+      "reason": "call_stage_not_completed",
+      "index": 315
+    },
+    {
+      "sample": "ERR3652626",
+      "reason": "call_stage_not_completed",
+      "index": 316
+    },
+    {
+      "sample": "ERR3652628",
+      "reason": "call_stage_not_completed",
+      "index": 317
+    },
+    {
+      "sample": "ERR3652629",
+      "reason": "call_stage_not_completed",
+      "index": 318
+    },
+    {
+      "sample": "ERR3652630",
+      "reason": "call_stage_not_completed",
+      "index": 319
+    },
+    {
+      "sample": "ERR3652631",
+      "reason": "call_stage_not_completed",
+      "index": 320
+    },
+    {
+      "sample": "ERR3652632",
+      "reason": "call_stage_not_completed",
+      "index": 321
+    },
+    {
+      "sample": "ERR3652633",
+      "reason": "call_stage_not_completed",
+      "index": 322
+    },
+    {
+      "sample": "ERR3652634",
+      "reason": "call_stage_not_completed",
+      "index": 323
+    },
+    {
+      "sample": "ERR3652635",
+      "reason": "call_stage_not_completed",
+      "index": 324
+    },
+    {
+      "sample": "ERR3652637",
+      "reason": "call_stage_not_completed",
+      "index": 325
+    },
+    {
+      "sample": "ERR3652638",
+      "reason": "call_stage_not_completed",
+      "index": 326
+    },
+    {
+      "sample": "ERR3652639",
+      "reason": "call_stage_not_completed",
+      "index": 327
+    },
+    {
+      "sample": "ERR3652640",
+      "reason": "call_stage_not_completed",
+      "index": 328
+    },
+    {
+      "sample": "ERR3652641",
+      "reason": "call_stage_not_completed",
+      "index": 329
+    },
+    {
+      "sample": "ERR3652642",
+      "reason": "call_stage_not_completed",
+      "index": 330
+    },
+    {
+      "sample": "ERR3652643",
+      "reason": "call_stage_not_completed",
+      "index": 331
+    },
+    {
+      "sample": "ERR3652644",
+      "reason": "call_stage_not_completed",
+      "index": 332
+    },
+    {
+      "sample": "ERR3652646",
+      "reason": "call_stage_not_completed",
+      "index": 334
+    },
+    {
+      "sample": "ERR3652647",
+      "reason": "call_stage_not_completed",
+      "index": 335
+    },
+    {
+      "sample": "ERR3652648",
+      "reason": "call_stage_not_completed",
+      "index": 336
+    },
+    {
+      "sample": "ERR3652649",
+      "reason": "call_stage_not_completed",
+      "index": 337
+    },
+    {
+      "sample": "ERR3652650",
+      "reason": "call_stage_not_completed",
+      "index": 338
+    },
+    {
+      "sample": "ERR3652651",
+      "reason": "call_stage_not_completed",
+      "index": 339
+    },
+    {
+      "sample": "ERR3652652",
+      "reason": "call_stage_not_completed",
+      "index": 340
+    },
+    {
+      "sample": "ERR3652653",
+      "reason": "call_stage_not_completed",
+      "index": 341
+    },
+    {
+      "sample": "ERR3652654",
+      "reason": "call_stage_not_completed",
+      "index": 342
+    },
+    {
+      "sample": "ERR3652655",
+      "reason": "call_stage_not_completed",
+      "index": 343
+    },
+    {
+      "sample": "ERR3652656",
+      "reason": "call_stage_not_completed",
+      "index": 344
+    },
+    {
+      "sample": "ERR3652657",
+      "reason": "call_stage_not_completed",
+      "index": 345
+    },
+    {
+      "sample": "ERR3652658",
+      "reason": "call_stage_not_completed",
+      "index": 346
+    },
+    {
+      "sample": "ERR3652659",
+      "reason": "call_stage_not_completed",
+      "index": 347
+    },
+    {
+      "sample": "ERR3652660",
+      "reason": "call_stage_not_completed",
+      "index": 348
+    },
+    {
+      "sample": "ERR3652661",
+      "reason": "call_stage_not_completed",
+      "index": 349
+    },
+    {
+      "sample": "ERR3653097",
+      "reason": "call_stage_not_completed",
+      "index": 350
+    },
+    {
+      "sample": "ERR3653098",
+      "reason": "call_stage_not_completed",
+      "index": 351
+    },
+    {
+      "sample": "ERR3653117",
+      "reason": "call_stage_not_completed",
+      "index": 352
+    },
+    {
+      "sample": "ERR3653118",
+      "reason": "call_stage_not_completed",
+      "index": 353
+    },
+    {
+      "sample": "ERR3653119",
+      "reason": "call_stage_not_completed",
+      "index": 354
+    },
+    {
+      "sample": "ERR3653120",
+      "reason": "call_stage_not_completed",
+      "index": 355
+    },
+    {
+      "sample": "ERR3653125",
+      "reason": "call_stage_not_completed",
+      "index": 356
+    },
+    {
+      "sample": "ERR3653292",
+      "reason": "call_stage_not_completed",
+      "index": 357
+    },
+    {
+      "sample": "ERR3653293",
+      "reason": "call_stage_not_completed",
+      "index": 358
+    },
+    {
+      "sample": "ERR3653295",
+      "reason": "call_stage_not_completed",
+      "index": 360
+    },
+    {
+      "sample": "ERR3653296",
+      "reason": "call_stage_not_completed",
+      "index": 361
+    },
+    {
+      "sample": "ERR3653297",
+      "reason": "call_stage_not_completed",
+      "index": 362
+    },
+    {
+      "sample": "ERR3653298",
+      "reason": "call_stage_not_completed",
+      "index": 363
+    },
+    {
+      "sample": "ERR3653299",
+      "reason": "call_stage_not_completed",
+      "index": 364
+    },
+    {
+      "sample": "ERR3653300",
+      "reason": "call_stage_not_completed",
+      "index": 365
+    },
+    {
+      "sample": "ERR3653301",
+      "reason": "call_stage_not_completed",
+      "index": 366
+    },
+    {
+      "sample": "ERR3653302",
+      "reason": "call_stage_not_completed",
+      "index": 367
+    },
+    {
+      "sample": "ERR3653303",
+      "reason": "call_stage_not_completed",
+      "index": 368
+    },
+    {
+      "sample": "ERR3653305",
+      "reason": "call_stage_not_completed",
+      "index": 370
+    },
+    {
+      "sample": "ERR3653306",
+      "reason": "call_stage_not_completed",
+      "index": 371
+    },
+    {
+      "sample": "ERR3653307",
+      "reason": "call_stage_not_completed",
+      "index": 372
+    },
+    {
+      "sample": "ERR3653308",
+      "reason": "call_stage_not_completed",
+      "index": 373
+    },
+    {
+      "sample": "ERR3653309",
+      "reason": "call_stage_not_completed",
+      "index": 374
+    },
+    {
+      "sample": "ERR3653310",
+      "reason": "call_stage_not_completed",
+      "index": 375
+    },
+    {
+      "sample": "ERR3653311",
+      "reason": "call_stage_not_completed",
+      "index": 376
+    },
+    {
+      "sample": "ERR3653392",
+      "reason": "call_stage_not_completed",
+      "index": 377
+    },
+    {
+      "sample": "ERR3653394",
+      "reason": "call_stage_not_completed",
+      "index": 379
+    },
+    {
+      "sample": "ERR3653395",
+      "reason": "call_stage_not_completed",
+      "index": 380
+    },
+    {
+      "sample": "ERR3653396",
+      "reason": "call_stage_not_completed",
+      "index": 381
+    },
+    {
+      "sample": "ERR3653397",
+      "reason": "call_stage_not_completed",
+      "index": 382
+    },
+    {
+      "sample": "ERR3653398",
+      "reason": "call_stage_not_completed",
+      "index": 383
+    },
+    {
+      "sample": "ERR3653399",
+      "reason": "call_stage_not_completed",
+      "index": 384
+    },
+    {
+      "sample": "ERR3653401",
+      "reason": "call_stage_not_completed",
+      "index": 386
+    },
+    {
+      "sample": "ERR3653402",
+      "reason": "call_stage_not_completed",
+      "index": 387
+    },
+    {
+      "sample": "ERR3653403",
+      "reason": "call_stage_not_completed",
+      "index": 388
+    },
+    {
+      "sample": "ERR3653405",
+      "reason": "call_stage_not_completed",
+      "index": 390
+    },
+    {
+      "sample": "ERR3653406",
+      "reason": "call_stage_not_completed",
+      "index": 391
+    },
+    {
+      "sample": "ERR3653407",
+      "reason": "call_stage_not_completed",
+      "index": 392
+    },
+    {
+      "sample": "ERR3653409",
+      "reason": "call_stage_not_completed",
+      "index": 394
+    },
+    {
+      "sample": "ERR3653410",
+      "reason": "call_stage_not_completed",
+      "index": 395
+    },
+    {
+      "sample": "ERR3653411",
+      "reason": "call_stage_not_completed",
+      "index": 396
+    },
+    {
+      "sample": "ERR3653412",
+      "reason": "call_stage_not_completed",
+      "index": 397
+    },
+    {
+      "sample": "ERR3653413",
+      "reason": "call_stage_not_completed",
+      "index": 398
+    },
+    {
+      "sample": "ERR3653414",
+      "reason": "call_stage_not_completed",
+      "index": 399
+    },
+    {
+      "sample": "ERR3653415",
+      "reason": "call_stage_not_completed",
+      "index": 400
+    },
+    {
+      "sample": "ERR3653416",
+      "reason": "call_stage_not_completed",
+      "index": 401
+    },
+    {
+      "sample": "ERR3653417",
+      "reason": "call_stage_not_completed",
+      "index": 402
+    },
+    {
+      "sample": "ERR3653419",
+      "reason": "call_stage_not_completed",
+      "index": 403
+    },
+    {
+      "sample": "ERR3653420",
+      "reason": "call_stage_not_completed",
+      "index": 404
+    },
+    {
+      "sample": "ERR3653421",
+      "reason": "call_stage_not_completed",
+      "index": 405
+    },
+    {
+      "sample": "ERR3653422",
+      "reason": "call_stage_not_completed",
+      "index": 406
+    },
+    {
+      "sample": "ERR3653423",
+      "reason": "call_stage_not_completed",
+      "index": 407
+    },
+    {
+      "sample": "ERR3653424",
+      "reason": "call_stage_not_completed",
+      "index": 408
+    },
+    {
+      "sample": "ERR3653425",
+      "reason": "call_stage_not_completed",
+      "index": 409
+    },
+    {
+      "sample": "ERR3653427",
+      "reason": "call_stage_not_completed",
+      "index": 410
+    },
+    {
+      "sample": "ERR3653428",
+      "reason": "call_stage_not_completed",
+      "index": 411
+    },
+    {
+      "sample": "ERR3653429",
+      "reason": "call_stage_not_completed",
+      "index": 412
+    },
+    {
+      "sample": "ERR3653430",
+      "reason": "call_stage_not_completed",
+      "index": 413
+    },
+    {
+      "sample": "ERR3653529",
+      "reason": "call_stage_not_completed",
+      "index": 414
+    },
+    {
+      "sample": "ERR3653530",
+      "reason": "call_stage_not_completed",
+      "index": 415
+    },
+    {
+      "sample": "ERR3653531",
+      "reason": "call_stage_not_completed",
+      "index": 416
+    },
+    {
+      "sample": "ERR3653532",
+      "reason": "call_stage_not_completed",
+      "index": 417
+    },
+    {
+      "sample": "ERR3653533",
+      "reason": "call_stage_not_completed",
+      "index": 418
+    },
+    {
+      "sample": "ERR3653534",
+      "reason": "call_stage_not_completed",
+      "index": 419
+    },
+    {
+      "sample": "ERR3653535",
+      "reason": "call_stage_not_completed",
+      "index": 420
+    },
+    {
+      "sample": "ERR3653536",
+      "reason": "call_stage_not_completed",
+      "index": 421
+    },
+    {
+      "sample": "ERR3653537",
+      "reason": "call_stage_not_completed",
+      "index": 422
+    },
+    {
+      "sample": "ERR3653539",
+      "reason": "call_stage_not_completed",
+      "index": 423
+    },
+    {
+      "sample": "ERR3653543",
+      "reason": "call_stage_not_completed",
+      "index": 424
+    },
+    {
+      "sample": "ERR3656073",
+      "reason": "call_stage_not_completed",
+      "index": 425
+    },
+    {
+      "sample": "ERR3656232",
+      "reason": "call_stage_not_completed",
+      "index": 426
+    },
+    {
+      "sample": "ERR3656233",
+      "reason": "call_stage_not_completed",
+      "index": 427
+    },
+    {
+      "sample": "ERR3656234",
+      "reason": "call_stage_not_completed",
+      "index": 428
+    },
+    {
+      "sample": "ERR3656235",
+      "reason": "call_stage_not_completed",
+      "index": 429
+    },
+    {
+      "sample": "ERR3656282",
+      "reason": "call_stage_not_completed",
+      "index": 430
+    },
+    {
+      "sample": "ERR3656283",
+      "reason": "call_stage_not_completed",
+      "index": 431
+    },
+    {
+      "sample": "ERR3656288",
+      "reason": "call_stage_not_completed",
+      "index": 432
+    },
+    {
+      "sample": "ERR3656289",
+      "reason": "call_stage_not_completed",
+      "index": 433
+    },
+    {
+      "sample": "ERR3656290",
+      "reason": "call_stage_not_completed",
+      "index": 434
+    },
+    {
+      "sample": "ERR3656291",
+      "reason": "call_stage_not_completed",
+      "index": 435
+    }
+  ],
+  "scope": {
+    "legacy_ventral_only_phenotype_candidates": 1,
+    "dorsal_individuals_preserved": 473,
+    "existing_ventral_individuals": 26,
+    "ventral_targets": 448,
+    "unknown_ventral_phenotype": 0,
+    "reused_Rosina_BAMs": 0,
+    "paired_local_FASTQ_candidates": 0,
+    "alignment": "Full Rosina genome; duplicate-marked chromosome 15 retained",
+    "downloads": "Only missing or checksum-invalid mates",
+    "PK_and_laboratory_crosses": "Excluded through parent cohort"
+  },
+  "capture_focus": {
+    "policy": "capture_or_completed_WGS_or_complete_local_inputs; unfinished WGS cancelled",
+    "capture_tasks": 338,
+    "retained_WGS": 33,
+    "deferred_WGS": 77,
+    "deferred_samples": [
+      "ERR1143584",
+      "ERR1143605",
+      "ERR1143606",
+      "ERR1307107",
+      "ERR1307108",
+      "ERR1307114",
+      "ERR1307115",
+      "ERR1307116",
+      "ERR1994782",
+      "ERR1994784",
+      "ERR1994785",
+      "ERR2298210",
+      "ERR2298220",
+      "ERR2298225",
+      "ERR2298229",
+      "ERR2298241",
+      "ERR2298250",
+      "ERR2298251",
+      "ERR2298252",
+      "ERR2298253",
+      "ERR2298254",
+      "ERR2298255",
+      "ERR2298256",
+      "ERR2298258",
+      "ERR2298259",
+      "ERR2298261",
+      "ERR2298262",
+      "ERR2298264",
+      "ERR2298266",
+      "ERR2298267",
+      "ERR2298270",
+      "ERR2298271",
+      "ERR2298272",
+      "ERR2298273",
+      "ERR260277",
+      "ERR260278",
+      "ERR260279",
+      "ERR260280",
+      "ERR260281",
+      "ERR260282",
+      "ERR260283",
+      "ERR260284",
+      "ERR260285",
+      "ERR260286",
+      "ERR260287",
+      "ERR260288",
+      "ERR260289",
+      "ERR260290",
+      "ERR260291",
+      "ERR260292",
+      "ERR260293",
+      "ERR260294",
+      "ERR260295",
+      "ERR260296",
+      "ERR260297",
+      "ERR260298",
+      "ERR260299",
+      "ERR260300",
+      "ERR260301",
+      "ERR260302",
+      "ERR3653294",
+      "ERR3653304",
+      "ERR3653393",
+      "ERR3653400",
+      "ERR3653404",
+      "ERR3653408",
+      "ERR3789739",
+      "ERR3789746",
+      "ERR3789751",
+      "ERR3789759",
+      "ERR3790006",
+      "ERR3790010",
+      "ERR3790012",
+      "SRR3101790",
+      "SRR3101792",
+      "SRR3101794",
+      "SRR424576"
+    ],
+    "parent_run": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1",
+    "original_run_manifest_unchanged": true,
+    "existing_data_deleted": false,
+    "selection_independent_of_genotype": true,
+    "sequencing_manifest": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/sequencing_audits/20261018T203734Z_138522440/sequencing_and_reuse.tsv",
+    "sequencing_manifest_sha256": "688372825323828dfbc1556ef2d8f51170cad9eda1a461d320912a2f4ad68cd1"
+  }
+}

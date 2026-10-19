@@ -1,0 +1,517 @@
+sample	individual_id	taxon	d	v	d_evidence	v_evidence	phenotype_conflict	phenotype_class	cydno_priority	exclusion
+ERR055404	SAMEA1322902	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1143560	ERR1143560	Heliconius cydno ssp. cordula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	True	
+ERR1143566	SAMEA3670517	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR1143584	SAMEA3670535	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1143591	ERR1143591	Heliconius melpomene ssp. cythera; cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR1143592	ERR1143592	cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR1143605	SAMEA3670556	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1143606	SAMEA3670557	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1143609	ERR1143609	Heliconius melpomene ssp. vulcanus; vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR1143610	ERR1143610	vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR1303880	ERR1303880	Heliconius numata ssp. numata			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR1303882	ERR1303882	Heliconius numata ssp. silvana			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR1303884	ERR1303884	Heliconius numata ssp. silvana			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR1303885	ERR1303885	Heliconius numata ssp. silvana			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR1307105	ERR1307105	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR1307106	ERR1307106	vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR1307107	SAMEA3723393	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1307108	SAMEA3723394	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1307111	ERR1307111	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1307112	ERR1307112	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1307113	ERR1307113	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1307114	SAMEA3723400	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1307115	SAMEA3723401	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1307116	SAMEA3723402	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR1994782	SAMEA104106540	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR1994784	SAMEA104106542	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR1994785	SAMEA104106543	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298196	SAMEA104585044	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298197	SAMEA104585045	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298198	SAMEA104585046	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298199	SAMEA104585047	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298200	SAMEA104585048	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298201	ERR2298201	Heliconius melpomene ssp. melpomene; melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298203	SAMEA104585076	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298204	ERR2298204	Heliconius melpomene spp. melpomene; Heliconius melpomene ssp. melpomene; melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298205	ERR2298205	Heliconius melpomene ssp. rosina; rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298206	ERR2298206	Heliconius melpomene ssp. rosina; rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298207	SAMEA104585077	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298208	ERR2298208	Heliconius melpomene ssp. rosina; rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298209	SAMEA104585086	Heliconius melpomene ssp. rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298210	SAMEA104585087	Heliconius melpomene ssp. rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298211	SAMEA104585088	Heliconius melpomene ssp. rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298214	ERR2298214	Heliconius melpomene ssp. melpomene; melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298215	SAMEA104585079	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298216	ERR2298216	Heliconius melpomene ssp. melpomene; melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298217	SAMEA104585081	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298218	SAMEA104585082	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298219	SAMEA104585089	Heliconius melpomene ssp. rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298220	SAMEA104585050	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298221	ERR2298221	Heliconius melpomene ssp. rosina; rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298222	SAMEA104585051	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298223	SAMEA104585067	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298224	SAMEA104585068	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298225	SAMEA104585054	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298226	SAMEA104585055	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298227	SAMEA104585056	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298228	SAMEA104585057	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298229	SAMEA104585058	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298230	SAMEA104585069	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298231	SAMEA104585069	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298232	SAMEA104585100	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298233	SAMEA104585100	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298234	SAMEA104585101	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298235	ERR2298235	Heliconius timareta ssp. florencia; florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298236	ERR2298236	Heliconius timareta ssp. florencia; florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298237	SAMEA104585104	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298238	SAMEA104585105	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298239	SAMEA104585059	Heliconius cydno ssp. zelinde	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR2298240	ERR2298240	Heliconius melpomene ssp. vulcanus; vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR2298241	SAMEA104585092	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR2298242	SAMEA104585093	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR2298244	SAMEA104585095	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR2298245	SAMEA104585096	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR2298247	SAMEA104585098	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR2298250	SAMEA104585071	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298251	SAMEA104585072	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298252	SAMEA104585073	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298253	SAMEA104585074	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298254	SAMEA104585061	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298255	SAMEA104585062	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298256	SAMEA104585063	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298257	ERR2298257	Heliconius melpomene ssp. amaryllis; amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298258	SAMEA104585110	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298259	SAMEA104585111	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298260	ERR2298260	Heliconius melpomene ssp. amaryllis; amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298261	SAMEA104585066	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298262	SAMEA104585112	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298263	ERR2298263	Heliconius timareta ssp. thelxinoe; thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298264	SAMEA104585114	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298265	ERR2298265	Heliconius timareta ssp. thelxinoe; thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298266	SAMEA104585115	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR2298267	SAMEA104585060	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298268	ERR2298268	Heliconius cydno ssp. cordula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	True	
+ERR2298269	ERR2298269	Heliconius cydno ssp. cordula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	True	
+ERR2298270	SAMEA104585106	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298271	SAMEA104585107	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298272	SAMEA104585108	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR2298273	SAMEA104585109	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260277	SAMEA1919271	Heliconius melpomene ssp. rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260278	SAMEA1919260	Heliconius melpomene ssp. rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260279	SAMEA1919279	Heliconius melpomene ssp. rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260280	SAMEA1919257	Heliconius melpomene ssp. rosina	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260281	SAMEA1919270	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260282	SAMEA1919252	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260283	SAMEA1919267	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260284	SAMEA1919276	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260285	SAMEA1919255	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260286	SAMEA1919258	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260287	SAMEA1919269	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260288	SAMEA1919275	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260289	SAMEA1919261	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260290	SAMEA1919277	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260291	SAMEA1919251	Heliconius melpomene ssp. aglaope	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260292	SAMEA1919264	Heliconius melpomene ssp. aglaope	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260293	SAMEA1919274	Heliconius melpomene ssp. aglaope	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260294	SAMEA1919259	Heliconius melpomene ssp. aglaope	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR260295	SAMEA1919256	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR260296	SAMEA1919265	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR260297	SAMEA1919278	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR260298	SAMEA1919262	Heliconius cydno ssp. chioneus	0	0	Livraghi2021_both_surface_bar_absent_comparison	Livraghi2021_both_surface_bar_absent_comparison	False	d0/v0	True	
+ERR260299	SAMEA1919254	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260300	SAMEA1919273	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260301	SAMEA1919263	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260302	SAMEA1919266	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR260303	ERR260303	Heliconius pardalinus ssp. ssp.nov.P			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR260304	ERR260304	Heliconius pardalinus ssp. sergestus			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3650386	SAMEA6153648	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650387	SAMEA6153649	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650388	SAMEA6153650	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650414	SAMEA6153651	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650415	SAMEA6153652	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650416	SAMEA6153653	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650417	SAMEA6153654	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650418	SAMEA6153655	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650468	SAMEA6153656	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650469	SAMEA6153657	Heliconius melpomene ssp. xenoclea	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650470	SAMEA6153658	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650471	SAMEA6153660	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650472	SAMEA6153661	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650474	SAMEA6153662	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650477	SAMEA6153663	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650478	SAMEA6153664	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650479	SAMEA6153665	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650480	SAMEA6153666	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650481	SAMEA6153667	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650482	SAMEA6153668	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650483	SAMEA6153669	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650485	SAMEA6153670	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650486	SAMEA6153671	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650487	SAMEA6153672	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650488	SAMEA6153673	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650489	SAMEA6153720	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650490	SAMEA6153674	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650491	SAMEA6153675	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650492	SAMEA6153721	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650493	SAMEA6153676	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650494	SAMEA6153677	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650495	SAMEA6153722	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650496	SAMEA6153678	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650497	SAMEA6153679	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650498	SAMEA6153723	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650499	SAMEA6153680	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650512	SAMEA6153681	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650513	SAMEA6153682	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650514	SAMEA6153724	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650515	SAMEA6153683	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650516	SAMEA6153684	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650517	SAMEA6153725	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650518	SAMEA6153685	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650519	SAMEA6153686	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650520	SAMEA6153726	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650521	SAMEA6153687	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650522	SAMEA6153688	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650523	SAMEA6153727	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650524	SAMEA6153689	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650525	SAMEA6153728	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650526	SAMEA6153690	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650527	SAMEA6153691	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650528	SAMEA6153729	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650529	SAMEA6153692	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650579	SAMEA6153693	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650580	SAMEA6153730	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650581	SAMEA6153694	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650582	SAMEA6153731	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650583	SAMEA6153695	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650584	SAMEA6153696	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650585	SAMEA6153732	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650586	SAMEA6153697	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650587	SAMEA6153733	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650588	SAMEA6153698	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650673	SAMEA6153699	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650677	SAMEA6153700	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650679	SAMEA6153734	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650692	SAMEA6153701	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650705	SAMEA6153735	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650708	SAMEA6153702	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650728	SAMEA6153703	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3650738	SAMEA6153736	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3650748	SAMEA6153704	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651361	SAMEA6153705	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651362	SAMEA6153737	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651364	SAMEA6153706	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651366	SAMEA6153738	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651367	SAMEA6153707	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651368	SAMEA6153708	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651369	SAMEA6153739	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651370	SAMEA6153709	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651371	SAMEA6153710	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651374	SAMEA6153740	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651375	SAMEA6153711	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651412	SAMEA6153712	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651415	SAMEA6153741	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651416	SAMEA6153713	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651417	SAMEA6153714	Heliconius timareta ssp. thelxinoe	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3651418	SAMEA6153742	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651419	SAMEA6153715	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651426	SAMEA6153716	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651427	SAMEA6153743	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651428	SAMEA6153717	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3651475	SAMEA6153744	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651476	SAMEA6153718	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651477	SAMEA6153719	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651478	SAMEA6153745	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651479	SAMEA6153746	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651482	SAMEA6153747	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651483	SAMEA6153748	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651484	SAMEA6153789	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3651485	SAMEA6153749	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651486	SAMEA6153790	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3651487	SAMEA6153750	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651488	SAMEA6153791	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3651489	SAMEA6153751	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3651491	SAMEA6153792	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3651492	SAMEA6153752	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652193	SAMEA6153753	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652194	SAMEA6153793	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3652346	SAMEA6153858	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652347	SAMEA6153754	Heliconius timareta ssp. florencia	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652348	SAMEA6153794	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3652349	SAMEA6153859	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652350	SAMEA6153755	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652351	SAMEA6153796	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3652352	SAMEA6153860	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652353	SAMEA6153757	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652354	SAMEA6153797	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652355	SAMEA6153861	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652356	SAMEA6153758	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652357	SAMEA6153798	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652358	SAMEA6153862	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652359	SAMEA6153759	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652360	SAMEA6153799	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652361	SAMEA6153863	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652362	SAMEA6153760	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652363	SAMEA6153800	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652364	SAMEA6153864	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652365	SAMEA6153761	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652366	SAMEA6153801	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652368	SAMEA6153865	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652372	SAMEA6153762	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652374	SAMEA6153866	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652375	SAMEA6153802	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652376	SAMEA6153763	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652377	SAMEA6153803	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652378	SAMEA6153867	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652379	SAMEA6153764	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652380	SAMEA6153804	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652381	SAMEA6153868	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652382	SAMEA6153765	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652383	SAMEA6153806	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652384	SAMEA6153869	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652385	SAMEA6153766	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652386	SAMEA6153807	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652387	SAMEA6153767	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652388	SAMEA6153870	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652389	SAMEA6153768	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652390	SAMEA6153809	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652391	SAMEA6153769	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652392	SAMEA6153810	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652394	SAMEA6153770	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652395	SAMEA6153812	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652396	SAMEA6153771	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652397	SAMEA6153874	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652398	SAMEA6153813	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652399	SAMEA6153772	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652400	SAMEA6153875	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652401	SAMEA6153814	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652402	SAMEA6153773	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652403	SAMEA6153876	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652404	SAMEA6153816	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652405	SAMEA6153774	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652406	SAMEA6153877	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652407	SAMEA6153817	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652408	SAMEA6153775	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652409	SAMEA6153878	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652410	SAMEA6153818	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652411	SAMEA6153776	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652412	SAMEA6153879	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652413	SAMEA6153819	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652414	SAMEA6153777	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652415	SAMEA6153880	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652416	SAMEA6153820	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652417	SAMEA6153778	Heliconius melpomene ssp. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652418	SAMEA6153881	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652419	SAMEA6153821	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652420	SAMEA6153779	Heliconius melpomene ssp. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652421	SAMEA6153882	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652422	SAMEA6153822	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652575	SAMEA6153781	Heliconius timareta ssp. nov. 'vicina'; Heliconius timareta ssp. nov. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652576	SAMEA6153823	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652577	SAMEA6153884	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652579	SAMEA6153782	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652580	SAMEA6153824	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652584	SAMEA6153885	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652585	SAMEA6153783	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652586	SAMEA6153825	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652587	SAMEA6153886	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652588	SAMEA6153784	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652589	SAMEA6153826	Heliconius cydno ssp. cydnides	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	True	
+ERR3652590	SAMEA6153887	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652591	SAMEA6153827	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652592	SAMEA6153785	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652593	SAMEA6153888	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652594	SAMEA6153786	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652595	SAMEA6153828	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652596	SAMEA6153889	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652597	SAMEA6153829	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652598	SAMEA6153787	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652599	SAMEA6153890	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652600	SAMEA6153830	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652601	SAMEA6153788	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652602	SAMEA6153891	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652603	SAMEA6153831	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652604	SAMEA6153892	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652605	SAMEA6153832	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652606	SAMEA6153893	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652607	SAMEA6153833	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652608	SAMEA6153894	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652609	SAMEA6153834	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652611	SAMEA6153835	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652613	SAMEA6153836	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652615	SAMEA6153837	Heliconius cydno ssp. weymeri f. gustavi	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652616	SAMEA6153898	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652617	SAMEA6153838	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652618	SAMEA6153899	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652619	SAMEA6153839	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652620	SAMEA6153900	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652621	SAMEA6153840	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652622	SAMEA6153901	Heliconius elevatus	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652624	SAMEA6153841	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652626	SAMEA6153842	Heliconius timareta ssp. nov. 'vicina'; Heliconius timareta ssp. nov. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652628	SAMEA6153843	Heliconius timareta ssp. nov. 'vicina'; Heliconius timareta ssp. nov. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652629	SAMEA6153905	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652630	SAMEA6153906	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652631	SAMEA6153844	Heliconius timareta ssp. nov. 'vicina'; Heliconius timareta ssp. nov. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652632	SAMEA6153907	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652633	SAMEA6153908	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652634	SAMEA6153845	Heliconius timareta ssp. nov. 'vicina'; Heliconius timareta ssp. nov. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652635	SAMEA6153909	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652637	SAMEA6153910	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652638	SAMEA6153911	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652639	SAMEA6153847	Heliconius timareta ssp. nov. 'vicina'; Heliconius timareta ssp. nov. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652640	SAMEA6153912	Heliconius melpomene ssp. burchelli	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652641	SAMEA6153848	Heliconius melpomene ssp. meriana	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652642	SAMEA6153849	Heliconius melpomene ssp. 'meriana'; Heliconius melpomene ssp. meriana	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652643	SAMEA6153913	Heliconius melpomene ssp. burchelli	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652644	SAMEA6153850	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652645	SAMEA6153914	Heliconius melpomene ssp. burchelli	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652646	SAMEA6153851	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652647	SAMEA6153915	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652648	SAMEA6153852	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652649	SAMEA6153916	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652650	SAMEA6153853	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652651	SAMEA6153854	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652652	SAMEA6153917	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652653	SAMEA6153855	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652654	SAMEA6153918	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652655	SAMEA6153856	Heliconius besckei	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3652656	SAMEA6153919	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3652657	SAMEA6153920	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652658	SAMEA6153921	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652659	SAMEA6153922	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652660	SAMEA6153923	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3652661	SAMEA6153924	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3653097	SAMEA6153925	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3653098	SAMEA6153926	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3653117	SAMEA6153927	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3653118	SAMEA6153928	Heliconius melpomene ssp. 'meriana'	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653119	SAMEA6153929	Heliconius melpomene ssp. 'meriana'; Heliconius melpomene ssp. meriana	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653120	SAMEA6153930	Heliconius melpomene ssp. 'meriana'	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653121	ERR3653121	Heliconius hecale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3653122	ERR3653122	Heliconius hecale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3653123	ERR3653123	Heliconius ismenius			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3653124	ERR3653124	Heliconius ismenius			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3653125	SAMEA6153935	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653292	SAMEA6153936	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653293	SAMEA6153937	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653294	SAMEA6153987	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653295	SAMEA6153938	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653296	SAMEA6153939	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653297	SAMEA6153940	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653298	SAMEA6153941	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653299	SAMEA6153942	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653300	SAMEA6153943	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653301	SAMEA6153944	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653302	SAMEA6153945	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653303	SAMEA6153946	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653304	SAMEA6153988	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3653305	SAMEA6153947	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653306	SAMEA6153948	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653307	SAMEA6153949	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653308	SAMEA6153950	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653309	SAMEA6153951	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653310	SAMEA6153952	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653311	SAMEA6153953	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653392	SAMEA6153954	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653393	SAMEA6153989	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3653394	SAMEA6153955	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653395	SAMEA6153956	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653396	SAMEA6153957	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653397	SAMEA6153958	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653398	SAMEA6153959	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653399	SAMEA6153960	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653400	SAMEA6153990	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3653401	SAMEA6153961	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653402	SAMEA6153962	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653403	SAMEA6153963	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653404	SAMEA6153991	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3653405	SAMEA6153964	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653406	SAMEA6153965	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653407	SAMEA6153966	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653408	SAMEA6153992	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3653409	SAMEA6153967	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653410	SAMEA6153968	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653411	SAMEA6153969	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653412	SAMEA6153970	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653413	SAMEA6153971	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653414	SAMEA6153972	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653415	SAMEA6153973	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653416	SAMEA6153974	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653417	SAMEA6153975	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653419	SAMEA6153976	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653420	SAMEA6153977	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653421	SAMEA6153978	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653422	SAMEA6153979	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653423	SAMEA6153980	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653424	SAMEA6153981	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653425	SAMEA6153982	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653427	SAMEA6153983	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653428	SAMEA6153984	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653429	SAMEA6153985	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653430	SAMEA6153986	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653529	SAMEA1322914	Heliconius melpomene ssp. ecuadoriensis	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653530	SAMEA2240078	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653531	SAMEA2240096	Heliconius timareta ssp. nov. ECU	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653532	SAMEA3670555	Heliconius melpomene ssp. meriana	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653533	SAMEA3670554	Heliconius melpomene ssp. meriana	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653534	SAMN04407969	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3653535	SAMEA1094485	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653536	SAMEA3670565	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3653537	SAMEA1094484	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653539	SAMEA3670574	Heliconius timareta ssp. timareta f. timareta	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3653543	SAMEA1322935	Heliconius timareta ssp. timareta f. contigua	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656073	SAMEA6153659	Heliconius melpomene ssp. amaryllis	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3656232	SAMEA6153756	Heliconius melpomene ssp. plesseni	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656233	SAMEA6153780	Heliconius melpomene ssp. vicina	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656234	SAMEA6153795	Heliconius melpomene ssp. cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3656235	SAMEA6153805	Heliconius cydno ssp. weymeri f. weymeri	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+ERR3656282	SAMEA6153808	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656283	SAMEA6153815	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656288	SAMEA6153811	Heliconius timareta ssp. linaresi	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656289	SAMEA6153871	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656290	SAMEA6153883	Heliconius heurippa	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656291	SAMEA6153872	Heliconius melpomene ssp. melpomene	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3656292	SAMEA6153857	Heliconius melpomene ssp. malleti	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	
+ERR3789739	SAMEA6447078	Heliconius timareta spp. tristero	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3789746	SAMEA6447079	Heliconius timareta spp. tristero; Heliconius timareta ssp. tristero	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3789751	SAMEA6447080	Heliconius timareta spp. tristero; Heliconius timareta ssp. tristero	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3789759	SAMEA6447081	Heliconius timareta spp. tristero	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+ERR3789891	ERR3789891	cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3789894	ERR3789894	cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3789905	ERR3789905	cythera	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3790006	SAMEA104585094	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3790010	SAMEA104585097	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3790012	SAMEA104585099	Heliconius melpomene ssp. vulcanus	0	1	documented_surface_specific_melpomene	documented_surface_specific_melpomene	False	d0/v1	False	
+ERR3790118	ERR3790118	Heliconius melpomene ssp. bellula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3790119	ERR3790119	Heliconius melpomene ssp. bellula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3790120	ERR3790120	Heliconius melpomene ssp. bellula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3790121	ERR3790121	Heliconius melpomene ssp. bellula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3790122	ERR3790122	Heliconius melpomene ssp. bellula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3790123	ERR3790123	Heliconius melpomene ssp. bellula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3790124	ERR3790124	Heliconius melpomene ssp. bellula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+ERR3790125	ERR3790125	Heliconius melpomene ssp. bellula			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	
+SRR1057604	SRR1057604	Heliconius pachinus	1	1	Livraghi2021_both_surface_bar_comparison	Livraghi2021_both_surface_bar_comparison	False	d1/v1	True	
+SRR11243344	SRR11243344	Butterfly world, piano keys; PK_dark	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	PK_or_laboratory_cross_or_focal
+SRR11243346	SRR11243346	PK_pale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243347	SRR11243347	PK_pale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243348	SRR11243348	PK_pale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243349	SRR11243349	PK_pale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243350	SRR11243350	PK_pale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243352	SRR11243352	PK_pale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243353	SRR11243353	Butterfly world, piano keys; PK_dark	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	PK_or_laboratory_cross_or_focal
+SRR11243354	SRR11243354	PK_dark			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243355	SRR11243355	PK_dark			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243356	SRR11243356	PK_dark			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243357	SRR11243357	PK_dark			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243358	SRR11243358	PK_dark			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243359	SRR11243359	PK_dark			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243360	SRR11243360	PK_dark			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243362	SRR11243362	PK_pale			no_recorded_surface_phenotype	no_recorded_surface_phenotype	False	dNone/vNone	False	PK_or_laboratory_cross_or_focal
+SRR11243364	SRR11243364	Butterfly world, piano keys; PK_dark	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	PK_or_laboratory_cross_or_focal
+SRR11243375	SRR11243375	Butterfly world, piano keys; PK_dark	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	PK_or_laboratory_cross_or_focal
+SRR11243376	SRR11243376	Butterfly world, piano keys; PK_dark	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	PK_or_laboratory_cross_or_focal
+SRR3101790	SAMN04407968	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+SRR3101792	SAMN04407970	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+SRR3101794	SAMN04407971	Heliconius melpomene ssp. nanna	1	1	recorded_surface_phenotype	recorded_surface_phenotype	False	d1/v1	False	
+SRR424576	SAMN00794386	Heliconius melpomene reference genome	0	0	recorded_surface_phenotype	recorded_surface_phenotype	False	d0/v0	False	

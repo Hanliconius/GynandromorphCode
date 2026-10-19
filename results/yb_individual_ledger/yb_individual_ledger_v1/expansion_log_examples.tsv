@@ -1,0 +1,43 @@
+sample	index	stage	path	last_lines
+ERR2298196	13	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_13.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+curl: (7) Failed to connect to ftp.sra.ebi.ac.uk:443 after 160 ms: Could not connect to server
+curl: (7) Failed to connect to ftp.sra.ebi.ac.uk:443 after 161 ms: Could not connect to server"
+ERR2298197	14	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_14.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+curl: (7) Failed ctuor lc:o n(n7e)c tF atiol efdt pt.os rcao.nenbeic.ta ct.ou kf:t4p4.3s raaf.teebri .1a6c1. umks::4 4C3o ualfdt enro t1 6c1o nmnse:c tC otuol ds enrovte rc
+onnect to server"
+ERR2298198	15	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_15.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+curl: (7) Failed to connect to ftp.csurral.:e b(i7.)a cF.auikl:e4d4 3t oa fctoenrn e1c5t9  tmos :f tCpo.uslrda .neobti .caocn.nuekc:t4 4t3o  asfetrevre r1
+61 ms: Could not connect to server"
+ERR2298199	16	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_16.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish"
+ERR2298200	17	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_17.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish"
+ERR2298203	18	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_18.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish"
+ERR2298207	19	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_19.err	
+ERR2298209	20	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_20.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish"
+ERR2298211	22	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_22.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish"
+ERR2298217	24	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_24.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish"
+ERR2298218	25	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_25.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish"
+ERR2298219	26	download	/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/logs/download.138522353_26.err	"error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/CCAS/home/jjhanly/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+curl: (7) Failed to ccuornln:e c(t7 )t oF afitlpe.ds rtao. ecboin.naecc.tu kt:o4 4f3t pa.fstrear. e1b6i0. amcs.:u kC:o4u4l3d  anfotte rc o1n6n0e cmts :t oC osuelrdv enro
+t connect to server"

@@ -1,0 +1,28 @@
+{
+  "status": "LEDGER_REQUIRES_REVIEW",
+  "phenotype_individual_ids": 514,
+  "resource_tasks": 278,
+  "read_errors": 0,
+  "HmRos_ventral_actions": {
+    "inspect_available_BAM_no_marker_DP2": 1,
+    "resolve_surface_phenotype": 21,
+    "already_plotted": 30,
+    "inspect_existing_VCF_filter_and_allele_evidence": 445,
+    "excluded_PK_or_cross": 19
+  },
+  "surface_classes": {
+    "d0/v0": 299,
+    "dNone/vNone": 21,
+    "d0/v1": 27,
+    "d1/v1": 150
+  },
+  "stage_completion": {
+    "download": 370,
+    "BAM": 5,
+    "call": 5,
+    "retained_tasks": 371
+  },
+  "phenotypes_not_inferred_from_genotypes": true,
+  "no_new_downloads_or_alignments_or_calls": true,
+  "literature": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8289415/"
+}

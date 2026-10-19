@@ -1,0 +1,474 @@
+[
+  {
+    "reference": "HmRos",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/rosina_genomewide_joint_recall/20261014T223341Z_f956c8bc/integration_Yb/Yb_chromosome.vcf.gz",
+    "source": "existing_native_VCF",
+    "exact_matching_markers": 47,
+    "quality_evaluations": {
+      "GQ": 949,
+      "missing_or_low_DP": 132
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/0.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 52,
+    "quality_evaluations": {
+      "GQ": 36,
+      "PL_derived_Q": 16
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/1.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 52,
+    "quality_evaluations": {
+      "GQ": 35,
+      "GT_PL_disagree": 1,
+      "PL_derived_Q": 16
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/2.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 52,
+    "quality_evaluations": {
+      "GQ": 33,
+      "PL_derived_Q": 19
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/external/krista_genotype_plots_original/Genotype_Plots/Ivory_Hmr15-1627000-1637000_biallelic.vcf",
+    "source": "legacy_VCF",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "missing_or_low_DP": 1170,
+      "GQ": 10926
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/rosina_genomewide_joint_recall/20261014T223341Z_f956c8bc/integration_Yb/Yb_chromosome.vcf.gz",
+    "source": "existing_native_VCF",
+    "exact_matching_markers": 24,
+    "quality_evaluations": {
+      "GQ": 530,
+      "missing_or_low_DP": 22
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/0.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 25,
+      "missing_or_low_DP": 2
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/1.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 26,
+      "missing_or_low_DP": 1
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/2.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 26,
+      "missing_or_low_DP": 1
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/calls/17.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 0,
+    "quality_evaluations": {}
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/calls/18.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "PL_derived_Q": 17,
+      "GQ": 10
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/calls/350.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "PL_derived_Q": 16,
+      "GQ": 11
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/calls/40.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 22,
+    "quality_evaluations": {
+      "PL_derived_Q": 10,
+      "GQ": 10,
+      "missing_or_low_DP": 2
+    }
+  },
+  {
+    "reference": "HmRos",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_ventral_population_expansion_v1/calls/453.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 27
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/10.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "PL_derived_Q": 9,
+      "GQ": 34,
+      "missing_or_low_DP": 3
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/11.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "GQ": 30,
+      "PL_derived_Q": 14,
+      "GT_PL_disagree": 2
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/12.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 44,
+    "quality_evaluations": {
+      "PL_derived_Q": 17,
+      "GQ": 27
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/13.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 37,
+    "quality_evaluations": {
+      "GQ": 12,
+      "PL_derived_Q": 21,
+      "missing_or_low_DP": 4
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/14.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "GQ": 39,
+      "PL_derived_Q": 7
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/15.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "GQ": 39,
+      "PL_derived_Q": 7
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/16.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 43,
+    "quality_evaluations": {
+      "PL_derived_Q": 9,
+      "GQ": 34
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/3.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "GQ": 9,
+      "PL_derived_Q": 37
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/4.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "GQ": 9,
+      "PL_derived_Q": 37
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/5.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 43,
+    "quality_evaluations": {
+      "PL_derived_Q": 9,
+      "GQ": 32,
+      "missing_or_low_DP": 2
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/6.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "PL_derived_Q": 9,
+      "GQ": 35,
+      "missing_or_low_DP": 2
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/7.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "PL_derived_Q": 9,
+      "GQ": 35,
+      "missing_or_low_DP": 2
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/8.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "GQ": 12,
+      "PL_derived_Q": 34
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "d",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/9.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 46,
+    "quality_evaluations": {
+      "GQ": 9,
+      "PL_derived_Q": 37
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/10.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 13,
+      "PL_derived_Q": 14
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/11.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 17,
+      "PL_derived_Q": 9,
+      "missing_or_low_DP": 1
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/12.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 17,
+      "PL_derived_Q": 9,
+      "missing_or_low_DP": 1
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/13.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 17,
+      "PL_derived_Q": 9,
+      "missing_or_low_DP": 1
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/14.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 25,
+      "GT_PL_disagree": 1,
+      "PL_derived_Q": 1
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/15.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 24,
+      "PL_derived_Q": 3
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/16.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 12,
+      "PL_derived_Q": 12,
+      "missing_or_low_DP": 3
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/3.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "PL_derived_Q": 13,
+      "GQ": 14
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/4.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "PL_derived_Q": 13,
+      "GQ": 14
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/5.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 14,
+      "PL_derived_Q": 13
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/6.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 13,
+      "PL_derived_Q": 14
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/7.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "GQ": 13,
+      "PL_derived_Q": 14
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/8.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "PL_derived_Q": 9,
+      "GQ": 14,
+      "GT_PL_disagree": 4
+    }
+  },
+  {
+    "reference": "Hmel2.5",
+    "interval": "v",
+    "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_expanded_existing_controls_v2/calls/9.vcf.gz",
+    "source": "forced_BAM_call",
+    "exact_matching_markers": 27,
+    "quality_evaluations": {
+      "PL_derived_Q": 13,
+      "GQ": 14
+    }
+  }
+]
