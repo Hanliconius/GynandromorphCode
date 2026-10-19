@@ -70,10 +70,10 @@ def run(a):
   cc={' '.join(m.get('Country','').split()) for m in json.loads(r['local_metadata']) if m.get('Country','').strip()}
   if len(cc)!=1:unknown_local.add(r['sample'])
   else:countries_by_sample[r['sample']]=next(iter(cc))
-  if len(cc)==1:local[r['sample']]='East' if next(iter(cc))=='French Guiana' else 'West'
+  if len(cc)==1:local[r['sample']]='East' if next(iter(cc)) in ('French Guiana','Venezuela') else 'West'
  for i,r in members.iterrows():
   geo,evidence=region(r['race'])
-  if r['sample'] in local:geo=local[r['sample']];evidence='User-defined melpomene bins: FG East; other known localities West (not a literal Andes-side classification)'
+  if r['sample'] in local:geo=local[r['sample']];evidence='User-defined melpomene bins: FG and Venezuela East; Panama and Colombian population group West (not a literal Andes-side classification)'
   members.loc[i,'geography']=geo;members.loc[i,'geography_evidence']=evidence
   if r['sample'] in local:
    country=countries_by_sample[r['sample']]
@@ -87,8 +87,10 @@ def run(a):
  qc.to_csv(out/'full_window_sample_quality.tsv',sep='\t',index=False)
  # Primary retains all genotype states. Separate sensitivity uses only callable
  # fraction; the REF genotype itself never triggers exclusion.
- keep=np.asarray([r['sample'] not in unknown_local for r in members.to_dict('records')]) & (full_callable>=a.min_callable)
- excluded=members.loc[~keep].copy();excluded['reason']=['unknown melpomene locality' if x in unknown_local else 'full-window callability below '+str(a.min_callable) for x in excluded['sample']]
+ import re
+ cydno_group=np.asarray([bool(set(re.findall('[a-z]+',r['race'].lower()))&{'cydno','pachinus'}) for r in members.to_dict('records')])
+ keep=np.asarray([r['sample'] not in unknown_local for r in members.to_dict('records')]) & ~cydno_group & (full_callable>=a.min_callable)
+ excluded=members.loc[~keep].copy();excluded['reason']=['; '.join(reason for flag,reason in [(r['sample'] in unknown_local,'unknown melpomene locality'),(bool(cydno_group[i]),'cydno/pachinus group excluded by request'),(full_callable[i]<a.min_callable,'full-window callability below '+str(a.min_callable))] if flag) for i,r in members.loc[~keep].iterrows()]
  excluded.to_csv(out/'excluded_samples.tsv',sep='\t',index=False)
  members=members.loc[keep].reset_index(drop=True);matrix=matrix[keep]
  # Export the actual sheet records for provisional Ecuadorian assignments.
@@ -123,10 +125,10 @@ def run(a):
   ns['draw'](np.asarray(freq),labels,styles,positions,out,pdf)
   ns['draw'](np.asarray(fractions),labels,styles,positions,out,pdf,True)
  shutil.copy2(__file__,out/Path(__file__).name)
- audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 positions and ALT definitions; full joint VCF allele mapping audited; incompatible calls missing',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
+ audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 positions and ALT definitions; full joint VCF allele mapping audited; incompatible calls missing',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,cydno_pachinus_excluded=True,Venezuela_melpomene_population='East',unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
  (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print(json.dumps(audit,indent=2));print('PDF\t'+str(out/pdfname))
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v5');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v6');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
  if not a.submit:
   run(a)
   if a.min_callable==0:
