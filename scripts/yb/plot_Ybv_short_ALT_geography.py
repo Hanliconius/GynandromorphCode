@@ -32,12 +32,14 @@ def run(a):
  import pysam,importlib.util
  spec=importlib.util.spec_from_file_location('yb_quality',ROOT/'analysis/yb_completed_reads_recovery_v1/engine.py');engine=importlib.util.module_from_spec(spec);spec.loader.exec_module(engine)
  positions=old.pos1.astype(int).tolist();matrix=np.full((len(members),len(old)),np.nan)
- wanted={int(r.pos1):(j,r) for j,r in enumerate(old.itertuples())};seen=set();marker_audit=[];raw_audit=[]
+ wanted={int(r.pos1):(j,r) for j,r in enumerate(old.itertuples())};seen=set();marker_audit=[];raw_audit=[];record_vectors={};incompatible=np.zeros(matrix.shape,dtype=bool)
  with pysam.VariantFile(str(source/'full_window.vcf.gz')) as vf:
   for rec in vf.fetch('NC_140403.1',min(positions)-1,max(positions)):
    if rec.pos not in wanted:continue
    j,r=wanted[rec.pos]
-   if rec.pos in seen:raise RuntimeError('Duplicate VCF position at original marker '+str(rec.pos))
+   if len(rec.ref)!=1 or any(len(x)!=1 or x not in 'ACGT' for x in (rec.alts or ())):
+    marker_audit.append(dict(pos1=rec.pos,REF=rec.ref,old_ALT=r.alt,joint_ALT=','.join(rec.alts or ()),status='separate_indel_or_symbolic_record_not_used_for_SNP',n_called=0));continue
+   recvector=np.full(len(members),np.nan)
    seen.add(rec.pos)
    if rec.ref!=r.ref:raise RuntimeError('Reference mismatch at original marker '+str(rec.pos))
    alleles=rec.alleles
@@ -48,11 +50,19 @@ def run(a):
      c=rec.samples[alias];value,quality=engine.quality(c,allow_pl=True)
      gt=c.get('GT') or ();bases=[alleles[k] for k in gt if k is not None and k<len(alleles)]
      compatible=len(gt)==2 and len(bases)==2 and all(x in (r.ref,r.alt) for x in bases)
+     if value is not None and not compatible:incompatible[i,j]=True
      alt_value=sum(x==r.alt for x in bases)/2 if compatible and value is not None else np.nan
      if np.isfinite(alt_value):vals.append(alt_value)
      raw_audit.append(dict(sample=alias,representative=member['sample'],pos1=rec.pos,old_REF=r.ref,old_ALT=r.alt,joint_alleles=','.join(alleles),GT=str(gt),DP=c.get('DP'),GQ=c.get('GQ'),quality=quality,target_ALT_dosage=alt_value))
-    if vals and len(set(vals))==1:matrix[i,j]=vals[0]
-   marker_audit.append(dict(pos1=rec.pos,REF=r.ref,old_ALT=r.alt,joint_ALT=','.join(rec.alts or ()),status=status,n_called=int(np.isfinite(matrix[:,j]).sum())))
+    if vals and len(set(vals))==1:recvector[i]=vals[0]
+    elif vals:incompatible[i,j]=True
+   marker_audit.append(dict(pos1=rec.pos,REF=r.ref,old_ALT=r.alt,joint_ALT=','.join(rec.alts or ()),status=status,n_called=int(np.isfinite(recvector).sum())))
+   record_vectors.setdefault(j,[]).append(recvector)
+ for j,vectors in record_vectors.items():
+  x=np.asarray(vectors);n=np.isfinite(x).sum(axis=0)
+  low=np.min(np.where(np.isfinite(x),x,np.inf),axis=0);high=np.max(np.where(np.isfinite(x),x,-np.inf),axis=0)
+  matrix[:,j]=np.where((n>0)&(low==high)&~incompatible[:,j],low,np.nan)
+  if len(vectors)>1:marker_audit.append(dict(pos1=positions[j],status='duplicate_SNP_records_concordant_union_conflicts_missing',records=len(vectors),n_conflicts=int(((n>0)&((low!=high)|incompatible[:,j])).sum()),n_called=int(np.isfinite(matrix[:,j]).sum())))
  for pos in set(positions)-seen:marker_audit.append(dict(pos1=pos,status='absent_from_complete_VCF_kept_missing',n_called=0))
  if len(members)!=complete['individuals'] or len(positions)!=len(old):raise RuntimeError('Source count mismatch')
  local={};unknown_local=set();countries_by_sample={}
@@ -116,7 +126,7 @@ def run(a):
  audit=dict(status='COMPLETE',source=str(source),individuals=len(members),SNPs=len(positions),allele_scale='0=REF,1=ALT',no_new_calls=True,marker_set='Original 27 positions and ALT definitions; full joint VCF allele mapping audited; incompatible calls missing',focal='Original corrected focal calls converted to ALT dosage',no_phenotype_changes=True,unknown_geography_retained=True,min_full_window_callable_fraction=a.min_callable,REF_zero_not_exclusion_criterion=True,unknown_melpomene_locality_omitted=sorted(unknown_local),provisional_ECU_assignments=True,geography_bins='West/East are broad population bins; melpomene user-defined FG versus other collection localities; see membership evidence',d_positive_v_negative=int(((pd.to_numeric(members.d,errors='coerce')==1)&(pd.to_numeric(members.v,errors='coerce')==0)).sum()))
  (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n');print(json.dumps(audit,indent=2));print('PDF\t'+str(out/pdfname))
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v3');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_REF_ALT_rebuild_v1');p.add_argument('--output',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v4');p.add_argument('--min-callable',type=float,default=0.0);p.add_argument('--submit',action='store_true');a=p.parse_args()
  if not a.submit:
   run(a)
   if a.min_callable==0:
