@@ -1,0 +1,12 @@
+{
+  "source_directory": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/rosina_genomewide_joint_recall/20261014T223341Z_f956c8bc/Optix_Arnaud_review_nonPK_v2/merged",
+  "matrix": "Dennis_BA90_intervals_frequencies.tsv",
+  "allele_orientation": "Dennis_BA90_intervals_sites.tsv",
+  "producer_branch": "optix-joint-recall-20261014",
+  "producer": "scripts/figures/figure3/plot_optix_publication_nonPK.py",
+  "expected_SNPs": 24,
+  "expected_positive_n": 142,
+  "expected_negative_n": 281,
+  "display": "Controls: both base frequencies; focal: unphased base-pair genotypes",
+  "output": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Dennis_nucleotide_letters_v1/Dennis_nucleotide_letters.pdf"
+}
