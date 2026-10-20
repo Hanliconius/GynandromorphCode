@@ -11,6 +11,7 @@ def boolean(x):
  if str(x).lower() in ('true','1','1.0'):return True
  if str(x).lower() in ('false','0','0.0'):return False
  raise ValueError('Invalid Boolean '+str(x))
+BASE_COLOURS={'A':'#26943A','C':'#2463C5','G':'#D89500','T':'#D52C35'}
 def clean(x):return ' '.join(str(x).split())
 def qualified(c):
  import numpy as np
@@ -42,15 +43,24 @@ def run(a):
  vcf=RUN/'Optix_legacy_merge_v1/Optix_legacy_plus_recalled.vcf.gz'
  keys=[tuple(r[k] for k in KEY) for r in sites.to_dict('records')];indices={k:j for j,k in enumerate(keys)}
  names=meta['sample'].tolist();matrix=np.full((len(meta),24),np.nan);seen=set()
- with pysam.VariantFile(str(vcf)) as vf:
-  if set(names)!=set(vf.header.samples):raise RuntimeError('Metadata and comparative VCF sample sets differ')
-  for rec in vf:
-   if len(rec.alts or ())!=1:continue
-   key=(rec.contig,rec.pos,rec.ref,rec.alts[0])
-   if key not in indices:continue
-   if key in seen:raise RuntimeError('Duplicate selected VCF variant')
-   seen.add(key);j=indices[key];d=np.array([qualified(rec.samples[n]) for n in names]);matrix[:,j]=d if sites.iloc[j].pattern_is_alt else 1-d
- if seen!=set(keys):raise RuntimeError('Selected variants absent from VCF')
+ if a.nucleotide_colours:
+  cached=ROOT/'Dennis_figure_set_v1/all_individual_associated_dosages.tsv.gz'
+  cached_complete=ROOT/'Dennis_figure_set_v1/complete.json'
+  if json.loads(cached_complete.read_text())['status']!='COMPLETE':raise RuntimeError('Original figure set incomplete')
+  stored=pd.read_csv(cached,sep='\t',index_col=0)
+  columns=[':'.join(map(str,k)) for k in keys]
+  if set(stored.index)!=set(names) or list(stored.columns)!=columns:raise RuntimeError('Cached genotype matrix identities differ')
+  matrix=stored.reindex(names).to_numpy(dtype=float)
+ else:
+  with pysam.VariantFile(str(vcf)) as vf:
+   if set(names)!=set(vf.header.samples):raise RuntimeError('Metadata and comparative VCF sample sets differ')
+   for rec in vf:
+    if len(rec.alts or ())!=1:continue
+    key=(rec.contig,rec.pos,rec.ref,rec.alts[0])
+    if key not in indices:continue
+    if key in seen:raise RuntimeError('Duplicate selected VCF variant')
+    seen.add(key);j=indices[key];d=np.array([qualified(rec.samples[n]) for n in names]);matrix[:,j]=d if sites.iloc[j].pattern_is_alt else 1-d
+  if seen!=set(keys):raise RuntimeError('Selected variants absent from VCF')
  lookup={n:i for i,n in enumerate(names)}
  def pool(ids,min_rate=.8):
   x=matrix[[lookup[n] for n in ids]];n=np.isfinite(x).sum(axis=0)
@@ -96,15 +106,15 @@ def run(a):
      if kind=='genotype':
       if x not in (0,.5,1):raise RuntimeError('Non-discrete focal genotype')
       if x==.5:
-       heat.add_patch(Polygon([(j-.47,i-.43),(j+.47,i-.43),(j-.47,i+.43)],facecolor='#E4DDED',edgecolor='none'))
-       heat.add_patch(Polygon([(j+.47,i-.43),(j+.47,i+.43),(j-.47,i+.43)],facecolor='#FAE4D4',edgecolor='none'))
-       heat.text(j-.17,i-.15,associated,color=colors[1],ha='center',va='center',fontsize=9,weight='bold');heat.text(j+.17,i+.17,other,color=colors[0],ha='center',va='center',fontsize=9,weight='bold')
+       heat.add_patch(Polygon([(j-.47,i-.43),(j+.47,i-.43),(j-.47,i+.43)],facecolor=BASE_COLOURS[associated] if a.nucleotide_colours else '#E4DDED',alpha=.16 if a.nucleotide_colours else 1,edgecolor='none'))
+       heat.add_patch(Polygon([(j+.47,i-.43),(j+.47,i+.43),(j-.47,i+.43)],facecolor=BASE_COLOURS[other] if a.nucleotide_colours else '#FAE4D4',alpha=.16 if a.nucleotide_colours else 1,edgecolor='none'))
+       heat.text(j-.17,i-.15,associated,color=BASE_COLOURS[associated] if a.nucleotide_colours else colors[1],ha='center',va='center',fontsize=9,weight='bold');heat.text(j+.17,i+.17,other,color=BASE_COLOURS[other] if a.nucleotide_colours else colors[0],ha='center',va='center',fontsize=9,weight='bold')
       else:
-       c=1 if x==1 else 0;heat.add_patch(Rectangle((j-.47,i-.43),.94,.86,facecolor='#E4DDED' if c else '#FAE4D4',edgecolor='none'));heat.text(j,i,associated if c else other,ha='center',va='center',color=colors[c],weight='bold',fontsize=10)
+       c=1 if x==1 else 0;heat.add_patch(Rectangle((j-.47,i-.43),.94,.86,facecolor='#E4DDED' if c else '#FAE4D4',edgecolor='none'));heat.text(j,i,associated if c else other,ha='center',va='center',color=BASE_COLOURS[associated if c else other] if a.nucleotide_colours else colors[c],weight='bold',fontsize=10)
      elif kind=='consensus':
-      base=associated if x>.5 else other if x<.5 else associated+'/'+other;heat.text(j,i,base,ha='center',va='center',color=colors[int(x>.5)],fontsize=10,weight='bold')
+      base=associated if x>.5 else other if x<.5 else associated+'/'+other;heat.text(j,i,base,ha='center',va='center',color=BASE_COLOURS.get(base,'#333333') if a.nucleotide_colours else colors[int(x>.5)],fontsize=10,weight='bold')
      else:
-      heat.add_patch(Rectangle((j-.47,i-.43),.94,.86,facecolor=cmap(x),edgecolor='white',lw=.3));heat.text(j,i,associated if x>.5 else other,ha='center',va='center',fontsize=8,color='white' if x>.8 else '#333333')
+      heat.add_patch(Rectangle((j-.47,i-.43),.94,.86,facecolor=cmap(x),alpha=.16 if a.nucleotide_colours else 1,edgecolor='white',lw=.3));heat.text(j,i,associated if x>.5 else other,ha='center',va='center',fontsize=8,color=BASE_COLOURS[associated if x>.5 else other] if a.nucleotide_colours else ('white' if x>.8 else '#333333'))
   split=sum(positions<1218000);heat.axvline(split-.5,color='#AAAAAA',lw=.6)
   for ax in (heat,loc):
    for spine in ax.spines.values():spine.set_visible(False)
@@ -113,7 +123,7 @@ def run(a):
    for j,x in enumerate(sites.balanced_accuracy):heat.text(j,1.025,f'{x:.2f}',transform=heat.get_xaxis_transform(),ha='center',fontsize=6)
    heat.text(-.025,1.025,'BA',transform=heat.transAxes,ha='right',fontsize=6)
   note='24 frozen BA ≥ 0.90 SNPs; PK excluded from selection. Missing calls are grey/dashes; DP ≥ 2 and reported GQ ≥ 20.\n'
-  note+='Purple = Dennis-present-associated allele; orange = Dennis-absent-associated allele. Frequencies average qualified individual dosages.\n'
+  note+=('Letters: A green; C blue; G orange; T red. Pale morph-cell backgrounds retain associated-allele frequencies.\n' if a.nucleotide_colours else 'Purple = Dennis-present-associated allele; orange = Dennis-absent-associated allele. Frequencies average qualified individual dosages.\n')
   note+='Consensus = per-site majority base across selection controls, not a haplotype. Split cells = unphased heterozygotes; single base = homozygote. Corrected L/R.'
   fig.text(.025,.055,note,fontsize=7)
   if style=='heat':
@@ -125,10 +135,10 @@ def run(a):
     draw(items[start:start+42],title+f' | rows {start+1}–{min(start+42,len(items))}',pdf,ba=ba)
  focal_rows=[('Left (corrected)',focal.loc['TN_Left'].to_numpy(),'genotype'),('Right (corrected)',focal.loc['TN_Right'].to_numpy(),'genotype')]
  allrows=[(meta.loc[i,'label_single_line'],matrix[i],'genotype') for i in order]
- diagnostic('01_Dennis_all_individuals.pdf',focal_rows+allrows,'Dennis | every included comparative individual')
- diagnostic('02_Dennis_race_frequencies.pdf',focal_rows+race_rows,'Dennis | race and phenotype frequencies')
+ if not a.nucleotide_colours:diagnostic('01_Dennis_all_individuals.pdf',focal_rows+allrows,'Dennis | every included comparative individual')
+ if not a.nucleotide_colours:diagnostic('02_Dennis_race_frequencies.pdf',focal_rows+race_rows,'Dennis | race and phenotype frequencies')
  selrows=[(meta.loc[i,'label_single_line'],matrix[i],'genotype') for i in order if meta.loc[i,'sample'] in selected]
- diagnostic('03_Dennis_BA_selection_individuals.pdf',focal_rows+selrows,'Dennis | individuals used for BA selection',True)
+ if not a.nucleotide_colours:diagnostic('03_Dennis_BA_selection_individuals.pdf',focal_rows+selrows,'Dennis | individuals used for BA selection',True)
  # Choose four morphs per phenotype by sample count, without inspecting SNP agreement.
  chosen={};morphrows={}
  for state in [1,0]:
@@ -136,26 +146,31 @@ def run(a):
   for race in races:
    ids=mm.loc[mm.race.eq(race),'sample'].tolist();v,n=pool(ids);morphrows[state].append((f'{race} | D{state} | n={len(ids)}',v,'frequency'))
  bread=[('Dennis present consensus (n=142)',focal.loc['present'].to_numpy(),'consensus'),('Dennis absent consensus (n=281)',focal.loc['absent'].to_numpy(),'consensus')]
- with PdfPages(a.output/'04_Dennis_publication_alternatives.pdf') as pdf:
-  for context in [False,True]:
-   draw([bread[0]]+focal_rows+[bread[1]],'Dennis | consensus / corrected genotypes',pdf,'letters',context)
-   draw(morphrows[1]+[bread[0]]+focal_rows+[bread[1]]+morphrows[0],'Dennis | morph frequencies explain the consensus',pdf,'letters',context)
+ if a.nucleotide_colours:
+  with PdfPages(a.output/'Dennis_publication_last_panel_ATGC.pdf') as pdf:
+   draw(morphrows[1]+[bread[0]]+focal_rows+[bread[1]]+morphrows[0],'Dennis | morph frequencies and corrected genotypes',pdf,'letters',True)
+ else:
+  with PdfPages(a.output/'04_Dennis_publication_alternatives.pdf') as pdf:
+   for context in [False,True]:
+    draw([bread[0]]+focal_rows+[bread[1]],'Dennis | consensus / corrected genotypes',pdf,'letters',context)
+    draw(morphrows[1]+[bread[0]]+focal_rows+[bread[1]]+morphrows[0],'Dennis | morph frequencies explain the consensus',pdf,'letters',context)
  meta['included_in_BA']=meta['sample'].isin(selected);meta.to_csv(a.output/'individual_membership.tsv',sep='\t',index=False)
  pd.DataFrame(matrix,index=names,columns=[':'.join(map(str,k)) for k in keys]).to_csv(a.output/'all_individual_associated_dosages.tsv.gz',sep='\t')
  pd.DataFrame(race_export).to_csv(a.output/'race_frequencies_and_callability.tsv.gz',sep='\t',index=False)
  sites.to_csv(a.output/'frozen_markers_and_BA.tsv',sep='\t',index=False)
  pd.DataFrame([dict(phenotype=state,race=race,selection_rule='rank by eligible sample count, no genotype matching') for state,races in chosen.items() for race in races]).to_csv(a.output/'publication_morph_membership.tsv',sep='\t',index=False)
  provenance={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [values,sites_path,meta_path,membership_path]}
- (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',sources=provenance,vcf=str(vcf),comparative_individuals=len(meta),BA_individuals=len(selected),SNPs=24,corrected_focal_matches_frozen_matrix=True,control_frequencies_verified=True,phase_inferred=False,chosen_morphs=chosen,morph_selection='four largest eligible race groups per D phenotype, no genotype matching',optix_gene_coordinates=a.optix_gene,optix_gene_annotation_status='explicit coordinates supplied' if a.optix_gene else 'not supplied; wide locus view contains B R D windows only',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
+ (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',sources=provenance,vcf=str(vcf),comparative_individuals=len(meta),BA_individuals=len(selected),SNPs=24,corrected_focal_matches_frozen_matrix=True,control_frequencies_verified=True,phase_inferred=False,nucleotide_letter_colours=BASE_COLOURS if a.nucleotide_colours else None,chosen_morphs=chosen,morph_selection='four largest eligible race groups per D phenotype, no genotype matching',optix_gene_coordinates=a.optix_gene,optix_gene_annotation_status='explicit coordinates supplied' if a.optix_gene else 'not supplied; wide locus view contains B R D windows only',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
  for p in sorted(a.output.glob('*.pdf')):print('PDF\t'+str(p))
  print(f'COMPLETE\t{len(meta)} individuals; {len(selected)} BA controls; 24 unchanged SNPs')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_figure_set_v1');p.add_argument('--optix-gene',type=int,nargs=2,metavar=('START','END'));p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_figure_set_v1');p.add_argument('--optix-gene',type=int,nargs=2,metavar=('START','END'));p.add_argument('--nucleotide-colours',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
  if a.submit:
   helper=Path(__file__).with_name('plot_Dennis_nucleotide_letters.py');digest=hashlib.sha256(Path(__file__).read_bytes()+helper.read_bytes()).hexdigest()[:12];stage=ROOT/'Dennis_figure_set_code'/digest;stage.mkdir(parents=True,exist_ok=True)
   for f in [Path(__file__),helper]:shutil.copy2(f,stage/f.name)
   args=[sys.executable,str(stage/Path(__file__).name),'--source',str(a.source),'--output',str(a.output)]
+  if a.nucleotide_colours:args+=['--nucleotide-colours']
   if a.optix_gene:args+=['--optix-gene',*map(str,a.optix_gene)]
   job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G','--cpus-per-task=1','--job-name=Dennis_set','--output='+str(stage/'plot.%j.out'),'--error='+str(stage/'plot.%j.err'),'--wrap='+shlex.join(args)],text=True).strip();print('JOB\t'+job);print('LOG_DIR\t'+str(stage));print('OUTPUT\t'+str(a.output))
  else:run(a)
