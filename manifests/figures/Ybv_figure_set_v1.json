@@ -1,0 +1,31 @@
+{
+  "source_directory": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/ybv_short_ALT_geography_v7",
+  "source_files": [
+    "audit.json",
+    "membership_geography.tsv",
+    "region_race_ALT_frequencies.tsv"
+  ],
+  "callset": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/ybv_REF_ALT_rebuild_v1/full_window.vcf.gz",
+  "focal_calls": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/yb_completed_reads_recovery_v1/frozen/HmRos_Ybv_unchanged_focal_calls.tsv.gz",
+  "marker_count": 27,
+  "scale": "0=REF,1=ALT",
+  "excluded_races": [
+    "cydno",
+    "pachinus",
+    "nanna",
+    "burchelli",
+    "amaryllis"
+  ],
+  "membership": "Frozen v7, no new exclusions or phenotype changes",
+  "PDFs": [
+    "01_Ybv_all_retained_individuals.pdf",
+    "02_Ybv_race_frequencies.pdf",
+    "03_Ybv_phenotype_comparison_individuals.pdf",
+    "04_Ybv_publication_alternatives.pdf",
+    "05_Ybv_publication_last_panel_ATGC.pdf"
+  ],
+  "publication_variants": "local/wide locus; consensus sandwich or morph+consensus sandwich; REF/ALT palette or ATGC letter palette",
+  "BA": "No new scoring: phenotype-comparison cohort explicitly labelled",
+  "phase_inferred": false,
+  "output_directory": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Ybv_figure_set_v1"
+}
