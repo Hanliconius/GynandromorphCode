@@ -1,0 +1,8 @@
+{
+  "status": "ANNOTATION_EVIDENCE_COLLECTED",
+  "files": 1,
+  "matches": 20,
+  "errors": 0,
+  "coordinates_not_yet_approved_for_display": true,
+  "reference": "Require native NC_140403.1 or verified Hmel2.5 transfer; no constant coordinate offset"
+}

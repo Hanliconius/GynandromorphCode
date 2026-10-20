@@ -1,0 +1,1 @@
+/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/genomewide_mixing_input/reference/GCF_056956725.1/GCF_056956725.1_ASM5695672v1_genomic.gff.gz
