@@ -67,13 +67,14 @@ def run(a):
  letters=[]
  a.output.mkdir(parents=True,exist_ok=False)
  plt.rcParams.update({'pdf.fonttype':42,'font.size':8,'font.family':'DejaVu Sans'})
- fig=plt.figure(figsize=(12,4.2));heat=fig.add_axes([.38,.26,.57,.38]);locus=fig.add_axes([.38,.77,.57,.09]);wing=fig.add_axes([.02,.26,.12,.38]);wing.set_xlim(-1,1);wing.set_ylim(5.5,-.5);wing.axis('off')
+ fig=plt.figure(figsize=(12,4.2));heat=fig.add_axes([.38,.26,.57,.38]);locus=fig.add_axes([.38,.77,.57,.09]);wing=fig.add_axes([.02,.26,.12,.38]);wing.set_xlim(-1,1);wing.set_ylim(5.9,-.5);wing.axis('off')
  # Small generic forewing cartoons, explicitly phenotype schematics.
- for y,present in [(0,True),(5,False)]:
+ for y,present in [(0,True),(5.4,False)]:
   wing.add_patch(Ellipse((0,y),1.35,.65,angle=-12,facecolor='#252525',edgecolor='none'))
   if present:wing.add_patch(Ellipse((-.40,y+.07),.38,.26,angle=-12,facecolor='#D44936',edgecolor='none'))
  wing.text(0,-.75,'Forewing base',ha='center',fontsize=7)
- heat.set_xlim(-.5,23.5);heat.set_ylim(5.5,-.5)
+ heat.set_xlim(-.5,23.5);heat.set_ylim(5.9,-.5)
+ row_y={0:0,1:1.55,2:2.10,3:3.40,4:3.95,5:5.4}
  for j,pos in enumerate(m.columns):
   associated,other=alleles[pos]
   display_rows=[]
@@ -86,11 +87,11 @@ def run(a):
    bases=pseudo_alleles(value,associated,other)
    display_rows.extend((first+k,original+' display allele '+str(k+1),base,value) for k,base in enumerate(bases))
   for y,row,base,value in display_rows:
-   color='#662A83' if base==associated else '#28708A' if base==other else '#999999'
-   heat.text(j,y,base,ha='center',va='center',fontsize=12,fontfamily='monospace',weight='bold',color=color)
+   color='#54278F' if base==associated else '#D55E00' if base==other else '#999999'
+   heat.text(j,row_y[y],base,ha='center',va='center',fontsize=12,fontfamily='monospace',weight='bold',color=color)
    letters.append(dict(pos=int(pos),row=row,associated_base=associated,other_base=other,associated_frequency=value,display=base))
- heat.set_yticks(range(6),['Dennis present consensus (n=142)','Left · allele 1','Left · allele 2','Right · allele 1','Right · allele 2','Dennis absent consensus (n=281)']);heat.tick_params(length=0,pad=9);heat.set_xticks([])
- for y in [.5,2.5,4.5]:heat.axhline(y,color='#DDDDDD',lw=.6)
+ heat.set_yticks([row_y[i] for i in range(6)],['Dennis present consensus (n=142)','Left · allele 1','Left · allele 2','Right · allele 1','Right · allele 2','Dennis absent consensus (n=281)']);heat.tick_params(length=0,pad=9);heat.set_xticks([])
+ for y in [.75,2.75,4.65]:heat.axhline(y,color='#DDDDDD',lw=.6)
  split=sum(m.columns<1218557)
  if 0<split<24:heat.axvline(split-.5,color='#DDDDDD',lw=.6)
  for name,lo,hi in [('D1',1215210,1216124),('D2',1218557,1221494)]:
@@ -99,7 +100,7 @@ def run(a):
  for j,pos in enumerate(m.columns):fig.add_artist(ConnectionPatch(xyA=(pos,.1),coordsA=locus.transData,xyB=(j,-.5),coordsB=heat.transData,color='#B3B8BC',alpha=.4,lw=.35,clip_on=False,zorder=0))
  for ax in [heat,locus]:
   for s in ax.spines.values():s.set_visible(False)
- fig.text(.38,.13,'Purple: Dennis-present-associated allele     Blue: Dennis-absent-associated allele',fontsize=8)
+ fig.text(.38,.13,'Purple: Dennis-present-associated allele     Orange: Dennis-absent-associated allele',fontsize=8)
  fig.text(.02,.94,'Dennis',weight='bold',fontsize=13);fig.text(.95,.94,'24 associated SNPs',ha='right',fontsize=9)
  fig.text(.38,.025,'Controls: majority allele at each SNP; not a phased haplotype. Left/Right rows are display pseudophase.\nAt heterozygous sites the Dennis-present allele is placed first independently at each SNP; linkage is not inferred.\nBA ≥ 0.90; same 24 SNPs and genotypes. Dash = unavailable. Wing icons schematic.',fontsize=6.5)
  dest=a.output/'Dennis_nucleotide_letters.pdf';fig.savefig(dest);plt.close(fig)
@@ -109,7 +110,7 @@ def run(a):
  print('SOURCE\t'+str(source));print('PDF\t'+str(dest))
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--values',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_nucleotide_letters_v2');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--values',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_nucleotide_letters_v3');p.add_argument('--submit',action='store_true');a=p.parse_args()
  if a.submit:
   stage=ROOT/'Dennis_nucleotide_letters_code';stage.mkdir(parents=True,exist_ok=True);f=stage/('plot_'+hashlib.sha256(Path(__file__).read_bytes()).hexdigest()[:12]+'.py');shutil.copy2(__file__,f)
   args=[sys.executable,str(f),'--output',str(a.output)]
