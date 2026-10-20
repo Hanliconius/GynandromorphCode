@@ -32,6 +32,14 @@ def extract(path):
    records.append(dict(chrom=key[0],pos=key[1],ref=key[2],alt=key[3],row=row,original_label=label,frequency=x))
  return pd.DataFrame(records),m
 
+def pseudo_alleles(value,associated,other):
+ import math
+ if not math.isfinite(value):return ('–','–')
+ if abs(value)<1e-8:return (other,other)
+ if abs(value-.5)<1e-8:return (associated,other)
+ if abs(value-1)<1e-8:return (associated,associated)
+ raise RuntimeError('Focal dosage is not a discrete diploid call')
+
 def run(a):
  import numpy as np
  import matplotlib
@@ -59,53 +67,49 @@ def run(a):
  letters=[]
  a.output.mkdir(parents=True,exist_ok=False)
  plt.rcParams.update({'pdf.fonttype':42,'font.size':8,'font.family':'DejaVu Sans'})
- fig=plt.figure(figsize=(12,4.2));heat=fig.add_axes([.38,.26,.57,.38]);locus=fig.add_axes([.38,.77,.57,.09]);wing=fig.add_axes([.02,.26,.12,.38]);wing.set_xlim(-1,1);wing.set_ylim(3.5,-.5);wing.axis('off')
+ fig=plt.figure(figsize=(12,4.2));heat=fig.add_axes([.38,.26,.57,.38]);locus=fig.add_axes([.38,.77,.57,.09]);wing=fig.add_axes([.02,.26,.12,.38]);wing.set_xlim(-1,1);wing.set_ylim(5.5,-.5);wing.axis('off')
  # Small generic forewing cartoons, explicitly phenotype schematics.
- for y,present in [(0,True),(3,False)]:
+ for y,present in [(0,True),(5,False)]:
   wing.add_patch(Ellipse((0,y),1.35,.65,angle=-12,facecolor='#252525',edgecolor='none'))
   if present:wing.add_patch(Ellipse((-.40,y+.07),.38,.26,angle=-12,facecolor='#D44936',edgecolor='none'))
  wing.text(0,-.75,'Forewing base',ha='center',fontsize=7)
- cmap=LinearSegmentedColormap.from_list('Dennis',[(0,'#D7EDF5'),(.5,'#ECCB63'),(1,'#662A83')]);cmap.set_bad('#CCCCCC')
- heat.set_xlim(-.5,23.5);heat.set_ylim(3.5,-.5)
+ heat.set_xlim(-.5,23.5);heat.set_ylim(5.5,-.5)
  for j,pos in enumerate(m.columns):
   associated,other=alleles[pos]
-  for i,row in enumerate(m.index):
-   value=m.loc[row,pos]
-   if not np.isfinite(value):
-    heat.text(j,i,'–',ha='center',va='center',color='#999999');continue
-   if i in (1,2):
-    if not any(np.isclose(value,d,atol=1e-8) for d in (0,.5,1)):raise RuntimeError('Focal dosage is not a discrete diploid call')
-    bases=(other,other) if np.isclose(value,0) else (associated,associated) if np.isclose(value,1) else (other,associated)
-    # Slash denotes an unphased genotype, not a haplotype assignment.
-    heat.text(j,i,'/'.join(bases),ha='center',va='center',fontsize=9,fontfamily='monospace',color='#333333')
-    display='/'.join(bases)
-   else:
-    heat.text(j,i-.17,associated,ha='center',va='center',fontsize=11,fontfamily='monospace',weight='bold',color='#662A83')
-    heat.text(j,i+.05,f'{value:.0%}',ha='center',va='center',fontsize=6.5,color='#662A83')
-    heat.text(j,i+.31,f'{other} {(1-value):.0%}',ha='center',va='center',fontsize=6.5,color='#28708A')
-    display=f'{associated} {value:.6f}; {other} {1-value:.6f}'
-   letters.append(dict(pos=int(pos),row=row,associated_base=associated,other_base=other,associated_frequency=float(value),display=display))
- heat.set_yticks(range(4),['Dennis present (142)','Left wing','Right wing','Dennis absent (281)']);heat.tick_params(length=0,pad=9);heat.set_xticks([])
- for y in [.5,1.5,2.5]:heat.axhline(y,color='white',lw=2)
+  display_rows=[]
+  for original,target in [('present',0),('absent',5)]:
+   value=float(m.loc[original,pos])
+   base='–' if not np.isfinite(value) else associated if value>.5 else other if value<.5 else associated+'/'+other
+   display_rows.append((target,original+' consensus',base,value))
+  for original,first in [('TN_Left',1),('TN_Right',3)]:
+   value=float(m.loc[original,pos])
+   bases=pseudo_alleles(value,associated,other)
+   display_rows.extend((first+k,original+' display allele '+str(k+1),base,value) for k,base in enumerate(bases))
+  for y,row,base,value in display_rows:
+   color='#662A83' if base==associated else '#28708A' if base==other else '#999999'
+   heat.text(j,y,base,ha='center',va='center',fontsize=12,fontfamily='monospace',weight='bold',color=color)
+   letters.append(dict(pos=int(pos),row=row,associated_base=associated,other_base=other,associated_frequency=value,display=base))
+ heat.set_yticks(range(6),['Dennis present consensus (n=142)','Left · allele 1','Left · allele 2','Right · allele 1','Right · allele 2','Dennis absent consensus (n=281)']);heat.tick_params(length=0,pad=9);heat.set_xticks([])
+ for y in [.5,2.5,4.5]:heat.axhline(y,color='#DDDDDD',lw=.6)
  split=sum(m.columns<1218557)
- if 0<split<24:heat.axvline(split-.5,color='white',lw=2)
+ if 0<split<24:heat.axvline(split-.5,color='#DDDDDD',lw=.6)
  for name,lo,hi in [('D1',1215210,1216124),('D2',1218557,1221494)]:
   locus.add_patch(Rectangle((lo,.1),hi-lo,.18,facecolor='#555555',edgecolor='none'));locus.text((lo+hi)/2,.45,name,ha='center',fontsize=8)
  locus.set_xlim(1214500,1222500);locus.set_ylim(0,1);locus.set_yticks([]);locus.set_xticks([1215000,1220000],["1.215","1.220"]);locus.tick_params(length=2,labelsize=7);locus.set_xlabel('Chromosome 18 (Mb)',fontsize=7,labelpad=2)
  for j,pos in enumerate(m.columns):fig.add_artist(ConnectionPatch(xyA=(pos,.1),coordsA=locus.transData,xyB=(j,-.5),coordsB=heat.transData,color='#B3B8BC',alpha=.4,lw=.35,clip_on=False,zorder=0))
  for ax in [heat,locus]:
   for s in ax.spines.values():s.set_visible(False)
- fig.text(.38,.13,'Purple: Dennis-associated nucleotide     Blue: other nucleotide',fontsize=8)
+ fig.text(.38,.13,'Purple: Dennis-present-associated allele     Blue: Dennis-absent-associated allele',fontsize=8)
  fig.text(.02,.94,'Dennis',weight='bold',fontsize=13);fig.text(.95,.94,'24 associated SNPs',ha='right',fontsize=9)
- fig.text(.38,.025,'Controls: both nucleotide frequencies (rounded percentages). Left/Right: corrected unphased genotypes.\nBA ≥ 0.90; all 24 original SNPs retained. Homozygotes repeat the base; dash = unavailable. Wing icons schematic.',fontsize=6.5)
+ fig.text(.38,.025,'Controls: majority allele at each SNP; not a phased haplotype. Left/Right rows are display pseudophase.\nAt heterozygous sites the Dennis-present allele is placed first independently at each SNP; linkage is not inferred.\nBA ≥ 0.90; same 24 SNPs and genotypes. Dash = unavailable. Wing icons schematic.',fontsize=6.5)
  dest=a.output/'Dennis_nucleotide_letters.pdf';fig.savefig(dest);plt.close(fig)
  pd.DataFrame(letters).to_csv(a.output/'nucleotide_display_audit.tsv',sep='\t',index=False)
  t.to_csv(a.output/'unchanged_plot_values.tsv',sep='\t',index=False)
- (a.output/'complete.json').write_text(json.dumps({'status':'COMPLETE','input':str(source),'input_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'orientation_table':str(sites_path),'orientation_sha256':hashlib.sha256(sites_path.read_bytes()).hexdigest(),'SNPs':24,'cohort_n':[142,281],'values_changed':False,'orientation':'original Dennis-associated allele, NOT necessarily VCF ALT','phase_inferred':False,'PDF':str(dest)},indent=2)+'\n')
+ (a.output/'complete.json').write_text(json.dumps({'status':'COMPLETE','input':str(source),'input_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'orientation_table':str(sites_path),'orientation_sha256':hashlib.sha256(sites_path.read_bytes()).hexdigest(),'SNPs':24,'cohort_n':[142,281],'values_changed':False,'orientation':'original Dennis-associated allele, NOT necessarily VCF ALT','phase_inferred':False,'display_pseudophase':'associated allele first independently at heterozygous sites on both sides','control_display':'per-site majority base, ties show both, full frequencies retained in audit','PDF':str(dest)},indent=2)+'\n')
  print('SOURCE\t'+str(source));print('PDF\t'+str(dest))
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--values',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_nucleotide_letters_v1');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--values',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_nucleotide_letters_v2');p.add_argument('--submit',action='store_true');a=p.parse_args()
  if a.submit:
   stage=ROOT/'Dennis_nucleotide_letters_code';stage.mkdir(parents=True,exist_ok=True);f=stage/('plot_'+hashlib.sha256(Path(__file__).read_bytes()).hexdigest()[:12]+'.py');shutil.copy2(__file__,f)
   args=[sys.executable,str(f),'--output',str(a.output)]
