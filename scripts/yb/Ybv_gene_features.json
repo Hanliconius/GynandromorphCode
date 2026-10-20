@@ -1,0 +1,93 @@
+{
+  "assembly": "GCF_056956725.1",
+  "contig": "NC_140403.1",
+  "cortex": {
+    "start": 1642343,
+    "end": 1653300,
+    "strand": "-",
+    "exons": [
+      [
+        1653119,
+        1653300
+      ],
+      [
+        1651700,
+        1651822
+      ],
+      [
+        1650804,
+        1650990
+      ],
+      [
+        1647724,
+        1647884
+      ],
+      [
+        1645528,
+        1645676
+      ],
+      [
+        1644512,
+        1644722
+      ],
+      [
+        1644148,
+        1644346
+      ],
+      [
+        1643384,
+        1643527
+      ],
+      [
+        1642343,
+        1642617
+      ]
+    ],
+    "source": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/genomewide_mixing_input/reference/GCF_056956725.1/GCF_056956725.1_ASM5695672v1_genomic.gff.gz",
+    "source_audit_blob": "14ee980a7036373438910e771b13c0ef34b45a31"
+  },
+  "ivory": {
+    "strand": "+",
+    "exons": [
+      [
+        1659008,
+        1659348
+      ],
+      [
+        1676871,
+        1676971
+      ],
+      [
+        1680808,
+        1680854
+      ],
+      [
+        1689258,
+        1689361
+      ],
+      [
+        1711502,
+        1711521
+      ],
+      [
+        1721768,
+        1721830
+      ],
+      [
+        1741449,
+        1741475
+      ]
+    ],
+    "partial": true,
+    "unmapped_exon_Hmel2_5": [
+      1567872,
+      1568488
+    ],
+    "source_repository": "Hanliconius/ivory-mir193_paper",
+    "source_file": "data/references/Hmel_cortexIvory_region_luca-reannotated.gff",
+    "source_blob": "02d8e9cb47d00dd3f773fa174a2982146e774049",
+    "transfer_file": "results/yb_exact_coordinate_transfer/job_138421491/Hmel2.5_to_HmRos_Yb.paf",
+    "transfer_blob": "0919a128c9b4378500943551aec99d2770877161",
+    "transfer_method": "Exact cg CIGAR M/=/X endpoint mapping; query and target region offsets; unique plus-strand mappings; cortex TSS 1424680 -> 1653288 cross-check passed"
+  }
+}
