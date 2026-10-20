@@ -166,8 +166,8 @@ def run(a):
  if not a.with_gene_annotations:diagnostic('03_Ybv_phenotype_comparison_individuals.pdf',focal+[(members.loc[i,'single_line_label'],matrix[i],'genotype') for i in order if members.loc[i,'v'] in (0,1)],'Yb(v) | phenotype-comparison individuals; no new BA selection')
  bread=[(f'Yb(v)+ consensus (n={len(summaries[1][0])})',summaries[1][1],'consensus'),(f'Yb(v)− consensus (n={len(summaries[0][0])})',summaries[0][1],'consensus')]
  if a.with_gene_annotations:
-  with PdfPages(a.output/'Ybv_publication_ATGC_cortex_ivory.pdf') as pdf:
-   draw(morphs[1]+[bread[0]]+focal+[bread[1]]+morphs[0],'Yb(v) | cortex / ivory context',pdf,True,True,True)
+  with PdfPages(a.output/('Ybv_publication_allele_colours_cortex_ivory.pdf' if a.allele_colours else 'Ybv_publication_ATGC_cortex_ivory.pdf')) as pdf:
+   draw(morphs[1]+[bread[0]]+focal+[bread[1]]+morphs[0],'Yb(v) | cortex / ivory context',pdf,True,not a.allele_colours,True)
  else:
   with PdfPages(a.output/'04_Ybv_publication_alternatives.pdf') as pdf:
    for wide in [False,True]:
@@ -181,16 +181,17 @@ def run(a):
  pd.DataFrame(chosen).to_csv(a.output/'publication_morph_membership.tsv',sep='\t',index=False)
  pd.DataFrame(marker_audit).to_csv(a.output/'original_marker_mapping_audit.tsv',sep='\t',index=False)
  provenance={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [frozen/'audit.json',frozen/'membership_geography.tsv',frozen/'region_race_ALT_frequencies.tsv',ROOT/'analysis/yb_completed_reads_recovery_v1/frozen/HmRos_Ybv_unchanged_focal_calls.tsv.gz']}
- (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',source=str(frozen),source_hashes=provenance,individuals=len(members),SNPs=27,scale='0=REF,1=ALT',no_new_calls=True,no_phenotype_or_marker_selection_changes=True,control_frequencies_match_v7=True,focal='original corrected calls converted to ALT',phase_inferred=False,bold_focal=a.bold_focal,gene_annotation=gene_features if a.with_gene_annotations else None,BA_selection='Not recomputed; diagnostic is phenotype comparator cohort',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
+ (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',source=str(frozen),source_hashes=provenance,individuals=len(members),SNPs=27,scale='0=REF,1=ALT',no_new_calls=True,no_phenotype_or_marker_selection_changes=True,control_frequencies_match_v7=True,focal='original corrected calls converted to ALT',phase_inferred=False,bold_focal=a.bold_focal,allele_colours=a.allele_colours,gene_annotation=gene_features if a.with_gene_annotations else None,BA_selection='Not recomputed; diagnostic is phenotype comparator cohort',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
  for p in sorted(a.output.glob('*.pdf')):print('PDF\t'+str(p))
  print('COMPLETE\t'+str(len(members))+' individuals; 27 unchanged markers')
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v7');p.add_argument('--output',type=Path,default=ROOT/'analysis/Ybv_figure_set_v1');p.add_argument('--bold-focal',action='store_true');p.add_argument('--with-gene-annotations',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v7');p.add_argument('--output',type=Path,default=ROOT/'analysis/Ybv_figure_set_v1');p.add_argument('--allele-colours',action='store_true');p.add_argument('--bold-focal',action='store_true');p.add_argument('--with-gene-annotations',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
  if a.bold_focal:a.with_gene_annotations=True
  if not a.submit:return run(a)
  tag=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()[:12];stage=ROOT/'analysis/Ybv_figure_set_code'/tag;stage.mkdir(parents=True,exist_ok=True);script=stage/Path(__file__).name;shutil.copy2(__file__,script)
  cmd=[sys.executable,str(script),'--source',str(a.source),'--output',str(a.output)]
  if a.bold_focal:cmd+=['--bold-focal']
+ if a.allele_colours:cmd+=['--allele-colours']
  if a.with_gene_annotations:
   annotation=Path(__file__).with_name('Ybv_gene_features.json');shutil.copy2(annotation,stage/annotation.name);cmd+=['--with-gene-annotations']
  job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G','--cpus-per-task=1','--job-name=Ybv_set','--output='+str(stage/'plot.%j.out'),'--error='+str(stage/'plot.%j.err'),'--wrap='+shlex.join(cmd)],text=True).strip()
