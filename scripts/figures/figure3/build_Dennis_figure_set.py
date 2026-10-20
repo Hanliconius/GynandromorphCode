@@ -83,7 +83,7 @@ def run(a):
  colors=['#D55E00','#54278F'];cmap=LinearSegmentedColormap.from_list('associated',[colors[0],'#F4ECDD',colors[1]]);cmap.set_bad('#D0D0D0')
  pages=[]
  def draw(rows,title,pdf,style='heat',context=False,ba=False):
-  nr=len(rows);h=max(4.2,2.4+nr*.23);label_width=max(4.2,max(len(r[0]) for r in rows)*.045);width=max(13,label_width+7);fig=plt.figure(figsize=(width,h));left=label_width/width
+  nr=len(rows);heights=np.array([2.7 if a.bold_focal and style=='letters' and r[2]=='genotype' else 1. for r in rows]);centres=np.cumsum(heights)-heights/2-.5;total_height=float(heights.sum());h=max(4.2,2.4+total_height*.23);label_width=max(4.2,max(len(r[0]) for r in rows)*.045);width=max(13,label_width+7);fig=plt.figure(figsize=(width,h));left=label_width/width
   heat=fig.add_axes([left,.21, .98-left,.53]);loc=fig.add_axes([left,.82,.98-left,.09])
   positions=sites.pos.to_numpy();lo,hi=(1060000,1240000) if context else (1214500,1223500)
   if context and a.optix_gene:lo=min(lo,a.optix_gene[0]-3000);hi=max(hi,a.optix_gene[1]+3000)
@@ -96,25 +96,31 @@ def run(a):
    x,y=a.optix_gene;loc.add_patch(Rectangle((x,1.05),y-x,.15,color='#333333'));loc.text((x+y)/2,1.25,'optix',ha='center',fontsize=7)
   loc.set_yticks([]);ticks=np.linspace(lo,hi,4);loc.set_xticks(ticks,[f'{x/1e6:.3f}' for x in ticks],fontsize=7);loc.set_xlabel('Chromosome 18 (Mb)',fontsize=7,labelpad=1)
   for j,pos in enumerate(positions):fig.add_artist(ConnectionPatch(xyA=(pos,.12),coordsA=loc.transData,xyB=(j,-.5),coordsB=heat.transData,color='#BFC3C7',lw=.3,alpha=.4,clip_on=False))
-  heat.set_xlim(-.5,23.5);heat.set_ylim(nr-.5,-.5);heat.set_xticks([]);heat.set_yticks(range(nr),[r[0] for r in rows],fontsize=7);heat.tick_params(length=0,pad=8)
+  heat.set_xlim(-.5,23.5);heat.set_ylim(total_height-.5,-.5);heat.set_xticks([]);heat.set_yticks(centres,[r[0] for r in rows],fontsize=7);heat.tick_params(length=0,pad=8)
   if style=='heat':heat.imshow(np.ma.masked_invalid(np.array([r[1] for r in rows])),vmin=0,vmax=1,cmap=cmap,aspect='auto',interpolation='nearest')
   else:
    for i,(label,vals,kind) in enumerate(rows):
+    cy=centres[i];rh=heights[i];bold=a.bold_focal and kind=='genotype'
     for j,x in enumerate(vals):
      r=sites.iloc[j];associated,other=(r.alt,r.ref) if r.pattern_is_alt else (r.ref,r.alt)
-     if not np.isfinite(x):heat.text(j,i,'–',ha='center',va='center',color='#999999');continue
+     if not np.isfinite(x):heat.text(j,cy,'–',ha='center',va='center',color='#999999');continue
      if kind=='genotype':
       if x not in (0,.5,1):raise RuntimeError('Non-discrete focal genotype')
       if x==.5:
-       heat.add_patch(Polygon([(j-.47,i-.43),(j+.47,i-.43),(j-.47,i+.43)],facecolor=BASE_COLOURS[associated] if a.nucleotide_colours else '#E4DDED',alpha=.16 if a.nucleotide_colours else 1,edgecolor='none'))
-       heat.add_patch(Polygon([(j+.47,i-.43),(j+.47,i+.43),(j-.47,i+.43)],facecolor=BASE_COLOURS[other] if a.nucleotide_colours else '#FAE4D4',alpha=.16 if a.nucleotide_colours else 1,edgecolor='none'))
-       heat.text(j-.17,i-.15,associated,color=BASE_COLOURS[associated] if a.nucleotide_colours else colors[1],ha='center',va='center',fontsize=9,weight='bold');heat.text(j+.17,i+.17,other,color=BASE_COLOURS[other] if a.nucleotide_colours else colors[0],ha='center',va='center',fontsize=9,weight='bold')
+       heat.add_patch(Polygon([(j-.47,cy-.43*rh),(j+.47,cy-.43*rh),(j-.47,cy+.43*rh)],facecolor=BASE_COLOURS[associated] if a.nucleotide_colours else '#E4DDED',alpha=.16 if a.nucleotide_colours else 1,edgecolor='none'))
+       heat.add_patch(Polygon([(j+.47,cy-.43*rh),(j+.47,cy+.43*rh),(j-.47,cy+.43*rh)],facecolor=BASE_COLOURS[other] if a.nucleotide_colours else '#FAE4D4',alpha=.16 if a.nucleotide_colours else 1,edgecolor='none'))
+       heat.text(j-.17,cy-.15*rh,associated,color=BASE_COLOURS[associated] if a.nucleotide_colours else colors[1],ha='center',va='center',fontsize=14 if bold else 9,weight='bold');heat.text(j+.17,cy+.17*rh,other,color=BASE_COLOURS[other] if a.nucleotide_colours else colors[0],ha='center',va='center',fontsize=14 if bold else 9,weight='bold')
       else:
-       c=1 if x==1 else 0;heat.add_patch(Rectangle((j-.47,i-.43),.94,.86,facecolor='#E4DDED' if c else '#FAE4D4',edgecolor='none'));heat.text(j,i,associated if c else other,ha='center',va='center',color=BASE_COLOURS[associated if c else other] if a.nucleotide_colours else colors[c],weight='bold',fontsize=10)
+       c=1 if x==1 else 0;heat.add_patch(Rectangle((j-.47,cy-.43*rh),.94,.86*rh,facecolor='#E4DDED' if c else '#FAE4D4',edgecolor='none'));heat.text(j,cy,associated if c else other,ha='center',va='center',color=BASE_COLOURS[associated if c else other] if a.nucleotide_colours else colors[c],weight='bold',fontsize=15 if bold else 10)
      elif kind=='consensus':
-      base=associated if x>.5 else other if x<.5 else associated+'/'+other;heat.text(j,i,base,ha='center',va='center',color=BASE_COLOURS.get(base,'#333333') if a.nucleotide_colours else colors[int(x>.5)],fontsize=10,weight='bold')
+      base=associated if x>.5 else other if x<.5 else associated+'/'+other;heat.text(j,cy,base,ha='center',va='center',color=BASE_COLOURS.get(base,'#333333') if a.nucleotide_colours else colors[int(x>.5)],fontsize=10,weight='bold')
      else:
-      heat.add_patch(Rectangle((j-.47,i-.43),.94,.86,facecolor=cmap(x),alpha=.16 if a.nucleotide_colours else 1,edgecolor='white',lw=.3));heat.text(j,i,associated if x>.5 else other,ha='center',va='center',fontsize=8,color=BASE_COLOURS[associated if x>.5 else other] if a.nucleotide_colours else ('white' if x>.8 else '#333333'))
+      heat.add_patch(Rectangle((j-.47,cy-.43*rh),.94,.86*rh,facecolor=cmap(x),alpha=.16 if a.nucleotide_colours else 1,edgecolor='white',lw=.3));heat.text(j,cy,associated if x>.5 else other,ha='center',va='center',fontsize=8,color=BASE_COLOURS[associated if x>.5 else other] if a.nucleotide_colours else ('white' if x>.8 else '#333333'))
+  if a.bold_focal and style=='letters':
+   for i,row in enumerate(rows):
+    if row[2]!='genotype':continue
+    for j in range(24):heat.add_patch(Rectangle((j-.47,centres[i]-.43*heights[i]),.94,.86*heights[i],facecolor='none',edgecolor='#777777',lw=.65))
+    tick=heat.get_yticklabels()[i];tick.set_fontweight('bold');tick.set_fontsize(10)
   split=sum(positions<1218000);heat.axvline(split-.5,color='#AAAAAA',lw=.6)
   for ax in (heat,loc):
    for spine in ax.spines.values():spine.set_visible(False)
@@ -160,17 +166,19 @@ def run(a):
  sites.to_csv(a.output/'frozen_markers_and_BA.tsv',sep='\t',index=False)
  pd.DataFrame([dict(phenotype=state,race=race,selection_rule='rank by eligible sample count, no genotype matching') for state,races in chosen.items() for race in races]).to_csv(a.output/'publication_morph_membership.tsv',sep='\t',index=False)
  provenance={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [values,sites_path,meta_path,membership_path]}
- (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',sources=provenance,vcf=str(vcf),comparative_individuals=len(meta),BA_individuals=len(selected),SNPs=24,corrected_focal_matches_frozen_matrix=True,control_frequencies_verified=True,phase_inferred=False,nucleotide_letter_colours=BASE_COLOURS if a.nucleotide_colours else None,chosen_morphs=chosen,morph_selection='four largest eligible race groups per D phenotype, no genotype matching',optix_gene_coordinates=a.optix_gene,optix_gene_annotation_status='explicit coordinates supplied' if a.optix_gene else 'not supplied; wide locus view contains B R D windows only',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
+ (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',sources=provenance,vcf=str(vcf),comparative_individuals=len(meta),BA_individuals=len(selected),SNPs=24,corrected_focal_matches_frozen_matrix=True,control_frequencies_verified=True,phase_inferred=False,bold_focal=a.bold_focal,nucleotide_letter_colours=BASE_COLOURS if a.nucleotide_colours else None,chosen_morphs=chosen,morph_selection='four largest eligible race groups per D phenotype, no genotype matching',optix_gene_coordinates=a.optix_gene,optix_gene_annotation_status='explicit coordinates supplied' if a.optix_gene else 'not supplied; wide locus view contains B R D windows only',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
  for p in sorted(a.output.glob('*.pdf')):print('PDF\t'+str(p))
  print(f'COMPLETE\t{len(meta)} individuals; {len(selected)} BA controls; 24 unchanged SNPs')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_figure_set_v1');p.add_argument('--optix-gene',type=int,nargs=2,metavar=('START','END'));p.add_argument('--nucleotide-colours',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_figure_set_v1');p.add_argument('--optix-gene',type=int,nargs=2,metavar=('START','END'));p.add_argument('--bold-focal',action='store_true');p.add_argument('--nucleotide-colours',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ if a.bold_focal:a.nucleotide_colours=True
  if a.submit:
   helper=Path(__file__).with_name('plot_Dennis_nucleotide_letters.py');digest=hashlib.sha256(Path(__file__).read_bytes()+helper.read_bytes()).hexdigest()[:12];stage=ROOT/'Dennis_figure_set_code'/digest;stage.mkdir(parents=True,exist_ok=True)
   for f in [Path(__file__),helper]:shutil.copy2(f,stage/f.name)
   args=[sys.executable,str(stage/Path(__file__).name),'--source',str(a.source),'--output',str(a.output)]
   if a.nucleotide_colours:args+=['--nucleotide-colours']
+  if a.bold_focal:args+=['--bold-focal']
   if a.optix_gene:args+=['--optix-gene',*map(str,a.optix_gene)]
   job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G','--cpus-per-task=1','--job-name=Dennis_set','--output='+str(stage/'plot.%j.out'),'--error='+str(stage/'plot.%j.err'),'--wrap='+shlex.join(args)],text=True).strip();print('JOB\t'+job);print('LOG_DIR\t'+str(stage));print('OUTPUT\t'+str(a.output))
  else:run(a)
