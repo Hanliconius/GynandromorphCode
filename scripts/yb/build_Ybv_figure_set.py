@@ -104,7 +104,8 @@ def run(a):
  pages=[]
  def draw(rows,title,pdf,letters=False,nt=False,wide=False):
   nr=len(rows);lw=max(4.3,max(len(r[0]) for r in rows)*.044);width=max(13,lw+7);left=lw/width
-  fig=plt.figure(figsize=(width,max(4.5,2.5+nr*.25)));ax=fig.add_axes([left,.23,.98-left,.49]);locus=fig.add_axes([left,.83,.98-left,.09])
+  heights=np.array([2.7 if a.bold_focal and letters and row[2]=='genotype' else 1. for row in rows]);centres=np.cumsum(heights)-heights/2-.5;total_height=float(heights.sum())
+  fig=plt.figure(figsize=(width,max(4.5,2.5+total_height*.25)));ax=fig.add_axes([left,.23,.98-left,.49]);locus=fig.add_axes([left,.83,.98-left,.09])
   lo,hi=((1630000,1692000) if a.with_gene_annotations else (1630000,1661500)) if wide else (min(positions)-180,max(positions)+180)
   locus.set_xlim(lo,hi);locus.set_ylim(0,2.6 if a.with_gene_annotations and wide else 1.5);locus.axhline(.1,color='#AAAAAA',lw=.5)
   for label,start,end in [('Yb(d)',1633041,1635646),('Yb(v)',1658079,1659072)]:
@@ -125,24 +126,30 @@ def run(a):
      locus.text((start+end)/2,y+.22,'cortex',fontsize=7,color=color,ha='center')
   ticks=np.linspace(lo,hi,4);locus.set_xticks(ticks,[f'{p/1e6:.4f}' for p in ticks],fontsize=7);locus.set_yticks([]);locus.set_xlabel('Chromosome 15 (Rosina, Mb)',fontsize=7,labelpad=1)
   for j,pos in enumerate(positions):fig.add_artist(ConnectionPatch(xyA=(pos,.1),coordsA=locus.transData,xyB=(j,-.5),coordsB=ax.transData,color='#BFC3C7',lw=.3,alpha=.4,clip_on=False))
-  ax.set_xlim(-.5,26.5);ax.set_ylim(nr-.5,-.5);ax.set_xticks([]);ax.set_yticks(range(nr),[r[0] for r in rows],fontsize=7);ax.tick_params(length=0,pad=8)
+  ax.set_xlim(-.5,26.5);ax.set_ylim(total_height-.5,-.5);ax.set_xticks([]);ax.set_yticks(centres,[r[0] for r in rows],fontsize=7);ax.tick_params(length=0,pad=8)
   if not letters:ax.imshow(np.ma.masked_invalid(np.asarray([r[1] for r in rows])),cmap=cmap,vmin=0,vmax=1,aspect='auto',interpolation='nearest')
   else:
    for i,(label,vals,kind) in enumerate(rows):
+    cy=centres[i];rh=heights[i];bold=a.bold_focal and kind=='genotype'
     for j,x in enumerate(vals):
      ref,alt=old.iloc[j]['ref'],old.iloc[j]['alt']
      colour=lambda base:BASES[base] if nt else '#54278F' if base==alt else '#D55E00'
-     if not np.isfinite(x):ax.text(j,i,'–',ha='center',va='center',color='#AAAAAA');continue
+     if not np.isfinite(x):ax.text(j,cy,'–',ha='center',va='center',color='#AAAAAA');continue
      if kind=='genotype' and np.isclose(x,.5):
-      ax.add_patch(Polygon([(j-.47,i-.43),(j+.47,i-.43),(j-.47,i+.43)],facecolor=to_rgba(colour(ref),.14),edgecolor='none'))
-      ax.add_patch(Polygon([(j+.47,i-.43),(j+.47,i+.43),(j-.47,i+.43)],facecolor=to_rgba(colour(alt),.14),edgecolor='none'))
-      ax.text(j-.17,i-.16,ref,color=colour(ref),ha='center',va='center',fontsize=9,weight='bold');ax.text(j+.17,i+.17,alt,color=colour(alt),ha='center',va='center',fontsize=9,weight='bold')
+      ax.add_patch(Polygon([(j-.47,cy-.43*rh),(j+.47,cy-.43*rh),(j-.47,cy+.43*rh)],facecolor=to_rgba(colour(ref),.14),edgecolor='none'))
+      ax.add_patch(Polygon([(j+.47,cy-.43*rh),(j+.47,cy+.43*rh),(j-.47,cy+.43*rh)],facecolor=to_rgba(colour(alt),.14),edgecolor='none'))
+      ax.text(j-.17,cy-.16*rh,ref,color=colour(ref),ha='center',va='center',fontsize=14 if bold else 9,weight='bold');ax.text(j+.17,cy+.17*rh,alt,color=colour(alt),ha='center',va='center',fontsize=14 if bold else 9,weight='bold')
      else:
       base=alt if x>.5 else ref if x<.5 else ref+'/'+alt
       if kind=='genotype':
-       ax.add_patch(Rectangle((j-.47,i-.43),.94,.86,facecolor=to_rgba(colour(base),.14),edgecolor='none'))
-      elif kind=='frequency':ax.add_patch(Rectangle((j-.47,i-.43),.94,.86,facecolor=to_rgba(cmap(x),.18),edgecolor='white',lw=.4))
-      ax.text(j,i,base,ha='center',va='center',color=colour(base) if base in BASES else '#555555',fontsize=10 if kind!='frequency' else 8,weight='bold')
+       ax.add_patch(Rectangle((j-.47,cy-.43*rh),.94,.86*rh,facecolor=to_rgba(colour(base),.14),edgecolor='none'))
+      elif kind=='frequency':ax.add_patch(Rectangle((j-.47,cy-.43*rh),.94,.86*rh,facecolor=to_rgba(cmap(x),.18),edgecolor='white',lw=.4))
+      ax.text(j,cy,base,ha='center',va='center',color=colour(base) if base in BASES else '#555555',fontsize=15 if bold else 10 if kind!='frequency' else 8,weight='bold')
+  if a.bold_focal and letters:
+   for i,row in enumerate(rows):
+    if row[2]!='genotype':continue
+    for j in range(27):ax.add_patch(Rectangle((j-.47,centres[i]-.43*heights[i]),.94,.86*heights[i],facecolor='none',edgecolor='#777777',lw=.65))
+    tick=ax.get_yticklabels()[i];tick.set_fontweight('bold');tick.set_fontsize(10)
   for z in [ax,locus]:
    for spine in z.spines.values():spine.set_visible(False)
   fig.text(.025,.96,title,weight='bold',fontsize=12)
@@ -174,14 +181,16 @@ def run(a):
  pd.DataFrame(chosen).to_csv(a.output/'publication_morph_membership.tsv',sep='\t',index=False)
  pd.DataFrame(marker_audit).to_csv(a.output/'original_marker_mapping_audit.tsv',sep='\t',index=False)
  provenance={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [frozen/'audit.json',frozen/'membership_geography.tsv',frozen/'region_race_ALT_frequencies.tsv',ROOT/'analysis/yb_completed_reads_recovery_v1/frozen/HmRos_Ybv_unchanged_focal_calls.tsv.gz']}
- (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',source=str(frozen),source_hashes=provenance,individuals=len(members),SNPs=27,scale='0=REF,1=ALT',no_new_calls=True,no_phenotype_or_marker_selection_changes=True,control_frequencies_match_v7=True,focal='original corrected calls converted to ALT',phase_inferred=False,gene_annotation=gene_features if a.with_gene_annotations else None,BA_selection='Not recomputed; diagnostic is phenotype comparator cohort',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
+ (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',source=str(frozen),source_hashes=provenance,individuals=len(members),SNPs=27,scale='0=REF,1=ALT',no_new_calls=True,no_phenotype_or_marker_selection_changes=True,control_frequencies_match_v7=True,focal='original corrected calls converted to ALT',phase_inferred=False,bold_focal=a.bold_focal,gene_annotation=gene_features if a.with_gene_annotations else None,BA_selection='Not recomputed; diagnostic is phenotype comparator cohort',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
  for p in sorted(a.output.glob('*.pdf')):print('PDF\t'+str(p))
  print('COMPLETE\t'+str(len(members))+' individuals; 27 unchanged markers')
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v7');p.add_argument('--output',type=Path,default=ROOT/'analysis/Ybv_figure_set_v1');p.add_argument('--with-gene-annotations',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=ROOT/'analysis/ybv_short_ALT_geography_v7');p.add_argument('--output',type=Path,default=ROOT/'analysis/Ybv_figure_set_v1');p.add_argument('--bold-focal',action='store_true');p.add_argument('--with-gene-annotations',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ if a.bold_focal:a.with_gene_annotations=True
  if not a.submit:return run(a)
  tag=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()[:12];stage=ROOT/'analysis/Ybv_figure_set_code'/tag;stage.mkdir(parents=True,exist_ok=True);script=stage/Path(__file__).name;shutil.copy2(__file__,script)
  cmd=[sys.executable,str(script),'--source',str(a.source),'--output',str(a.output)]
+ if a.bold_focal:cmd+=['--bold-focal']
  if a.with_gene_annotations:
   annotation=Path(__file__).with_name('Ybv_gene_features.json');shutil.copy2(annotation,stage/annotation.name);cmd+=['--with-gene-annotations']
  job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G','--cpus-per-task=1','--job-name=Ybv_set','--output='+str(stage/'plot.%j.out'),'--error='+str(stage/'plot.%j.err'),'--wrap='+shlex.join(cmd)],text=True).strip()
