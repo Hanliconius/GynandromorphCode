@@ -43,7 +43,7 @@ def run(a):
  vcf=RUN/'Optix_legacy_merge_v1/Optix_legacy_plus_recalled.vcf.gz'
  keys=[tuple(r[k] for k in KEY) for r in sites.to_dict('records')];indices={k:j for j,k in enumerate(keys)}
  names=meta['sample'].tolist();matrix=np.full((len(meta),24),np.nan);seen=set()
- if a.nucleotide_colours:
+ if a.nucleotide_colours or a.allele_colours:
   cached=ROOT/'Dennis_figure_set_v1/all_individual_associated_dosages.tsv.gz'
   cached_complete=ROOT/'Dennis_figure_set_v1/complete.json'
   if json.loads(cached_complete.read_text())['status']!='COMPLETE':raise RuntimeError('Original figure set incomplete')
@@ -141,10 +141,10 @@ def run(a):
     draw(items[start:start+42],title+f' | rows {start+1}–{min(start+42,len(items))}',pdf,ba=ba)
  focal_rows=[('Left (corrected)',focal.loc['TN_Left'].to_numpy(),'genotype'),('Right (corrected)',focal.loc['TN_Right'].to_numpy(),'genotype')]
  allrows=[(meta.loc[i,'label_single_line'],matrix[i],'genotype') for i in order]
- if not a.nucleotide_colours:diagnostic('01_Dennis_all_individuals.pdf',focal_rows+allrows,'Dennis | every included comparative individual')
- if not a.nucleotide_colours:diagnostic('02_Dennis_race_frequencies.pdf',focal_rows+race_rows,'Dennis | race and phenotype frequencies')
+ if not (a.nucleotide_colours or a.allele_colours):diagnostic('01_Dennis_all_individuals.pdf',focal_rows+allrows,'Dennis | every included comparative individual')
+ if not (a.nucleotide_colours or a.allele_colours):diagnostic('02_Dennis_race_frequencies.pdf',focal_rows+race_rows,'Dennis | race and phenotype frequencies')
  selrows=[(meta.loc[i,'label_single_line'],matrix[i],'genotype') for i in order if meta.loc[i,'sample'] in selected]
- if not a.nucleotide_colours:diagnostic('03_Dennis_BA_selection_individuals.pdf',focal_rows+selrows,'Dennis | individuals used for BA selection',True)
+ if not (a.nucleotide_colours or a.allele_colours):diagnostic('03_Dennis_BA_selection_individuals.pdf',focal_rows+selrows,'Dennis | individuals used for BA selection',True)
  # Choose four morphs per phenotype by sample count, without inspecting SNP agreement.
  chosen={};morphrows={}
  for state in [1,0]:
@@ -152,8 +152,8 @@ def run(a):
   for race in races:
    ids=mm.loc[mm.race.eq(race),'sample'].tolist();v,n=pool(ids);morphrows[state].append((f'{race} | D{state} | n={len(ids)}',v,'frequency'))
  bread=[('Dennis present consensus (n=142)',focal.loc['present'].to_numpy(),'consensus'),('Dennis absent consensus (n=281)',focal.loc['absent'].to_numpy(),'consensus')]
- if a.nucleotide_colours:
-  with PdfPages(a.output/'Dennis_publication_last_panel_ATGC.pdf') as pdf:
+ if a.nucleotide_colours or a.allele_colours:
+  with PdfPages(a.output/('Dennis_publication_last_panel_allele_colours.pdf' if a.allele_colours else 'Dennis_publication_last_panel_ATGC.pdf')) as pdf:
    draw(morphrows[1]+[bread[0]]+focal_rows+[bread[1]]+morphrows[0],'Dennis | morph frequencies and corrected genotypes',pdf,'letters',True)
  else:
   with PdfPages(a.output/'04_Dennis_publication_alternatives.pdf') as pdf:
@@ -166,18 +166,20 @@ def run(a):
  sites.to_csv(a.output/'frozen_markers_and_BA.tsv',sep='\t',index=False)
  pd.DataFrame([dict(phenotype=state,race=race,selection_rule='rank by eligible sample count, no genotype matching') for state,races in chosen.items() for race in races]).to_csv(a.output/'publication_morph_membership.tsv',sep='\t',index=False)
  provenance={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [values,sites_path,meta_path,membership_path]}
- (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',sources=provenance,vcf=str(vcf),comparative_individuals=len(meta),BA_individuals=len(selected),SNPs=24,corrected_focal_matches_frozen_matrix=True,control_frequencies_verified=True,phase_inferred=False,bold_focal=a.bold_focal,nucleotide_letter_colours=BASE_COLOURS if a.nucleotide_colours else None,chosen_morphs=chosen,morph_selection='four largest eligible race groups per D phenotype, no genotype matching',optix_gene_coordinates=a.optix_gene,optix_gene_annotation_status='explicit coordinates supplied' if a.optix_gene else 'not supplied; wide locus view contains B R D windows only',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
+ (a.output/'complete.json').write_text(json.dumps(dict(status='COMPLETE',sources=provenance,vcf=str(vcf),comparative_individuals=len(meta),BA_individuals=len(selected),SNPs=24,corrected_focal_matches_frozen_matrix=True,control_frequencies_verified=True,phase_inferred=False,bold_focal=a.bold_focal,allele_colours=a.allele_colours,nucleotide_letter_colours=BASE_COLOURS if a.nucleotide_colours else None,chosen_morphs=chosen,morph_selection='four largest eligible race groups per D phenotype, no genotype matching',optix_gene_coordinates=a.optix_gene,optix_gene_annotation_status='explicit coordinates supplied' if a.optix_gene else 'not supplied; wide locus view contains B R D windows only',pages=pages,PDFs=[str(p) for p in sorted(a.output.glob('*.pdf'))]),indent=2)+'\n')
  for p in sorted(a.output.glob('*.pdf')):print('PDF\t'+str(p))
  print(f'COMPLETE\t{len(meta)} individuals; {len(selected)} BA controls; 24 unchanged SNPs')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_figure_set_v1');p.add_argument('--optix-gene',type=int,nargs=2,metavar=('START','END'));p.add_argument('--bold-focal',action='store_true');p.add_argument('--nucleotide-colours',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
- if a.bold_focal:a.nucleotide_colours=True
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=ROOT/'Dennis_figure_set_v1');p.add_argument('--optix-gene',type=int,nargs=2,metavar=('START','END'));p.add_argument('--allele-colours',action='store_true');p.add_argument('--bold-focal',action='store_true');p.add_argument('--nucleotide-colours',action='store_true');p.add_argument('--submit',action='store_true');a=p.parse_args()
+ if a.bold_focal:a.nucleotide_colours=not a.allele_colours
+ if a.allele_colours:a.nucleotide_colours=False
  if a.submit:
   helper=Path(__file__).with_name('plot_Dennis_nucleotide_letters.py');digest=hashlib.sha256(Path(__file__).read_bytes()+helper.read_bytes()).hexdigest()[:12];stage=ROOT/'Dennis_figure_set_code'/digest;stage.mkdir(parents=True,exist_ok=True)
   for f in [Path(__file__),helper]:shutil.copy2(f,stage/f.name)
   args=[sys.executable,str(stage/Path(__file__).name),'--source',str(a.source),'--output',str(a.output)]
   if a.nucleotide_colours:args+=['--nucleotide-colours']
+  if a.allele_colours:args+=['--allele-colours']
   if a.bold_focal:args+=['--bold-focal']
   if a.optix_gene:args+=['--optix-gene',*map(str,a.optix_gene)]
   job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G','--cpus-per-task=1','--job-name=Dennis_set','--output='+str(stage/'plot.%j.out'),'--error='+str(stage/'plot.%j.err'),'--wrap='+shlex.join(args)],text=True).strip();print('JOB\t'+job);print('LOG_DIR\t'+str(stage));print('OUTPUT\t'+str(a.output))
