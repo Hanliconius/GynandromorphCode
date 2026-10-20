@@ -1,0 +1,28 @@
+{
+  "source_directory": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/rosina_genomewide_joint_recall/20261014T223341Z_f956c8bc/Optix_Arnaud_review_nonPK_v2/merged",
+  "required_files": [
+    "Dennis_BA90_intervals_frequencies.tsv",
+    "Dennis_BA90_intervals_sites.tsv",
+    "phenotype_manifest.tsv",
+    "Dennis_frequency_group_membership.json"
+  ],
+  "producer_branch": "optix-joint-recall-20261014",
+  "variants": 24,
+  "selection_unchanged": true,
+  "control_frequencies_verified_against_frozen_matrix": true,
+  "PDFs": [
+    "01_Dennis_all_individuals.pdf",
+    "02_Dennis_race_frequencies.pdf",
+    "03_Dennis_BA_selection_individuals.pdf",
+    "04_Dennis_publication_alternatives.pdf"
+  ],
+  "publication_views": [
+    "local consensus and unphased genotype",
+    "local consensus with four largest eligible morphs per phenotype",
+    "wide locus consensus and unphased genotype",
+    "wide locus consensus with morphs"
+  ],
+  "optix_gene_annotation": "Only plotted when verified native coordinates explicitly supplied with --optix-gene START END",
+  "phylogeny": "Not inferred or drawn",
+  "output_directory": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Dennis_figure_set_v1"
+}
