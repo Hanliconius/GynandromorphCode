@@ -124,7 +124,7 @@ def export(out):
         stable='GYNANDROMORPH_TN' if focal_row else bios[0] if len(bios)==1 else runs[0] if runs else ids[0]
         sheets=[r['row'] for r in rr if r['kind']=='sheet'];optix=[r['row'] for r in rr if r['kind']=='optix'];yb=[r['row'] for r in rr if r['kind']=='yb'];led=[r['row'] for r in rr if r['kind']=='phenotype_ledger'];provided=[r['row'] for r in rr if r['kind']=='provided_specimens'];ena=[r['row'] for r in rr if r['kind']=='ENA_identity']
         def field(records,key):return one([r.get(key,'') for r in records])
-        taxon=field(optix,'taxon') or field(yb,'race') or field(sheets,'Taxon Name') or field(ena,'scientific_name')
+        taxon=useful(field(optix,'taxon')) or useful(field(yb,'race')) or useful(field(sheets,'Taxon Name')) or useful(field(led,'taxon')) or useful(field(ena,'scientific_name'))
         row=dict(specimen_id=stable,specimen_name=field(provided,'specimen_name') or field(sheets,'SequenceID') or field(ena,'sample_alias') or stable,
             taxon=taxon,population=field(yb,'race') or field(optix,'group') or taxon)
         flags=[]
@@ -189,7 +189,113 @@ def export(out):
     result=dict(status='COMPLETE',specimens=len(rows),Fig3a_cohort_accessions=len(ba_a),Fig3b_cohort_representatives=len(ba_b),
         Fig3a_review_rows=sum(r['BA_Fig3a']=='TRUE' for r in rows),Fig3b_review_rows=sum(r['BA_Fig3b']=='TRUE' for r in rows),
         conflicts=len(conflicts),sources=sources,review_file_sha256=sha(target),review_csv_sha256=sha(out/'specimens_for_review.csv'),phenotypes_inferred_from_genotypes=False)
+    review,repair=repair_export(out,rows)
+    result.update(review_schema='compact_with_evidence',repair=repair,review_file_sha256=sha(target),review_csv_sha256=sha(out/'specimens_for_review.csv'))
     manifest.write_text(json.dumps(result,indent=2)+'\n');print('SPECIMEN_REVIEW\t'+str(target),flush=True)
+
+
+REVIEW_FIELDS=['specimen_id','specimen_name','taxon','population','B','D','R',
+    'Yb_dorsal','Yb_ventral','N','Sb','Br','recorded_phenotype_label',
+    'Ivory_state_recorded','BA_Fig3a','BA_Fig3b','D_used_Fig3a','Ybv_used_Fig3b',
+    'country','geography_used_Fig3b','run_accessions','BioSample_accessions',
+    'data_type','review_status','review_notes']
+
+def useful(value):
+    value=clean(value)
+    return '' if value.lower() in {'unresolved taxon','unknown','unresolved','na','nan','none','?'} else value
+
+def repair_export(out, original):
+    """Presentation/evidence repair only. Frozen cohorts and genotype inputs are never edited."""
+    out.mkdir(parents=True,exist_ok=True)
+    manual={r['specimen_name']:r for r in provided_pk_rows()}
+    labels={'P1009':'cydno galanthus','P1010':'cydno x pale PK',
+        'P1011':'F1 pale PK x cydno','P1012':'F1 pale PK x cydno',
+        'P1013':'BC of F1 x cydno','P1014':'BC of F1 x cydno','P1015':'BC of F1 x cydno'}
+    countries={'French Guiana','Colombia','Panama','Panamá','Venezuela','Peru','Ecuador','Brazil','Costa Rica'}
+    review=[];evidence=[];issues=[];changes=[];members=[]
+    for source in original:
+        r=dict(source);sid=r['specimen_id'];name=r['specimen_name'];m=manual.get(name,{})
+        flags=[x for x in clean(r.get('review_flags')).split('; ') if x]
+        def flag(message):
+            if message not in flags:flags.append(message)
+        def change(field,value,reason):
+            old=r.get(field,'')
+            if old!=value:
+                changes.append(dict(specimen_id=sid,field=field,previous=old,corrected=value,reason=reason))
+                r[field]=value
+        if m:
+            change('recorded_phenotype_label',labels.get(name,m['phenotype_label']),'User-provided specimen table')
+            if not useful(r.get('taxon')):
+                cohort='Butterfly world, piano keys' if m['phenotype_label'].startswith('PK') else 'Butterfly world, ivory stock' if m['phenotype_label']=='ivory' else 'Heliconius cydno ssp. galanthus' if name=='P1009' else 'Butterfly world, cydno / PK cross'
+                change('taxon',cohort,'Recorded stock/phenotype identification; not independent taxonomic verification')
+                if name!='P1009':flag('Taxon uses laboratory stock label; formal species unverified')
+        pop=next((useful(r.get(k)) for k in ['population','population_used_Fig3b','population_used_Fig3a','taxon'] if useful(r.get(k))), '?')
+        change('population',pop,'Known name takes precedence over placeholder')
+        for trait in TRAITS:
+            value=useful(r.get(trait));supplied=useful(r.get(trait+'_specimen_table'))
+            provenance='Existing ledger / analysis annotation' if value else ''
+            if not value and supplied:
+                value=supplied;provenance='Author-supplied specimen table (recorded B/D/R code)'
+                flag(trait+': restored author-supplied code; existing analysis unchanged')
+            if value and supplied and value!=supplied:flag(trait+': analysis and author-supplied table disagree')
+            if not value:value='?';provenance='Unresolved in exported evidence; requires historical source reconciliation'
+            change(trait,value,'Restore explicit supplied annotation or label unknown')
+            r[trait+'_review_source']=provenance
+        if m and m['phenotype_label'].startswith('PK') and any(r[k]=='?' for k in ('Yb_dorsal','Yb_ventral')):
+            flag('PK Yb surface annotations missing from exported sources; do not infer from optix/ivory genotype')
+        for field in ['country','sheet_Country']:
+            if r.get(field):change(field,r[field].replace('PanamÃ¡','Panamá'),'Correct UTF-8 mojibake')
+        bad=r.get('sheet_Called_sites','')
+        if bad:
+            try:float(bad)
+            except (ValueError,TypeError):
+                flag('Malformed historical source statistics; original fields retained, no numeric values invented')
+                pubs=[v for k,v in r.items() if k.startswith('sheet_Publication')]
+                if not useful(r.get('country')) and len(pubs)==1 and pubs[0] in countries:
+                    change('country',pubs[0],'Country explicitly recorded in malformed source row')
+        if not r.get('resources_recorded'):flag('No resource recorded in ledger; data absence not established')
+        for fig in ['3a','3b']:
+            accessions=[s for s in str(r.get('BA_Fig'+fig+'_accessions','')).split('; ') if s]
+            if len(accessions)>1:flag('Fig'+fig+': multiple cohort accessions share this specimen identity; verify independence/duplicate contribution')
+            for accession in accessions:
+                members.append(dict(figure='Fig'+fig,cohort_accession=accession,specimen_id=sid,
+                    specimen_name=name,phenotype_used=r.get('D_used_Fig3a' if fig=='3a' else 'Ybv_used_Fig3b',''),
+                    identity_review='Verify duplicate contribution' if len(accessions)>1 else ''))
+        missing=[k for k in TRAITS if r[k]=='?']
+        if missing:flag('Unresolved phenotype scores: '+', '.join(missing))
+        if not useful(r.get('taxon')):change('taxon','?','No taxon recovered');flag('Taxon unresolved')
+        r['review_status']='; '.join(flags) or 'No issue identified by ledger checks'
+        issues.extend(dict(specimen_id=sid,specimen_name=name,issue=f) for f in flags)
+        review.append({k:r.get(k,'') for k in REVIEW_FIELDS})
+        audit=dict(source)
+        for k,v in r.items():
+            if k not in source or source.get(k)!=v:audit['corrected_'+k]=v
+        evidence.append(audit)
+    if len({r['specimen_id'] for r in review})!=len(review):raise RuntimeError('Duplicate stable specimen ID')
+    write(out/'specimens_for_review.tsv',review,REVIEW_FIELDS)
+    with (out/'specimens_for_review.csv').open('w',newline='') as f:
+        w=csv.DictWriter(f,fieldnames=REVIEW_FIELDS);w.writeheader();w.writerows(review)
+    write(out/'specimen_source_evidence.tsv',evidence)
+    write(out/'specimen_review_issues.tsv',issues,['specimen_id','specimen_name','issue'])
+    write(out/'specimen_review_changes.tsv',changes,['specimen_id','field','previous','corrected','reason'])
+    write(out/'specimen_BA_membership.tsv',members,['figure','cohort_accession','specimen_id','specimen_name','phenotype_used','identity_review'])
+    meanings={'specimen_id':'Stable identifier: retain unchanged.',
+        'B':'Red band: 1 present, 0 absent, ? unresolved.','D':'Dennis: 1 present, 0 absent, ? unresolved.',
+        'R':'Ray: 1 present, 0 absent, ? unresolved.','Yb_dorsal':'Dorsal yellow band: 1 present, 0 absent, ? unresolved.',
+        'Yb_ventral':'Ventral yellow band: 1 present, 0 absent, ? unresolved.',
+        'BA_Fig3a':'Current Dennis cohort membership, not callability at every SNP.',
+        'BA_Fig3b':'Current Yb(v) cohort membership, not callability at every SNP.',
+        'review_notes':'Author edits/decisions.','review_status':'Specific unresolved metadata/identity issues.',
+        'D_used_Fig3a':'Frozen Dennis analysis phenotype.','Ybv_used_Fig3b':'Frozen Yb(v) analysis phenotype.'}
+    write(out/'column_dictionary.tsv',[dict(column=k,meaning=meanings.get(k,'Recorded review field; source evidence retained separately.')) for k in REVIEW_FIELDS])
+    (out/'README.txt').write_text('1=present, 0=absent, ?=unresolved; unknown never means absence.\nFig3a=Dennis; Fig3b=Yb(v). BA flags and *_used_Fig3* record existing frozen analyses, not per-SNP callability.\nMissing B/D/R codes are restored only from explicit author-supplied codes. Missing Yb surface scores are not inferred from optix/ivory genotypes. Laboratory stock labels do not establish formal species.\nEdit review fields/notes; retain specimen_id. Nothing is applied to analyses automatically.\nSource evidence preserves original fields, including malformed historical statistics. BA membership has one row per cohort accession; shared specimen identities remain flagged rather than silently split.\n')
+    summary=dict(status='REPAIRED_WITH_EXPLICIT_UNRESOLVED',specimens=len(review),columns=len(REVIEW_FIELDS),
+        changes=len(changes),unknown_phenotypes={k:sum(r[k]=='?' for r in review) for k in TRAITS},
+        Fig3a_cohort_accessions=sum(r['figure']=='Fig3a' for r in members),
+        Fig3b_cohort_representatives=sum(r['figure']=='Fig3b' for r in members),analyses_changed=False)
+    (out/'repair_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+    return review,summary
+
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);a=p.parse_args();export(a.output)
