@@ -40,7 +40,9 @@ def yb_example_groups(group):
 def prepare(a):
     features=Path(__file__).resolve().parents[2]/'yb/Ybv_gene_features.json'
     ba_helper=Path(__file__).with_name('stack_LR_heterozygosity_BA.py')
-    inputs=[ba_helper,DEN/'new_comparative_SNP_scores.tsv.gz',DEN/'Dennis_BA90_intervals_sites.tsv',
+    broad_helper=Path(__file__).with_name('extend_Ybv_BA_region.py')
+    review_helper=Path(__file__).with_name('export_gynandro_specimen_review.py')
+    inputs=[ba_helper,broad_helper,review_helper,DEN/'new_comparative_SNP_scores.tsv.gz',DEN/'Dennis_BA90_intervals_sites.tsv',
         DEN/'Dennis_frequency_group_membership.json',ROOT/'analysis/ybv_REF_ALT_rebuild_v1/SNPs.tsv',
         ROOT/'analysis/ybv_REF_ALT_rebuild_v1/individual_ALT_dosages.tsv.gz',HO/'complete.json',HO/'worker.py',HO/'Ivory_Yb_exploratory_fixed_parameter_pairs.tsv.gz',
         RUN/'optix_consistent_v2/reciprocal_mixture/optix_reciprocal_L_R_genotype_pairs.tsv.gz',
@@ -62,13 +64,25 @@ def prepare(a):
     out.mkdir(parents=True,exist_ok=True);(out/'logs').mkdir(exist_ok=True)
     (out/'complete.json').unlink(missing_ok=True)
     shutil.copy2(__file__,out/'worker.py');shutil.copy2(features,out/'Ybv_gene_features.json');shutil.copy2(ba_helper,out/'ba_worker.py')
+    shutil.copy2(broad_helper,out/'broad_BA_worker.py');shutil.copy2(review_helper,out/'review_worker.py')
     save(out/'run.json',dict(workflow='Optix_Ybv_integrated',input_hashes={str(p):sha(p) for p in inputs if p!=GFF},
         native_GFF=dict(path=str(GFF),bytes=GFF.stat().st_size),spans=SPANS,window_bp=10000,slide_bp=2500,
-        genotypes_and_cohorts_changed=False,mixture_refitted=False,code_sha256=sha(__file__)))
+        publication_genotypes_and_cohorts_changed=False,comparative_Yb_BA_calling_extended=True,mixture_refitted=False,BA_threshold=.9,code_sha256=sha(__file__)))
+    review_job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G',
+        '--job-name=Specimen_review','--output='+str(out/'logs/review.%j.out'),'--error='+str(out/'logs/review.%j.err'),
+        '--wrap='+shlex.join([sys.executable,str(out/'review_worker.py'),'--output',str(out/'specimen_review')])],text=True).strip().split(';')[0]
+    jobs=dict(review=review_job);save(out/'jobs.json',jobs);deps=[review_job]
+    broad_complete=out/'Ybv_BA_broad/complete.json'
+    ready=broad_complete.is_file() and json.loads(broad_complete.read_text()).get('status')=='COMPLETE' and json.loads(broad_complete.read_text()).get('cohort_sha256')==sha(V7/'membership_geography.tsv')
+    if not ready:
+        spec=importlib.util.spec_from_file_location('broad_ba',out/'broad_BA_worker.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        finish,broad_jobs=module.submit(out);deps.append(finish)
+        jobs.update({'yb_ba_'+k:v for k,v in broad_jobs.items()});save(out/'jobs.json',jobs)
     job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G',
+        '--dependency=afterok:'+':'.join(deps),'--kill-on-invalid-dep=yes',
         '--job-name=OxYb_panel','--output='+str(out/'logs/plot.%j.out'),'--error='+str(out/'logs/plot.%j.err'),
         '--wrap='+shlex.join([sys.executable,str(out/'worker.py'),'--output',str(out),'--run'])],text=True).strip().split(';')[0]
-    save(out/'jobs.json',dict(plot=job));print('JOB\t'+job+'\nOUTPUT\t'+str(out))
+    jobs['plot']=job;save(out/'jobs.json',jobs);print('JOB\t'+job+'\nREVIEW\t'+review_job+'\nOUTPUT\t'+str(out))
 
 def publication_data():
     import numpy as np,pandas as pd
@@ -166,10 +180,10 @@ def draw_letters(ax,data):
                 pairs=[(b,'#D55E00'),(a,'#54278F')] if yb else [(a,'#54278F'),(b,'#D55E00')]
                 for yy,(base,col) in zip([cy-.22*rh,cy+.22*rh],pairs):ax.text(j,yy,base,ha='center',va='center',color=col,weight='bold',fontsize=13)
             else:
-                base=a if x>.5 else b if x<.5 else a+'/'+b
-                background=to_rgba(cmap(x),.18) if data.get('palette_type')=='ALT' else cmap(x)
+                base=a if x>.5 else b if x<.5 else '='
+                background=cmap(x)
                 if kind!='consensus':ax.add_patch(Rectangle((j-.47,cy-.43*rh),.94,.86*rh,facecolor=('#E4DDED' if x>.5 else '#FAE4D4') if bold else background,edgecolor='white',lw=.3))
-                letter_colour=('#54278F' if x>.5 else '#D55E00') if kind!='frequency' or data.get('palette_type')=='ALT' else ('white' if x>.8 else '#333333')
+                letter_colour=('#54278F' if x>.5 else '#D55E00') if kind!='frequency' else ('white' if x>.8 else '#333333')
                 ax.text(j,cy,base,ha='center',va='center',fontsize=14 if bold else 9 if kind=='consensus' else 8,weight='bold',color=letter_colour)
             if bold:ax.add_patch(Rectangle((j-.47,cy-.43*rh),.94,.86*rh,facecolor='none',edgecolor='#777777',lw=.65))
         if bold:ax.get_yticklabels()[i].set_weight('bold');ax.get_yticklabels()[i].set_fontsize(9)
@@ -183,8 +197,19 @@ def run(out):
     spec=importlib.util.spec_from_file_location('old_ho',HO/'worker.py');old=importlib.util.module_from_spec(spec);spec.loader.exec_module(old)
     plt.rcParams.update({'pdf.fonttype':42,'font.size':8,'font.family':'DejaVu Sans'})
     data=publication_data();native=genes();yf=json.loads((out/'Ybv_gene_features.json').read_text())
-    spec=importlib.util.spec_from_file_location('frozen_ba',out/'ba_worker.py');ba_helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(ba_helper)
-    den_ba,yb_ba,ba_cohorts=ba_helper.load_scores(out)
+    den_ba=pd.read_csv(DEN/'new_comparative_SNP_scores.tsv.gz',sep='\t')
+    den_ba=den_ba.loc[den_ba.module.eq('Dennis')]
+    frozen=pd.read_csv(DEN/'Dennis_BA90_intervals_sites.tsv',sep='\t')
+    check=frozen.merge(den_ba,on=['chrom','pos','ref','alt'],suffixes=('_frozen','_all'),validate='one_to_one')
+    if len(check)!=len(frozen) or not np.allclose(check.balanced_accuracy_frozen,check.balanced_accuracy_all,atol=1e-9):
+        raise RuntimeError('Dennis BA values differ from frozen panel')
+    broad=out/'Ybv_BA_broad';ready=json.loads((broad/'complete.json').read_text())
+    if ready['status']!='COMPLETE' or ready['cohort_sha256']!=sha(V7/'membership_geography.tsv'):
+        raise RuntimeError('Full-span Yb BA is not complete for the current cohort')
+    yb_ba=pd.read_csv(broad/'Ybv_all_SNP_BA.tsv.gz',sep='\t')
+    ba_cohorts=dict(Dennis={int(g['phenotype']):g['n'] for g in json.loads((DEN/'Dennis_frequency_group_membership.json').read_text())},
+                    Ybv={1:ready['positive_n'],0:ready['negative_n']})
+
     # One tighter common Ho scale, determined before drawing either locus.
     window_tables={};max_ho=0.
     for locus in data:
@@ -196,68 +221,79 @@ def run(out):
             finite=w[['left_Ho','right_Ho']].to_numpy().ravel();finite=finite[np.isfinite(finite)]
             if len(finite):max_ho=max(max_ho,float(finite.max()))
     ho_top=min(1.,max(.3,float(np.ceil(max_ho*1.1*10)/10)))
-    fig=plt.figure(figsize=(14,17.5));audit=[]
-    for index,(locus,d) in enumerate(data.items()):
-        chrom,lo,hi=SPANS[locus];base=.515 if index==0 else .035
-        left,width=.35,.62
-        ba=fig.add_axes([left,base+.37,width,.075]);ho=fig.add_axes([left,base+.265,width,.09]);ann=fig.add_axes([left,base+.185,width,.065]);heat=fig.add_axes([left,base+.010,width,.16])
-        fig.text(.025,base+.46,('A  Optix / Dennis' if locus=='Dennis' else 'B  Ivory / Yb(v)'),fontsize=13,weight='bold')
-        scores=den_ba if locus=='Dennis' else yb_ba
-        if locus=='Dennis':
-            ba.scatter(scores.pos,scores.balanced_accuracy,s=6,c='#333333',alpha=.65,linewidths=0)
-        else:
-            for rule,marker,col in [('carrier','o','#333333'),('homozygote','x','#8A8A8A')]:
-                take=scores.loc[scores.rule.eq(rule)]
-                ba.scatter(take.pos,take.balanced_accuracy,s=8,c=col,marker=marker,alpha=.65,linewidths=.5,label=rule+' rule')
-            lower,upper=int(scores.pos.min()),int(scores.pos.max())
-            for x1,x2 in [(lo,lower),(upper,hi)]:
-                if x2>x1:ba.axvspan(x1,x2,facecolor='#eeeeee',hatch='///',edgecolor='#cccccc',lw=0)
-            ba.legend(fontsize=6,ncol=2,loc='upper right')
-            ba.text(.01,.08,'Hatched: no expanded-cohort BA data',transform=ba.transAxes,fontsize=6)
-        ba.axhline(.5,c='#aaaaaa',lw=.5,ls=':');ba.axhline(.9,c='#B15422',lw=.6,ls='--')
-        ba.set_xlim(lo,hi);ba.set_ylim(0,1.02);ba.set_ylabel('Phenotype BA')
-        ba.tick_params(axis='x',labelbottom=False);ba.spines[['top','right']].set_visible(False)
-        for cutoff,style in [(.95,'-'),(.99,'--')]:
-            w=window_tables[(locus,cutoff)]
-            for side,color in [('left','#1764AB'),('right','#D04B35')]:ho.plot(w.mid,w[side+'_Ho'],color=color,ls=style,lw=1.25 if cutoff==.95 else .8,label=side.title()+f' | P >= {cutoff}')
-        ho.set_xlim(lo,hi);ho.set_ylim(0,ho_top);ho.set_ylabel('Heterozygous fraction\namong callable SNPs');ho.tick_params(axis='x',labelbottom=False)
-        ho.legend(ncol=2,fontsize=7,loc='upper right');ho.spines[['top','right']].set_visible(False)
-        ann.set_xlim(lo,hi);ann.set_ylim(-.2,4.5);ann.axhline(0,color='#999999',lw=.5)
-        for label,a,b in INTERVALS[locus]:
-            ann.add_patch(Rectangle((a,.1),b-a,.24,facecolor='#555555' if label.startswith(('D','Yb')) else '#BBBBBB'))
-            ann.text((a+b)/2,.5 if label!='D2' else .9,label,ha='center',fontsize=7)
-        gs=[g for g in native if g['chrom']==chrom]
-        if locus=='Yb(v)':
-            c=yf['cortex'];gs=[g for g in gs if not (g['start']==c['start'] and g['end']==c['end'])]
-            gs+=[dict(chrom=chrom,label='cortex',**{k:c[k] for k in ['start','end','strand','exons']})]
-            iv=yf['ivory'];gs+=[dict(chrom=chrom,start=min(x[0] for x in iv['exons']),end=max(x[1] for x in iv['exons']),strand='+',label='ivory (continues)',exons=iv['exons'])]
-        lanes=[lo-1]*3
-        for g in sorted(gs,key=lambda z:z['start']):
-            lane=next((i for i,end in enumerate(lanes) if g['start']>end),int(np.argmin(lanes)))
-            lanes[lane]=g['end']+(hi-lo)*.04;y=1.5+lane*.95;a=max(lo,g['start']);b=min(hi,g['end'])
-            if b<a:continue
-            col='#267B82' if g['label'].startswith('ivory') else '#444444'
-            ann.plot([a,b],[y,y],c=col,lw=.65)
-            for a1,b1 in g['exons']:
-                if b1<lo or a1>hi:continue
-                ann.add_patch(Rectangle((max(lo,a1),y-.11),min(hi,b1)-max(lo,a1)+1,.22,facecolor=col,lw=0))
-            x1,x2=(a,b) if g['strand']=='+' else (b,a)
-            ann.annotate('',xy=(x2,y),xytext=(x1,y),arrowprops=dict(arrowstyle='->',color=col,lw=.6))
-            ann.text((a+b)/2,y+.2,g['label'],fontsize=6.5,ha='center',color=col)
-        ticks=np.linspace(lo,hi,5);ann.set_xticks(ticks,[f'{v/1e6:.3f}' for v in ticks]);ann.set_yticks([])
-        ann.set_xlabel(('Chromosome 18' if locus=='Dennis' else 'Chromosome 15')+' (Rosina, Mb)',fontsize=7,labelpad=1)
-        for sp in ann.spines.values():sp.set_visible(False)
-        draw_letters(heat,d)
-        for j,pos in enumerate(d['sites']):fig.add_artist(ConnectionPatch(xyA=(int(pos),0),coordsA=ann.transData,xyB=(j,-.5),coordsB=heat.transData,color='#BFC3C7',lw=.35,alpha=.5,clip_on=False))
-        fig.text(.35,base-.004,d['polarity'],fontsize=7)
-        audit.append(dict(locus=locus,chrom=chrom,span=[lo,hi],markers=len(d['sites']),genes=gs,rows=[r[0] for r in d['rows']],display_morph_changes=d.get('display_changes',[])))
-    fig.text(.025,.014,'Ho: 10-kb windows / 2.5-kb slide; same callable SNPs on both sides. Gene tracks and connector origins retain full genomic spans.\nSNP panels: frozen publication cohorts, allele orientations and corrected genotypes. Split cells are unphased heterozygotes; consensus is a per-site majority base.',fontsize=7)
-    dest=out/'Optix_Ybv_heterozygosity_annotation_genotypes.pdf';fig.savefig(dest);plt.close(fig)
-    save(out/'complete.json',dict(status='COMPLETE',PDF=str(dest),panels=audit,window_bp=10000,slide_bp=2500,
-         spans_changed=False,genotypes_or_cohorts_changed=False,ivory_annotation_partial=True,annotation_source=str(GFF),
+    pdfs=[]
+    for dot_version in [False,True]:
+        fig=plt.figure(figsize=(14,15.5 if dot_version else 17.5));audit=[]
+        for index,(locus,d) in enumerate(data.items()):
+            chrom,lo,hi=SPANS[locus];base=.515 if index==0 else .035
+            left,width=.35,.62
+            ba=None if dot_version else fig.add_axes([left,base+.37,width,.075])
+            ho=fig.add_axes([left,base+(.325 if dot_version else .265),width,.12 if dot_version else .09])
+            ann=fig.add_axes([left,base+(.225 if dot_version else .185),width,.085 if dot_version else .065])
+            heat=fig.add_axes([left,base+.010,width,.19 if dot_version else .16])
+            fig.text(.025,base+.46,('A  Optix / Dennis' if locus=='Dennis' else 'B  Ivory / Yb(v)'),fontsize=13,weight='bold')
+            scores=den_ba if locus=='Dennis' else yb_ba
+            if not dot_version:
+                if locus=='Dennis':
+                    ba.scatter(scores.pos,scores.balanced_accuracy,s=6,c='#333333',alpha=.65,linewidths=0)
+                else:
+                    for rule,marker,col in [('carrier','o','#333333'),('homozygote','x','#8A8A8A')]:
+                        take=scores.loc[scores.rule.eq(rule)]
+                        ba.scatter(take.pos,take.balanced_accuracy,s=8,c=col,marker=marker,alpha=.65,linewidths=.5,label=rule+' rule')
+                    ba.legend(fontsize=6,ncol=2,loc='upper right')
+                    ba.text(.01,.08,'Full-span comparative calls; unscoreable SNPs remain missing',transform=ba.transAxes,fontsize=6)
+                ba.axhline(.5,c='#aaaaaa',lw=.5,ls=':');ba.axhline(.9,c='#B15422',lw=.6,ls='--')
+                ba.set_xlim(lo,hi);ba.set_ylim(0,1.02);ba.set_ylabel('Phenotype BA')
+                ba.tick_params(axis='x',labelbottom=False);ba.spines[['top','right']].set_visible(False)
+            for cutoff,style in [(.95,'-'),(.99,'--')]:
+                w=window_tables[(locus,cutoff)]
+                for side,color in [('left','#1764AB'),('right','#D04B35')]:ho.plot(w.mid,w[side+'_Ho'],color=color,ls=style,lw=1.25 if cutoff==.95 else .8,label=side.title()+f' | P >= {cutoff}')
+            ho.set_xlim(lo,hi);ho.set_ylim(0,ho_top);ho.set_ylabel('Heterozygous fraction\namong callable SNPs');ho.tick_params(axis='x',labelbottom=False)
+            ho.legend(ncol=2,fontsize=7,loc='upper right');ho.spines[['top','right']].set_visible(False)
+            ann.set_xlim(lo,hi);ann.set_ylim(-.2,5.5 if dot_version else 4.5);ann.axhline(0,color='#999999',lw=.5)
+            for label,a,b in INTERVALS[locus]:
+                ann.add_patch(Rectangle((a,.1),b-a,.24,facecolor='#555555' if label.startswith(('D','Yb')) else '#BBBBBB'))
+                ann.text((a+b)/2,.5 if label!='D2' else .9,label,ha='center',fontsize=7)
+            gs=[g for g in native if g['chrom']==chrom]
+            if locus=='Yb(v)':
+                c=yf['cortex'];gs=[g for g in gs if not (g['start']==c['start'] and g['end']==c['end'])]
+                gs+=[dict(chrom=chrom,label='cortex',**{k:c[k] for k in ['start','end','strand','exons']})]
+                iv=yf['ivory'];gs+=[dict(chrom=chrom,start=min(x[0] for x in iv['exons']),end=max(x[1] for x in iv['exons']),strand='+',label='ivory (continues)',exons=iv['exons'])]
+            lanes=[lo-1]*3
+            for g in sorted(gs,key=lambda z:z['start']):
+                lane=next((i for i,end in enumerate(lanes) if g['start']>end),int(np.argmin(lanes)))
+                lanes[lane]=g['end']+(hi-lo)*.04;y=1.5+lane*.95;a=max(lo,g['start']);b=min(hi,g['end'])
+                if b<a:continue
+                col='#267B82' if g['label'].startswith('ivory') else '#444444'
+                ann.plot([a,b],[y,y],c=col,lw=.65)
+                for a1,b1 in g['exons']:
+                    if b1<lo or a1>hi:continue
+                    ann.add_patch(Rectangle((max(lo,a1),y-.11),min(hi,b1)-max(lo,a1)+1,.22,facecolor=col,lw=0))
+                x1,x2=(a,b) if g['strand']=='+' else (b,a)
+                ann.annotate('',xy=(x2,y),xytext=(x1,y),arrowprops=dict(arrowstyle='->',color=col,lw=.6))
+                ann.text((a+b)/2,y+.2,g['label'],fontsize=6.5,ha='center',color=col)
+            if dot_version:
+                rules=[('carrier',4.45)] if locus=='Dennis' else [('carrier',4.35),('homozygote',5.0)]
+                for rule,y_dot in rules:
+                    take=scores if locus=='Dennis' else scores.loc[scores.rule.eq(rule)]
+                    take=take.loc[take.balanced_accuracy>=.9]
+                    ann.scatter(take.pos,np.full(len(take),y_dot),s=9,c='#C62828',linewidths=0,zorder=8)
+                    ann.text(-.01,y_dot,'BA >=0.90'+(' '+rule if locus!='Dennis' else ''),transform=ann.get_yaxis_transform(),ha='right',va='center',fontsize=6,color='#C62828')
+            ticks=np.linspace(lo,hi,5);ann.set_xticks(ticks,[f'{v/1e6:.3f}' for v in ticks]);ann.set_yticks([])
+            ann.set_xlabel(('Chromosome 18' if locus=='Dennis' else 'Chromosome 15')+' (Rosina, Mb)',fontsize=7,labelpad=1)
+            for sp in ann.spines.values():sp.set_visible(False)
+            draw_letters(heat,d)
+            for j,pos in enumerate(d['sites']):fig.add_artist(ConnectionPatch(xyA=(int(pos),0),coordsA=ann.transData,xyB=(j,-.5),coordsB=heat.transData,color='#BFC3C7',lw=.35,alpha=.5,clip_on=False))
+            fig.text(.35,base-.004,d['polarity'],fontsize=7)
+            audit.append(dict(locus=locus,chrom=chrom,span=[lo,hi],markers=len(d['sites']),genes=gs,rows=[r[0] for r in d['rows']],display_morph_changes=d.get('display_changes',[])))
+        fig.text(.025,.004,'Ho: 10-kb windows / 2.5-kb slide; common callable SNPs per side. Full genomic spans retained.\nBA excludes focal specimens; red dots mark BA >=0.90 in the alternative. Yb score rules are labelled separately.\nOrange/purple encode allele identity/frequency. Two-letter cells are called unphased heterozygotes; = denotes a pooled 50:50 tie.\nPublication SNP cohorts and corrected genotypes are retained; the elevatus example replaces linaresi.',fontsize=6.5)
+        dest=out/('Optix_Ybv_heterozygosity_annotation_genotypes_BA_dots.pdf' if dot_version else 'Optix_Ybv_heterozygosity_annotation_genotypes.pdf');fig.savefig(dest);plt.close(fig)
+        pdfs.append(str(dest));print('PDF\t'+str(dest),flush=True)
+    save(out/'complete.json',dict(status='COMPLETE',PDFs=pdfs,panels=audit,window_bp=10000,slide_bp=2500,
+         spans_changed=False,publication_genotypes_or_cohorts_changed=False,comparative_Yb_BA_calling_extended=True,ivory_annotation_partial=True,annotation_source=str(GFF),
          BA_cohorts=ba_cohorts,Yb_BA_rules=['carrier','homozygote'],BA_above_Ho=True,
-         Ho_ylim=[0,ho_top],heterozygote_style='top-bottom rectangles; unphased'))
-    print('PDF\t'+str(dest));print('STATUS\tCOMPLETE')
+         Ho_ylim=[0,ho_top],heterozygote_style='top-bottom rectangles; unphased',pooled_tie_symbol='=',BA_threshold=.9,Yb_BA_span=ready['span']))
+    print('STATUS\tCOMPLETE')
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,default=ROOT/'analysis/Optix_Ybv_integrated_figure')
