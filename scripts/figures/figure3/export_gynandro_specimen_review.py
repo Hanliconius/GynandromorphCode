@@ -56,8 +56,10 @@ class Identities:
 def export(out):
     import pandas as pd,numpy as np
     out.mkdir(parents=True,exist_ok=True);target=out/'specimens_for_review.tsv';manifest=out/'review_manifest.json'
-    if target.exists() and manifest.exists() and sha(target)!=json.loads(manifest.read_text()).get('review_file_sha256'):
-        print('REVIEW_PRESERVED\tExisting review table contains edits; not overwritten',flush=True);return
+    if manifest.exists():
+        previous=json.loads(manifest.read_text());csvfile=out/'specimens_for_review.csv'
+        changed=(target.exists() and sha(target)!=previous.get('review_file_sha256')) or (csvfile.exists() and previous.get('review_csv_sha256') and sha(csvfile)!=previous['review_csv_sha256'])
+        if changed:print('REVIEW_PRESERVED\tExisting review table contains edits; not overwritten',flush=True);return
     identity=Identities();records=[];sources=[];presence=defaultdict(set)
     def add(kind,path,rows,id_fields):
         sources.append(dict(kind=kind,path=str(path),sha256=sha(path) if isinstance(path,Path) and path.is_file() else '',rows=len(rows)))
@@ -69,7 +71,7 @@ def export(out):
                     if token and token.lower() not in {'na','nan','none','unknown','?'}:
                         accessions=re.findall(r'\b(?:ERR|SRR|DRR|SAMN|SAMEA|ERS)\d+\b',token)
                         ids.extend(accessions or [token])
-            if not ids:ids=[f'metadata_unidentified_{i}']
+            if not ids:ids=[f'{kind}_unidentified_{i}']
             identity.join(ids);records.append(dict(kind=kind,path=str(path),ids=ids,row=row))
     canonical=read(META);add('sheet',META,canonical,['Accession','SequenceID','EarthCapeID'])
     dm=read(DEN/'phenotype_manifest.tsv');add('optix',DEN/'phenotype_manifest.tsv',dm,['sample'])
@@ -186,7 +188,7 @@ def export(out):
     (out/'README.txt').write_text('Import specimens_for_review.tsv into Google Sheets using Tab as separator. CSV is also supplied.\nEdit names, taxon, population, phenotype codes, BA flags and review_notes. Keep specimen_id unchanged. Blank phenotype = unknown, not absence. CONFLICT means records disagree and requires review.\nFig3a = Dennis BA; Fig3b = Yb(v) BA. Flags mean cohort membership, not that every SNP was callable. *_sheet fields preserve source-sheet codes; *_used_Fig3* preserve the effective analysis values. *_specimen_table fields copy codes from the supplied inferred-genotype table for author checking, without treating them as additional measured phenotypes. Source conflicts and aliases are retained.\nRun aliases are joined only using explicit source identity links. The TN tissue libraries are one documented gynandromorph specimen; side-specific phenotypes remain for author review. Multiple BioSample IDs are flagged. Metadata-only specimens are retained for review; presence in this table does not imply successful sequencing.\nReturn the edited TSV or CSV. Edits are not applied to analyses automatically. This exporter will preserve a review TSV if its content has been manually changed.\n')
     result=dict(status='COMPLETE',specimens=len(rows),Fig3a_cohort_accessions=len(ba_a),Fig3b_cohort_representatives=len(ba_b),
         Fig3a_review_rows=sum(r['BA_Fig3a']=='TRUE' for r in rows),Fig3b_review_rows=sum(r['BA_Fig3b']=='TRUE' for r in rows),
-        conflicts=len(conflicts),sources=sources,review_file_sha256=sha(target),phenotypes_inferred_from_genotypes=False)
+        conflicts=len(conflicts),sources=sources,review_file_sha256=sha(target),review_csv_sha256=sha(out/'specimens_for_review.csv'),phenotypes_inferred_from_genotypes=False)
     manifest.write_text(json.dumps(result,indent=2)+'\n');print('SPECIMEN_REVIEW\t'+str(target),flush=True)
 
 def main():
