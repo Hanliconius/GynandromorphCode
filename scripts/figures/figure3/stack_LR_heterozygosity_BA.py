@@ -4,7 +4,7 @@
 No calling or mixture fitting. Dennis scores are reused. Yb scores are new
 exploratory scores on all cached SNPs and the frozen retained v7 cohort.
 """
-import argparse,hashlib,importlib.util,json,shlex,shutil,subprocess,sys
+import argparse,getpass,hashlib,importlib.util,json,shlex,shutil,subprocess,sys
 from pathlib import Path
 ROOT=Path('/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling')
 RUN=ROOT/'analysis/rosina_genomewide_joint_recall/20261014T223341Z_f956c8bc'
@@ -45,10 +45,26 @@ def prepare(a):
         if not f.is_file():raise RuntimeError('Missing documented input: '+str(f))
     if json.loads((HO/'complete.json').read_text())['status']!='COMPLETE':raise RuntimeError('Ho incomplete')
     if json.loads((COHORT/'audit.json').read_text())['status']!='COMPLETE':raise RuntimeError('Yb cohort incomplete')
-    out=a.output;out.mkdir(parents=True,exist_ok=False);(out/'logs').mkdir()
+    out=a.output
+    if a.retry:
+        if not out.is_dir() or not (out/'run.json').is_file() or not (out/'jobs.json').is_file():
+            raise RuntimeError('--retry requires an existing prepared run')
+        if (out/'complete.json').exists():
+            raise RuntimeError('Completed run will not be overwritten')
+        previous=json.loads((out/'run.json').read_text())
+        if 'Dennis_BA' not in previous or 'Yb_BA' not in previous:
+            raise RuntimeError('Output directory is not owned by this workflow')
+        jobs=json.loads((out/'jobs.json').read_text())
+        active=set(subprocess.check_output(['squeue','--noheader','--user',getpass.getuser(),'--format=%A'],text=True).split())
+        recorded={str(j).split(';')[0] for j in jobs.values()}
+        if active & recorded:
+            raise RuntimeError('Run has an active Slurm job; wait before retrying')
+        (out/'logs').mkdir(exist_ok=True)
+    else:
+        out.mkdir(parents=True,exist_ok=False);(out/'logs').mkdir()
     shutil.copy2(__file__,out/'worker.py')
     save(out/'run.json',dict(input_hashes={str(f):sha(f) for f in files},
-         script_sha256=sha(__file__),SNP_calling_changed=False,mixture_fitting=False,window_bp=10000,step_bp=2500,
+         script_sha256=sha(__file__),retry_failed_run=a.retry,SNP_calling_changed=False,mixture_fitting=False,window_bp=10000,step_bp=2500,
          Dennis_BA='Existing dominant carrier rule, original non-PK cohort',
          Yb_BA='New all-cached-SNP scores, frozen v7 membership; carrier and homozygote rules separately; >=80% called in each class',
          unscored_flanks='No expanded-cohort BA outside cached Yb SNP window; shaded, never set to zero'))
@@ -191,7 +207,9 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,default=ROOT/'analysis/LR_Ho_BA_stacked_10kb_v2')
     p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true')
+    p.add_argument('--retry',action='store_true',help='Overwrite this failed run in place; refuses complete or active runs')
     a=p.parse_args()
+    if a.retry and not a.submit:p.error('--retry requires --submit')
     if a.submit:prepare(a)
     elif a.run:run(a.output)
     else:p.error('Use --submit')
