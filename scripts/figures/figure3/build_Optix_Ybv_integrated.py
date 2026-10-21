@@ -63,6 +63,8 @@ def prepare(a):
         if active & set(map(str,jobs.values())):raise RuntimeError('Figure job is still active')
     out.mkdir(parents=True,exist_ok=True);(out/'logs').mkdir(exist_ok=True)
     (out/'complete.json').unlink(missing_ok=True)
+    for filename in ['Optix_Ybv_heterozygosity_annotation_genotypes.pdf','Optix_Ybv_heterozygosity_annotation_genotypes_BA_dots.pdf']:
+        (out/filename).unlink(missing_ok=True)
     shutil.copy2(__file__,out/'worker.py');shutil.copy2(features,out/'Ybv_gene_features.json');shutil.copy2(ba_helper,out/'ba_worker.py')
     shutil.copy2(broad_helper,out/'broad_BA_worker.py');shutil.copy2(review_helper,out/'review_worker.py')
     save(out/'run.json',dict(workflow='Optix_Ybv_integrated',input_hashes={str(p):sha(p) for p in inputs if p!=GFF},
