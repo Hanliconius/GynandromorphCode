@@ -22,6 +22,21 @@ def boolean(x):
     if str(x).lower() in ('false','0','0.0'):return False
     raise ValueError('Invalid Boolean '+str(x))
 
+def yb_example_groups(group):
+    """Replace the displayed linaresi example with existing same-phenotype elevatus."""
+    ranks=group.groupby(['geography','race'],sort=True).size().sort_values(ascending=False,kind='stable')
+    selected=list(ranks.index[:4]);changes=[]
+    for i,(geo,race) in enumerate(list(selected)):
+        if not re.search(r'linaresi|linearesi',str(race),re.I):continue
+        candidates=[key for key in ranks.index if re.search('elevatus',str(key[1]),re.I) and key not in selected]
+        local=[key for key in candidates if key[0]==geo]
+        if not candidates:raise RuntimeError('No unused same-phenotype elevatus group is available to replace '+str(race))
+        replacement=(local or candidates)[0];selected[i]=replacement
+        ids=group.loc[group.geography.eq(replacement[0])&group.race.eq(replacement[1]),'sample'].tolist()
+        changes.append(dict(old_geography=geo,old_race=race,new_geography=replacement[0],new_race=replacement[1],
+                            samples=ids,selection='user requested display swap; same phenotype, same geography preferred then largest existing group'))
+    return selected,changes
+
 def prepare(a):
     features=Path(__file__).resolve().parents[2]/'yb/Ybv_gene_features.json'
     ba_helper=Path(__file__).with_name('stack_LR_heterozygosity_BA.py')
@@ -90,22 +105,23 @@ def publication_data():
     if len(old)!=27 or list(map(int,ym.columns))!=pos or set(ym.index)!=set(mm['sample']):raise RuntimeError('Yb cache identity changed')
     ym=ym.loc[mm['sample']];freq=pd.read_csv(V7/'region_race_ALT_frequencies.tsv',sep='\t')
     def ypool(ids):return ym.loc[ids].mean(axis=0).to_numpy(float)
-    yr={};bread={}
+    yr={};bread={};display_changes=[]
     for state in [1,0]:
         group=mm.loc[mm.v.eq(state)];v=ypool(group['sample'])
         label='All retained populations | v'+('+' if state else '-')
         saved=freq.loc[freq.row.eq(label)].set_index('pos1').reindex(pos).ALT_frequency.to_numpy(float)
         if not np.allclose(v,saved,equal_nan=True,atol=1e-8):raise RuntimeError('Yb consensus differs')
         bread[state]=(f'Yb(v){"+" if state else "-"} consensus (n={len(group)})',v,'consensus');yr[state]=[]
-        ranks=group.groupby(['geography','race'],sort=True).size().sort_values(ascending=False,kind='stable')
-        for geo,race in ranks.index[:4]:
+        examples,changes=yb_example_groups(group)
+        display_changes.extend([dict(phenotype=state,**r) for r in changes])
+        for geo,race in examples:
             ids=group.loc[group.geography.eq(geo)&group.race.eq(race),'sample']
             yr[state].append((f'{race} | v{state} | n={len(ids)}',ypool(ids),'frequency'))
     focal=[]
     for side in ['left','right']:
         v=old[side+'_rosina_dosage'].to_numpy(float,copy=True);flip=old.rosina_base.eq(old.ref).to_numpy();v[flip]=1-v[flip]
         focal.append((side.title()+' (corrected)',v,'genotype'))
-    yb=dict(sites=np.asarray(pos),rows=yr[1]+[bread[1]]+focal+[bread[0]]+yr[0],a=old.alt.tolist(),b=old.ref.tolist(),palette_type='ALT',
+    yb=dict(sites=np.asarray(pos),rows=yr[1]+[bread[1]]+focal+[bread[0]]+yr[0],a=old.alt.tolist(),b=old.ref.tolist(),palette_type='ALT',display_changes=display_changes,
             polarity='Purple: ALT; orange: REF (colours do not encode phenotype)')
     return {'Dennis':den,'Yb(v)':yb}
 
@@ -234,7 +250,7 @@ def run(out):
         draw_letters(heat,d)
         for j,pos in enumerate(d['sites']):fig.add_artist(ConnectionPatch(xyA=(int(pos),0),coordsA=ann.transData,xyB=(j,-.5),coordsB=heat.transData,color='#BFC3C7',lw=.35,alpha=.5,clip_on=False))
         fig.text(.35,base-.004,d['polarity'],fontsize=7)
-        audit.append(dict(locus=locus,chrom=chrom,span=[lo,hi],markers=len(d['sites']),genes=gs,rows=[r[0] for r in d['rows']]))
+        audit.append(dict(locus=locus,chrom=chrom,span=[lo,hi],markers=len(d['sites']),genes=gs,rows=[r[0] for r in d['rows']],display_morph_changes=d.get('display_changes',[])))
     fig.text(.025,.014,'Ho: 10-kb windows / 2.5-kb slide; same callable SNPs on both sides. Gene tracks and connector origins retain full genomic spans.\nSNP panels: frozen publication cohorts, allele orientations and corrected genotypes. Split cells are unphased heterozygotes; consensus is a per-site majority base.',fontsize=7)
     dest=out/'Optix_Ybv_heterozygosity_annotation_genotypes.pdf';fig.savefig(dest);plt.close(fig)
     save(out/'complete.json',dict(status='COMPLETE',PDF=str(dest),panels=audit,window_bp=10000,slide_bp=2500,
