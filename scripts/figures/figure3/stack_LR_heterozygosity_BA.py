@@ -152,7 +152,7 @@ def ten_kb_statistics(out):
     for locus,path in [
         ('Optix',RUN/'optix_consistent_v2/reciprocal_mixture/optix_reciprocal_L_R_genotype_pairs.tsv.gz'),
         ('Ivory_Yb',HO/'Ivory_Yb_exploratory_fixed_parameter_pairs.tsv.gz')]:
-        t=old.normalize(pd.read_csv(path,sep='\\t'),locus)
+        t=old.normalize(pd.read_csv(path,sep='\t'),locus)
         _,lo,hi=old.REGIONS[locus]
         parts=[]
         for cutoff in [.95,.99]:
@@ -161,7 +161,7 @@ def ten_kb_statistics(out):
                 raise RuntimeError('Unexpected 10kb/2.5kb window geometry')
             parts.append(w.assign(locus=locus))
         tables[locus]=pd.concat(parts,ignore_index=True)
-        tables[locus].to_csv(out/(locus+'_10kb_step2500_window_statistics.tsv.gz'),sep='\\t',index=False)
+        tables[locus].to_csv(out/(locus+'_10kb_step2500_window_statistics.tsv.gz'),sep='\t',index=False)
     return tables['Optix'],tables['Ivory_Yb']
 
 def run(out):
