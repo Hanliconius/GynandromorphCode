@@ -4,7 +4,7 @@
 No calling or mixture fitting. Dennis scores are reused. Yb scores are new
 exploratory scores on all cached SNPs and the frozen retained v7 cohort.
 """
-import argparse,hashlib,json,shlex,shutil,subprocess,sys
+import argparse,hashlib,importlib.util,json,shlex,shutil,subprocess,sys
 from pathlib import Path
 ROOT=Path('/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling')
 RUN=ROOT/'analysis/rosina_genomewide_joint_recall/20261014T223341Z_f956c8bc'
@@ -35,7 +35,9 @@ def score(d,y,rule,min_rate=.8):
 
 def prepare(a):
     import pandas as pd
-    files=[HO/'complete.json',HO/'Optix_window_statistics.tsv.gz',HO/'Ivory_Yb_window_statistics.tsv.gz',
+    files=[HO/'complete.json',HO/'worker.py',HO/'run.json',
+           HO/'Ivory_Yb_exploratory_fixed_parameter_pairs.tsv.gz',
+           RUN/'optix_consistent_v2/reciprocal_mixture/optix_reciprocal_L_R_genotype_pairs.tsv.gz',
            DEN/'new_comparative_SNP_scores.tsv.gz',DEN/'Dennis_BA90_intervals_sites.tsv',
            DEN/'Dennis_frequency_group_membership.json',YB/'SNPs.tsv',YB/'individual_ALT_dosages.tsv.gz',
            COHORT/'audit.json',COHORT/'membership_geography.tsv']
@@ -46,7 +48,7 @@ def prepare(a):
     out=a.output;out.mkdir(parents=True,exist_ok=False);(out/'logs').mkdir()
     shutil.copy2(__file__,out/'worker.py')
     save(out/'run.json',dict(input_hashes={str(f):sha(f) for f in files},
-         script_sha256=sha(__file__),SNP_calling_changed=False,mixture_fitting=False,
+         script_sha256=sha(__file__),SNP_calling_changed=False,mixture_fitting=False,window_bp=10000,step_bp=2500,
          Dennis_BA='Existing dominant carrier rule, original non-PK cohort',
          Yb_BA='New all-cached-SNP scores, frozen v7 membership; carrier and homozygote rules separately; >=80% called in each class',
          unscored_flanks='No expanded-cohort BA outside cached Yb SNP window; shaded, never set to zero'))
@@ -133,20 +135,41 @@ def plot_page(pdf,h,s,locus,lo,hi,window,cohort,rule=None):
     axes[4].set_xlim(lo/1e6,hi/1e6);axes[4].xaxis.set_major_locator(MaxNLocator(6))
     for ax in axes[1:]:ax.spines[['top','right']].set_visible(False)
     desc='existing carrier BA' if locus=='Dennis' else rule+' BA (new exploratory scores)'
-    fig.suptitle(f'{locus} | heterozygosity and phenotype association\n{window:,} bp Ho windows; {desc}',fontsize=12)
+    fig.suptitle(f'{locus} | heterozygosity and phenotype association\n{window:,} bp Ho windows / 2,500 bp slide; {desc}',fontsize=12)
     footer=f'BA cohort: phenotype+ n={cohort[1]}, phenotype- n={cohort[0]}; focal individual excluded. All eligible scored SNPs shown, no BA cutoff.\n'
     footer+='BA requires >=80% called in each phenotype class; tied allele orientations unscored. BA and Ho have different ascertainment.\n'
     footer+='Ho: same SNP denominator for both sides, depth >=10 each, >=20 SNPs/window; existing calls and mixture parameters unchanged.'
     fig.text(.11,.035,footer,fontsize=7)
     pdf.savefig(fig);plt.close(fig)
 
+def ten_kb_statistics(out):
+    """Re-window existing genotype pairs; never count reads or infer calls again."""
+    import pandas as pd
+    worker=HO/'worker.py'
+    spec=importlib.util.spec_from_file_location('frozen_ho_windows',worker)
+    old=importlib.util.module_from_spec(spec);spec.loader.exec_module(old)
+    tables={}
+    for locus,path in [
+        ('Optix',RUN/'optix_consistent_v2/reciprocal_mixture/optix_reciprocal_L_R_genotype_pairs.tsv.gz'),
+        ('Ivory_Yb',HO/'Ivory_Yb_exploratory_fixed_parameter_pairs.tsv.gz')]:
+        t=old.normalize(pd.read_csv(path,sep='\\t'),locus)
+        _,lo,hi=old.REGIONS[locus]
+        parts=[]
+        for cutoff in [.95,.99]:
+            w=old.windows(t,lo,hi,'bp',10000,cutoff)
+            if w.empty or not (w.end-w.start+1).eq(10000).all() or not w.start.diff().dropna().eq(2500).all():
+                raise RuntimeError('Unexpected 10kb/2.5kb window geometry')
+            parts.append(w.assign(locus=locus))
+        tables[locus]=pd.concat(parts,ignore_index=True)
+        tables[locus].to_csv(out/(locus+'_10kb_step2500_window_statistics.tsv.gz'),sep='\\t',index=False)
+    return tables['Optix'],tables['Ivory_Yb']
+
 def run(out):
     import pandas as pd,matplotlib
     matplotlib.use('Agg');matplotlib.rcParams.update({'pdf.fonttype':42,'font.size':8})
     from matplotlib.backends.backend_pdf import PdfPages
     d,y,cohorts=load_scores(out)
-    dh=pd.read_csv(HO/'Optix_window_statistics.tsv.gz',sep='\t')
-    yh=pd.read_csv(HO/'Ivory_Yb_window_statistics.tsv.gz',sep='\t')
+    dh,yh=ten_kb_statistics(out)
     paths=[]
     for locus,h,s in [('Dennis',dh,d),('Yb(v)',yh,y)]:
         dest=out/('Dennis_Ho_BA_stacked.pdf' if locus=='Dennis' else 'Ybv_Ho_BA_stacked.pdf')
@@ -155,17 +178,18 @@ def run(out):
             for rule in rules:
                 ss=s if rule is None else s.loc[s.rule.eq(rule)]
                 bounds=[(1060000,1240000),(1208000,1225000)] if locus=='Dennis' else [(1630000,1692000),(1650000,1662000)]
-                sizes=[1000,5000] if locus=='Dennis' else [1000,2000]
+                sizes=[10000]
                 for lo,hi in bounds:
                     for size in sizes:plot_page(pdf,h,ss,locus,lo,hi,size,cohorts['Dennis' if locus=='Dennis' else 'Ybv'],rule)
         paths.append(str(dest));print('PDF\t'+str(dest),flush=True)
     save(out/'complete.json',dict(status='COMPLETE',PDFs=paths,cohorts=cohorts,
          Dennis_BA_reused=True,Ybv_BA_new_exploratory=True,calling_changed=False,mixture_refitted=False,
+         window_bp=10000,step_bp=2500,existing_Yb_genotype_pairs_reused=True,
          Ybv_BA_span=[int(y.pos.min()),int(y.pos.max())],warning='Hatched Yb flanks have no BA data for this cohort'))
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--output',type=Path,default=ROOT/'analysis/LR_Ho_BA_stacked_v1')
+    p.add_argument('--output',type=Path,default=ROOT/'analysis/LR_Ho_BA_stacked_10kb_v2')
     p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true')
     a=p.parse_args()
     if a.submit:prepare(a)
