@@ -13,6 +13,23 @@ DEN=RUN/'Optix_Arnaud_review_nonPK_v2/merged'
 YB=ROOT/'analysis/ybv_REF_ALT_rebuild_v1'
 COHORT=ROOT/'analysis/ybv_short_ALT_geography_v7'
 
+
+# Author exclusion, 2026-10-22: all calculations, irrespective of BA flags.
+EXCLUDED_TAXON_PATTERN=r'numata|pardalinus'
+EXCLUDED_SPECIMEN_IDS=set(['ERR1303880','ERR1303882','ERR1303884','ERR1303885','ERR260303','ERR260304'])
+def excluded_specimen(record):
+    import re
+    text=' | '.join(str(v) for v in record.values()) if isinstance(record,dict) else str(record)
+    return bool(re.search(EXCLUDED_TAXON_PATTERN,text,re.I)) or any(
+        re.search(r'(?<![A-Za-z0-9])'+re.escape(s)+r'(?![A-Za-z0-9])',text) for s in EXCLUDED_SPECIMEN_IDS)
+def require_allowed_specimens(records,context):
+    bad=[r for r in records if excluded_specimen(r)]
+    if bad:
+        names=[str(r.get('sample',r.get('specimen_id',r))) if isinstance(r,dict) else str(r) for r in bad]
+        raise RuntimeError('EXCLUDED_TAXA_IN_CALCULATION: '+context+': '+', '.join(names)+
+            '; numata/pardalinus are excluded from all calculations. Rebuild affected cohorts, BA and frequencies before reusing results.')
+
+
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def save(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n')
 
@@ -83,9 +100,11 @@ def load_scores(out):
     if len(check)!=len(frozen) or not np.allclose(check.balanced_accuracy_frozen,check.balanced_accuracy_all,atol=1e-9):
         raise RuntimeError('Dennis broad scores disagree with frozen selected scores')
     groups=json.loads((DEN/'Dennis_frequency_group_membership.json').read_text())
+    for group in groups:require_allowed_specimens(group['samples'],'frozen Dennis BA scores')
     dn={int(g['phenotype']):g['n'] for g in groups}
     if dn!={1:142,0:281}:raise RuntimeError('Dennis cohort changed')
     members=pd.read_csv(COHORT/'membership_geography.tsv',sep='\t').fillna('')
+    require_allowed_specimens(members.to_dict('records'),'Yb(v) cached BA')
     members['v']=pd.to_numeric(members.v,errors='coerce')
     members=members.loc[members.v.isin([0,1])].copy()
     if members['sample'].duplicated().any():raise RuntimeError('Duplicate Yb individual')
