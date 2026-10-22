@@ -1,0 +1,43 @@
+# Reviewed Figure 3 package
+
+The input authority is `data/figure3_review/final_specimens.tsv`: a 550-row snapshot of the author-reviewed Google Sheet taken on 22 October 2026. Later online edits do not alter a running job. Every run freezes the input bytes and records SHA-256 hashes.
+
+Run on Pegasus:
+
+```bash
+git -C /gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandromorphCode_repo pull --quiet --ff-only origin main &&
+micromamba run -n gynandrocalling python \
+/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandromorphCode_repo/scripts/figures/figure3/build_Figure3_final_package.py \
+--submit --overwrite
+```
+
+Two nano array tasks independently calculate Dennis and Yb(v) statistics. A dependent nano job creates the PDFs and share archive. All jobs request 30 minutes and 8 GB. No download, alignment, SNP calling, or focal mixture fitting is performed.
+
+The stable output is `/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Figure3_for_Arnaud`. A successful run writes `complete.json` and `Figure3_for_Arnaud.zip` only after all eight PDFs and the archive succeed. Failed reruns overwrite generated files in this same owned directory, and active jobs are protected.
+
+## Figures
+
+1. `01_Figure3_main_BA_dots.pdf`: blue/yellow main panels, red BA >=0.90 dots on the annotations, unchanged corrected Ho, retained nucleotide focus panels.
+2. `02_Supplement_full_BA.pdf`: same layout with full BA scatter plots.
+3. `03_Dennis_all_individuals.pdf`: all reviewed specimens with existing Optix focus calls, excluding global exclusions. Display-only specimens are labelled BA=no.
+4. `04_Dennis_race_frequencies.pdf`: final reviewed Dennis cohort pooled by the exact population and phenotype fields.
+5. `05_Ybv_all_individuals.pdf`: all reviewed specimens with existing Yb focus calls, including available references excluded from BA, labelled BA=no.
+6. `06_Ybv_race_frequencies.pdf`: final reviewed Yb comparison cohort, pooled by geography, exact population label and ventral phenotype.
+7. `07_BA_selection_individuals.pdf`: specimens actually contributing to the main BA, separately for Dennis and western Yb(v).
+8. `08_Phenotype_frequencies.pdf`: phenotype-level frequencies for the main cohorts.
+
+The individual plots are paginated and labels stay on one line. Supplement palette: pale blue `#D7EDF5`, heterozygote gold `#ECCB63`, deep purple `#662A83`; grey missing. These supplements use raw ALT dosage. Frequency midpoints do not imply that every individual is heterozygous.
+
+## Statistical decisions
+
+- Use the reviewed `D`, `Yb_ventral`, population names, geography and inclusion flags, not the historical `*_used_Fig3*` columns.
+- Deny numata and pardalinus by names, known accessions, or the global exclusion flag. They never appear in genotype plots or contribute to statistics; their metadata remain in the audit snapshot.
+- One reviewed specimen contributes once. Multiple qualified run calls are united if concordant; conflicts are missing and counted in audit tables. No run is selected for its phenotype agreement.
+- Dennis uses the carrier rule over the final reviewed Dennis cohort. Yb(v) uses the homozygote rule within West. As in the geography sensitivity figure, allele orientation is determined from the final eligible pooled cohort and held fixed for the western score. The separately exported `best_within_cohort_BA` is not silently substituted.
+- Both require >=80% called within each tested phenotype class. Qualified Optix calls require DP>=2 and reported GQ>=20. Yb uses the unchanged GQ/PL quality engine. Existing legacy/new calling histories are retained; identical calling provenance is not claimed.
+- Keep the established 24 Dennis and 27 Yb focus SNP identities. Recalculate their BA, frequencies and class denominators without reselection. Export whether each still passes BA 0.90. Annotation dots show all newly passing SNPs across the full region, not only the lower focus markers.
+- Main Dennis consensus and example rows use the final Dennis cohort. Main Yb(v) consensus and examples use the same West cohort as its BA. Main colours retain the previous allele polarity: Dennis blue is the original Dennis-associated allele, yellow the other; Yb blue is ALT, yellow REF. Diploid genotypes use one row and unphased top/bottom allele boxes.
+- Keep the existing corrected L/R calls and Ho estimator: 10-kb windows, 2.5-kb slide, common callable denominator, posterior 0.95 and 0.99.
+- Keep fixed spans: Optix NC_140406.1:1060000-1240000, Yb NC_140403.1:1630000-1692000. Verified cortex and partial ivory annotations are preserved.
+
+The package includes the metadata snapshot, BA tables, per-site frequency denominators, specimen membership, run-conflict audit, current focus-marker scores and consensus frequencies. The wide genotype matrices and frozen worker code remain in the run's `data` and `code` subdirectories but are omitted from the share ZIP.
