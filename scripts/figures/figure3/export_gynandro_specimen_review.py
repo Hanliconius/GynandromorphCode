@@ -194,11 +194,28 @@ def export(out):
     manifest.write_text(json.dumps(result,indent=2)+'\n');print('SPECIMEN_REVIEW\t'+str(target),flush=True)
 
 
+
+# Author exclusion, 2026-10-22: all calculations, irrespective of BA flags.
+EXCLUDED_TAXON_PATTERN=r'numata|pardalinus'
+EXCLUDED_SPECIMEN_IDS=set(['ERR1303880','ERR1303882','ERR1303884','ERR1303885','ERR260303','ERR260304'])
+def excluded_specimen(record):
+    import re
+    text=' | '.join(str(v) for v in record.values()) if isinstance(record,dict) else str(record)
+    return bool(re.search(EXCLUDED_TAXON_PATTERN,text,re.I)) or any(
+        re.search(r'(?<![A-Za-z0-9])'+re.escape(s)+r'(?![A-Za-z0-9])',text) for s in EXCLUDED_SPECIMEN_IDS)
+def require_allowed_specimens(records,context):
+    bad=[r for r in records if excluded_specimen(r)]
+    if bad:
+        names=[str(r.get('sample',r.get('specimen_id',r))) if isinstance(r,dict) else str(r) for r in bad]
+        raise RuntimeError('EXCLUDED_TAXA_IN_CALCULATION: '+context+': '+', '.join(names)+
+            '; numata/pardalinus are excluded from all calculations. Rebuild affected cohorts, BA and frequencies before reusing results.')
+
+
 REVIEW_FIELDS=['specimen_id','specimen_name','taxon','population','B','D','R',
     'Yb_dorsal','Yb_ventral','N','Sb','Br','recorded_phenotype_label',
     'Ivory_state_recorded','BA_Fig3a','BA_Fig3b','D_used_Fig3a','Ybv_used_Fig3b',
     'country','geography_used_Fig3b','run_accessions','BioSample_accessions',
-    'data_type','review_status','review_notes']
+    'data_type','review_status','review_notes','exclude_from_all_calculations']
 
 def useful(value):
     value=clean(value)
@@ -264,6 +281,11 @@ def repair_export(out, original):
         missing=[k for k in TRAITS if r[k]=='?']
         if missing:flag('Unresolved phenotype scores: '+', '.join(missing))
         if not useful(r.get('taxon')):change('taxon','?','No taxon recovered');flag('Taxon unresolved')
+        blocked=excluded_specimen({k:r.get(k,'') for k in ['taxon','population','specimen_id','run_accessions','aliases','sheet_Taxon_Name']})
+        r['exclude_from_all_calculations']='TRUE' if blocked else 'FALSE'
+        if blocked:
+            for fig in ['3a','3b']:change('BA_Fig'+fig,'FALSE','Author exclusion: numata/pardalinus from all calculations')
+            flag('EXCLUDE FROM ALL CALCULATIONS: numata/pardalinus; historical scores require regeneration where affected')
         r['review_status']='; '.join(flags) or 'No issue identified by ledger checks'
         issues.extend(dict(specimen_id=sid,specimen_name=name,issue=f) for f in flags)
         review.append({k:r.get(k,'') for k in REVIEW_FIELDS})
