@@ -10,6 +10,23 @@ BASE=ROOT/'analysis/ybv_REF_ALT_rebuild_v1'
 COHORT=ROOT/'analysis/ybv_short_ALT_geography_v7'
 ENGINE=ROOT/'analysis/yb_completed_reads_recovery_v1/engine.py'
 CHROM='NC_140403.1';LO=1630000;HI=1692000
+
+# Author exclusion, 2026-10-22: all calculations, irrespective of BA flags.
+EXCLUDED_TAXON_PATTERN=r'numata|pardalinus'
+EXCLUDED_SPECIMEN_IDS=set(['ERR1303880','ERR1303882','ERR1303884','ERR1303885','ERR260303','ERR260304'])
+def excluded_specimen(record):
+    import re
+    text=' | '.join(str(v) for v in record.values()) if isinstance(record,dict) else str(record)
+    return bool(re.search(EXCLUDED_TAXON_PATTERN,text,re.I)) or any(
+        re.search(r'(?<![A-Za-z0-9])'+re.escape(s)+r'(?![A-Za-z0-9])',text) for s in EXCLUDED_SPECIMEN_IDS)
+def require_allowed_specimens(records,context):
+    bad=[r for r in records if excluded_specimen(r)]
+    if bad:
+        names=[str(r.get('sample',r.get('specimen_id',r))) if isinstance(r,dict) else str(r) for r in bad]
+        raise RuntimeError('EXCLUDED_TAXA_IN_CALCULATION: '+context+': '+', '.join(names)+
+            '; numata/pardalinus are excluded from all calculations. Rebuild affected cohorts, BA and frequencies before reusing results.')
+
+
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def save(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n')
 def loadmodule(path,name):
@@ -58,6 +75,7 @@ def preflight(out):
     words=members.astype(str).agg(' | '.join,axis=1).str.lower()
     if words.str.contains(r'piano|bwpk|pk_dark|pk_pale|gynandromorph|tn_left|tn_right|tn2l|tn2r|tn3l|tn3r',regex=True).any():
         raise RuntimeError('PK/focal candidate entered the frozen comparative cohort')
+    require_allowed_specimens(members.to_dict('records'),'Yb(v) joint-calling cohort')
     wanted={s for x in members.aliases for s in x.split(';') if s};seen=set();rows=[]
     with pysam.FastaFile(c['reference']) as f:
         dictionary=dict(zip(f.references,f.lengths))
@@ -70,6 +88,7 @@ def preflight(out):
             d=dict(zip(b.references,b.lengths))
             if not b.has_index() or len(sm)!=1 or CHROM not in d or any(dictionary.get(k)!=v for k,v in d.items()):raise RuntimeError('BAM reference/index/sample mismatch: '+path)
             name=next(iter(sm))
+            require_allowed_specimens([name],'Yb(v) discovery BAM')
             if name in seen:raise RuntimeError('Duplicate BAM sample '+name)
             seen.add(name);p=Path(path);rows.append(dict(sample=name,path=str(p.resolve()),bytes=p.stat().st_size,mtime_ns=p.stat().st_mtime_ns))
     if not wanted<=seen:raise RuntimeError('Cohort aliases absent from BAMs: '+','.join(sorted(wanted-seen)))
@@ -104,6 +123,7 @@ def score(out):
     if sha(COHORT/'membership_geography.tsv')!=c['cohort_sha256']:raise RuntimeError('Cohort changed during job')
     engine=loadmodule(out/'quality_engine.py','quality');ba=loadmodule(out/'ba_worker.py','ba')
     members=pd.read_csv(COHORT/'membership_geography.tsv',sep='\t').fillna('');members['v']=pd.to_numeric(members.v,errors='coerce')
+    require_allowed_specimens(members.to_dict('records'),'Yb(v) BA scoring')
     members=members.loc[members.v.isin([0,1])].copy();aliases=[str(x).split(';') for x in members.aliases]
     if members['sample'].duplicated().any():raise RuntimeError('Duplicate specimen representative')
     y=members.v.to_numpy(int);sites=[];vectors=[];seen=set()
