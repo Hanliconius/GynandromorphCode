@@ -15,6 +15,23 @@ GFF=ROOT/'analysis/genomewide_mixing_input/reference/GCF_056956725.1/GCF_0569567
 SPANS={'Dennis':('NC_140406.1',1060000,1240000),'Yb(v)':('NC_140403.1',1630000,1692000)}
 INTERVALS={'Dennis':[('B',1111500,1117000),('R1',1156000,1161000),('R2',1174000,1189000),('D1',1215000,1217000),('D2',1218000,1223000)],
            'Yb(v)':[('Yb(d)',1633041,1635646),('Yb(v)',1658079,1659072)]}
+
+# Author exclusion, 2026-10-22: all calculations, irrespective of BA flags.
+EXCLUDED_TAXON_PATTERN=r'numata|pardalinus'
+EXCLUDED_SPECIMEN_IDS=set(['ERR1303880','ERR1303882','ERR1303884','ERR1303885','ERR260303','ERR260304'])
+def excluded_specimen(record):
+    import re
+    text=' | '.join(str(v) for v in record.values()) if isinstance(record,dict) else str(record)
+    return bool(re.search(EXCLUDED_TAXON_PATTERN,text,re.I)) or any(
+        re.search(r'(?<![A-Za-z0-9])'+re.escape(s)+r'(?![A-Za-z0-9])',text) for s in EXCLUDED_SPECIMEN_IDS)
+def require_allowed_specimens(records,context):
+    bad=[r for r in records if excluded_specimen(r)]
+    if bad:
+        names=[str(r.get('sample',r.get('specimen_id',r))) if isinstance(r,dict) else str(r) for r in bad]
+        raise RuntimeError('EXCLUDED_TAXA_IN_CALCULATION: '+context+': '+', '.join(names)+
+            '; numata/pardalinus are excluded from all calculations. Rebuild affected cohorts, BA and frequencies before reusing results.')
+
+
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def save(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n')
 def boolean(x):
@@ -53,6 +70,13 @@ def prepare(a):
     for p in inputs:
         if not p.is_file():raise RuntimeError('Missing documented input: '+str(p))
     if json.loads((HO/'complete.json').read_text())['status']!='COMPLETE':raise RuntimeError('Ho not complete')
+    import pandas as pd
+    selection=pd.read_csv(DF/'individual_membership.tsv',sep='\t').fillna('')
+    selected=selection.loc[selection.included_in_BA.map(boolean)]
+    require_allowed_specimens(selected.to_dict('records'),'Dennis selection/frequency/consensus')
+    for group in json.loads((DEN/'Dennis_frequency_group_membership.json').read_text()):
+        require_allowed_specimens(group['samples'],'frozen Dennis BA membership')
+    require_allowed_specimens(pd.read_csv(V7/'membership_geography.tsv',sep='\t').fillna('').to_dict('records'),'Yb(v) cohort')
     out=a.output
     if out.exists():
         if not a.overwrite:raise RuntimeError('Use --overwrite to update this figure in place')
@@ -94,6 +118,7 @@ def publication_data():
     dm=pd.read_csv(DF/'all_individual_associated_dosages.tsv.gz',sep='\t',index_col=0)
     if set(dm.columns)!=set(keys):raise RuntimeError('Dennis cache marker mismatch')
     dm=dm[keys];meta=pd.read_csv(DF/'individual_membership.tsv',sep='\t').fillna('')
+    require_allowed_specimens(meta.loc[meta.included_in_BA.map(boolean)].to_dict('records'),'Dennis publication calculations')
     meta['D']=pd.to_numeric(meta.D,errors='coerce');meta['included_in_BA']=meta.included_in_BA.map(boolean)
     frozen=pd.read_csv(DEN/'Dennis_BA90_intervals_frequencies.tsv',sep='\t',index_col=0)
     if frozen.shape!=(4,24) or list(frozen.columns)!=keys:raise RuntimeError('Frozen Dennis order differs')
@@ -119,6 +144,7 @@ def publication_data():
     ym=pd.read_csv(YF/'individual_ALT_dosages.tsv.gz',sep='\t',index_col=0)
     mm=pd.read_csv(V7/'membership_geography.tsv',sep='\t').fillna('');mm['v']=pd.to_numeric(mm.v,errors='coerce')
     if len(old)!=27 or list(map(int,ym.columns))!=pos or set(ym.index)!=set(mm['sample']):raise RuntimeError('Yb cache identity changed')
+    require_allowed_specimens(mm.to_dict('records'),'Yb(v) publication calculations')
     ym=ym.loc[mm['sample']];freq=pd.read_csv(V7/'region_race_ALT_frequencies.tsv',sep='\t')
     def ypool(ids):return ym.loc[ids].mean(axis=0).to_numpy(float)
     yr={};bread={};display_changes=[]
