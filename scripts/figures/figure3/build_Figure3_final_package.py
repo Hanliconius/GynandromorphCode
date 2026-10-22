@@ -384,7 +384,7 @@ def heat_page(pdf,rows,positions,title,locus,frequency=False,page=None):
  from matplotlib.colors import LinearSegmentedColormap,Normalize
  from matplotlib.patches import ConnectionPatch,Rectangle
  labels=[r[0] for r in rows];matrix=np.asarray([r[1] for r in rows],float);nr=len(rows)
- label_width=max(4.8,max(map(len,labels))*.042+0.3);width=max(14,label_width+7.1);height=max(5.2,3+nr*.24);left=label_width/width
+ label_width=max(4.8,max(map(len,labels))*.055+0.3);width=max(14,label_width+7.1);height=max(5.2,3+nr*.24);left=label_width/width
  fig=plt.figure(figsize=(width,height));heat=fig.add_axes([left,.15,.98-left,.67]);loc=fig.add_axes([left,.88,.98-left,.055])
  cmap=LinearSegmentedColormap.from_list('previous_genotype_palette',SUPP,N=257);cmap.set_bad('#C8C8C8')
  heat.pcolormesh(np.arange(len(positions)+1)-.5,np.arange(nr+1)-.5,np.ma.masked_invalid(matrix),vmin=0,vmax=1,cmap=cmap,shading='flat',rasterized=False)
