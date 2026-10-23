@@ -42,6 +42,9 @@ def read_metadata(p):
   if not m[c].str.lower().isin(['true','false']).all():raise RuntimeError('Invalid Boolean in '+c)
  for c in TRAITS:
   if not m[c].isin(['0','1','?','']).all():raise RuntimeError('Invalid phenotype code in '+c)
+ # Cythera spelling variants denote the same population, not distinct cohorts.
+ cythera=m.population.str.fullmatch(r'Heliconius\s+melpomene\s+(?:(?:ssp|spp)\.?\s+)?cythera',case=False)
+ m.loc[cythera,'population']='Heliconius melpomene cythera'
  m['globally_excluded']=[blocked(r) for r in m.to_dict('records')]
  # This snapshot is the input authority. No genotype-dependent exclusions.
  return m
@@ -103,6 +106,8 @@ def prepare(a):
   metadata_source='Author-reviewed Google Sheet snapshot, 2026-10-22',metadata_url='https://docs.google.com/spreadsheets/d/1YcJjcnE48q_aJ1wGBIYLOudx0euTJTn9IMWDLGRES20/edit',
   input_hashes={str(p):sha(p) for p in paths},code_sha256=sha(__file__),no_new_calls=True,
   spans=SPANS,focus_markers_retained={'Dennis':24,'Ybv':27},Ybv_BA='West only; homozygote rule; final pooled orientation held fixed as in geography diagnostic',
+  Ybv_lower_panel='All final eligible comparison specimens; prior geography/race examples with elevatus replacing linaresi',
+  population_aliases={'Heliconius melpomene ssp. cythera':'Heliconius melpomene cythera'},
   Dennis_BA='Carrier rule; final reviewed cohort',duplicate_runs='Concordant union per specimen; conflicts missing',
   main_palette={'allele_1':YELLOW,'allele_2':BLUE},supplement_palette=SUPP))
  jobs={}
@@ -267,6 +272,10 @@ def pool(x,min_rate=0):
  x=np.asarray(x,float);n=np.isfinite(x).sum(axis=0)
  return np.divide(np.nansum(x,axis=0),n,out=np.full(x.shape[1],np.nan),where=(n>0)&(n>=len(x)*min_rate)),n
 def short(s):return normal(s).replace('Heliconius ','H. ')
+def lower_cohort(data,locus):
+ # BA is western-only for Yb; its lower comparison panel remains pooled.
+ m=data['meta']
+ return m.loc[m.used_in_main_BA] if locus=='Dennis' else m
 def main_rows(data,locus):
  import numpy as np
  m=data['meta'];focus=data['focus'];dos=data['dos'].copy();focal=data['focal'].copy()
@@ -274,16 +283,27 @@ def main_rows(data,locus):
   original=np.asarray([yes(x) for x in focus.pattern_is_alt]);dos.iloc[:,:]=np.where(original,dos.to_numpy(float),1-dos.to_numpy(float));focal=np.where(original,focal,1-focal)
   allele1=np.where(original,focus.alt,focus.ref).tolist();allele0=np.where(original,focus.ref,focus.alt).tolist()
  else:allele1=focus.alt.tolist();allele0=focus.ref.tolist()
- selected=m.loc[m.used_in_main_BA];groups={};bread={};member_rows=[]
+ selected=lower_cohort(data,locus);groups={};bread={};member_rows=[]
  for state in [1,0]:
   mm=selected.loc[selected.phenotype.eq(state)];ids=mm.specimen_id.tolist();values,n=pool(dos.loc[ids],.8 if locus=='Dennis' else 0)
-  label=('Dennis '+('present' if state else 'absent') if locus=='Dennis' else 'Western Yb(v)'+('+' if state else '-'))+f' consensus (n={len(ids)})'
+  label=('Dennis '+('present' if state else 'absent') if locus=='Dennis' else 'Yb(v)'+('+' if state else '-'))+f' consensus (n={len(ids)})'
   bread[state]=(label,values,'consensus');groups[state]=[]
-  ranks=mm.groupby('population',sort=True).size().sort_values(ascending=False,kind='stable')
-  for population in ranks.index[:4]:
-   ss=mm.loc[mm.population.eq(population),'specimen_id'];v,_=pool(dos.loc[ss],.8 if locus=='Dennis' else 0)
+  cols=['population'] if locus=='Dennis' else ['geography_used_Fig3b','population']
+  ranks=mm.groupby(cols,sort=True).size().sort_values(ascending=False,kind='stable')
+  picks=list(ranks.index[:4])
+  if locus=='Ybv':
+   for i,(geo,race) in enumerate(list(picks)):
+    if not re.search(r'linaresi|linearesi',race,re.I):continue
+    candidates=[k for k in ranks.index if re.search('elevatus',k[1],re.I) and k not in picks]
+    if not candidates:raise RuntimeError('No same-phenotype elevatus example to restore')
+    picks[i]=next((k for k in candidates if k[0]==geo),candidates[0])
+  for group in picks:
+   geography,population=('',group) if locus=='Dennis' else group
+   take=mm.population.eq(population)
+   if locus=='Ybv':take &= mm.geography_used_Fig3b.eq(geography)
+   ss=mm.loc[take,'specimen_id'];v,_=pool(dos.loc[ss],.8 if locus=='Dennis' else 0)
    groups[state].append((short(population)+f' | {"D" if locus=="Dennis" else "v"}{state} | n={len(ss)}',v,'frequency'))
-   member_rows.extend(dict(locus=locus,population=population,phenotype=state,specimen_id=s) for s in ss)
+   member_rows.extend(dict(locus=locus,geography=geography,population=population,phenotype=state,specimen_id=s) for s in ss)
  return dict(sites=focus.pos.to_numpy(),a=allele1,b=allele0,rows=groups[1]+[bread[1],('Left (corrected)',focal[0],'genotype'),('Right (corrected)',focal[1],'genotype'),bread[0]]+groups[0],examples=member_rows)
 def draw_main_letters(ax,data):
  import numpy as np
@@ -344,6 +364,24 @@ def annotation(ax,helper,features,native,locus,dots=None):
  ticks=np.linspace(lo,hi,5);ax.set_xticks(ticks,[f'{v/1e6:.3f}' for v in ticks]);ax.set_yticks([]);ax.set_xlabel(('Chromosome 18' if locus=='Dennis' else 'Chromosome 15')+' (Rosina, Mb)',fontsize=7)
  for sp in ax.spines.values():sp.set_visible(False)
 
+def coordinate_audit(out,data,features,helper):
+ import pandas as pd
+ focus=data['focus'];sites=data['scores'].loc[data['scores'].balanced_accuracy.ge(.9)]
+ exons=features['ivory']['exons'];first=min(exons,key=lambda e:e[0])
+ intervals=helper.INTERVALS['Yb(v)'];target=next(((a,b) for label,a,b in intervals if label=='Yb(v)'),(1658079,1659072))
+ keys={key(SPANS['Ybv'][0],r.pos,r.ref,r.alt) for r in focus.itertuples()}
+ rows=[]
+ for r in sites.itertuples():
+  nearest=focus.iloc[(focus.pos-int(r.pos)).abs().argmin()]
+  rows.append(dict(pos=int(r.pos),ref=r.ref,alt=r.alt,balanced_accuracy=r.balanced_accuracy,
+   displayed_exact_alleles=key(SPANS['Ybv'][0],r.pos,r.ref,r.alt) in keys,
+   nearest_displayed_pos=int(nearest.pos),offset_from_nearest_displayed_bp=int(r.pos)-int(nearest.pos),
+   Ybv_start=target[0],Ybv_end=target[1],right_of_Ybv=int(r.pos)>target[1],
+   first_ivory_exon_start=first[0],first_ivory_exon_end=first[1],right_of_first_ivory_exon=int(r.pos)>first[1]))
+ columns=['pos','ref','alt','balanced_accuracy','displayed_exact_alleles','nearest_displayed_pos','offset_from_nearest_displayed_bp','Ybv_start','Ybv_end','right_of_Ybv','first_ivory_exon_start','first_ivory_exon_end','right_of_first_ivory_exon']
+ pd.DataFrame(rows,columns=columns).to_csv(out/'tables/Ybv_BA90_coordinate_audit.tsv',sep='\t',index=False)
+ print('YBV_BA90_COORDINATES\t'+json.dumps(rows,allow_nan=False))
+
 def main_figures(out,data,helper,features,native,windows):
  import numpy as np,matplotlib.pyplot as plt
  from matplotlib.patches import ConnectionPatch
@@ -363,12 +401,12 @@ def main_figures(out,data,helper,features,native,windows):
    for q,ls in [(.95,'-'),(.99,'--')]:
     w=windows[(locus,q)]
     for side,col in [('left','#1764AB'),('right','#D04B35')]:ho.plot(w.mid,w[side+'_Ho'],c=col,ls=ls,lw=1.25 if q==.95 else .8,label=side.title()+f' | P >= {q}')
-   ho.set_xlim(*SPANS[locus][1:]);ho.set_ylim(0,ylim);ho.set_ylabel('Heterozygous fraction\namong callable SNPs');ho.tick_params(axis='x',labelbottom=False);ho.legend(fontsize=7,ncol=2,loc='upper right');ho.spines[['top','right']].set_visible(False)
+   ho.set_xlim(*SPANS[locus][1:]);ho.set_ylim(0,ylim);ho.set_yticks(np.round(np.arange(0,ylim+1e-8,.05),2));ho.set_ylabel('Heterozygous fraction\namong callable SNPs');ho.tick_params(axis='x',labelbottom=False);ho.legend(fontsize=7,ncol=2,loc='upper right');ho.spines[['top','right']].set_visible(False)
    ann=fig.add_axes([left,base+(.225 if dots else .185),width,.085 if dots else .065]);annotation(ann,helper,features,native,locus,d['scores'] if dots else None)
    heat=fig.add_axes([left,base+.010,width,.19 if dots else .16]);draw_main_letters(heat,letters)
    for j,pos in enumerate(letters['sites']):fig.add_artist(ConnectionPatch(xyA=(int(pos),0),coordsA=ann.transData,xyB=(j,-.5),coordsB=heat.transData,color='#BFC3C7',lw=.35,alpha=.5,clip_on=False))
-   fig.text(left,base-.004,'Blue: original Dennis-associated allele; yellow: other allele' if locus=='Dennis' else 'Blue: ALT; yellow: REF. Western consensus and example populations.',fontsize=7)
-   audit.append(dict(locus=locus,cohort=cohort,rows=[r[0] for r in letters['rows']],genes=[g['label'] for g in native if g['chrom']==SPANS[locus][0]],focus_SNPs=len(letters['sites'])))
+   fig.text(left,base-.004,'Blue: original Dennis-associated allele; yellow: other allele' if locus=='Dennis' else 'Blue: ALT; yellow: REF. Pooled comparison panel; BA above uses West only.',fontsize=7)
+   audit.append(dict(locus=locus,cohort=cohort,rows=[r[0] for r in letters['rows']],genes=[g['label'] for g in native if g['chrom']==SPANS[locus][0]],focus_SNPs=len(letters['sites']),xlim_bp=list(SPANS[locus][1:]),Ho_y_tick_step=.05,first_window_midpoint_bp=float(windows[(locus,.95)].mid.iloc[0]),lower_panel_counts={str(v):int(sum(lower_cohort(d,locus).phenotype.eq(v))) for v in [0,1]}))
    if dots:all_examples.extend(letters['examples'])
   fig.text(.025,.004,'Reviewed specimen metadata; one contribution per specimen. Red dots: updated BA >=0.90. Existing 24 Dennis / 27 Yb(v) focus SNP identities retained.\nHo: unchanged corrected calls, 10-kb windows / 2.5-kb slide, common callable denominator. No new calling or mixture fit.\nTwo-letter cells are unphased heterozygotes; = means a pooled 50:50 tie. Ivory continues beyond the fixed genomic view.',fontsize=6.5)
   fig.savefig(out/filename);plt.close(fig);save(out/'tables'/filename.replace('.pdf','.json'),dict(panels=audit,Ho_ylim=[0,ylim]))
@@ -458,9 +496,13 @@ def render(out):
    w=old.windows(table,*SPANS[locus][1:],'bp',10000,q);windows[(locus,q)]=w
    if not (w.end-w.start+1).eq(10000).all() or not w.start.diff().dropna().eq(2500).all():raise RuntimeError('Ho geometry changed')
    w.to_csv(out/'tables'/f'{locus}_Ho_10kb_step2500_P{q}.tsv.gz',sep='\t',index=False)
+ coordinate_audit(out,data['Ybv'],features,helper)
  main_figures(out,data,helper,features,native,windows);all_counts=supplements(out,data)
  audit=[]
  reviewed=read_metadata(out/'reviewed_specimens.tsv')
+ raw=pd.read_csv(out/'reviewed_specimens.tsv',sep='\t',dtype=str,keep_default_na=False)
+ changed=raw.population.ne(reviewed.population)
+ pd.DataFrame(dict(specimen_id=raw.loc[changed,'specimen_id'],source_population=raw.loc[changed,'population'],plot_population=reviewed.loc[changed,'population'])).to_csv(out/'tables/population_label_normalizations.tsv',sep='\t',index=False)
  for r in reviewed.to_dict('records'):
   audit.append(dict(specimen_id=r['specimen_id'],specimen_name=r['specimen_name'],taxon=r['taxon'],population=r['population'],
    globally_excluded=r['globally_excluded'],Dennis_used=r['specimen_id'] in set(data['Dennis']['meta'].specimen_id),
@@ -471,13 +513,13 @@ def render(out):
  consensus=[]
  for locus,d in data.items():
   shutil.copy2(out/'data'/locus/'all_SNP_BA.tsv.gz',out/'tables'/(locus+'_all_SNP_BA.tsv.gz'))
-  mm=d['meta'].loc[d['meta'].used_in_main_BA]
+  mm=lower_cohort(d,locus)
   for state in [1,0]:
    ss=mm.loc[mm.phenotype.eq(state),'specimen_id'];values,n=pool(d['dos'].loc[ss],.8 if locus=='Dennis' else 0)
    for j,r in enumerate(d['focus'].itertuples()):consensus.append(dict(locus=locus,phenotype=state,pos=r.pos,ref=r.ref,alt=r.alt,n_total=len(ss),n_called=int(n[j]),ALT_frequency=values[j]))
  pd.DataFrame(consensus).to_csv(out/'tables/main_consensus_frequencies.tsv',sep='\t',index=False)
  pd.DataFrame([dict(locus=k,negative_n=v['phenotype_counts']['0'],positive_n=v['phenotype_counts']['1'],all_genoplot_individuals=all_counts[k],focus_SNPs=v['focus_SNPs'],focus_SNPs_passing_current_BA90=v['focus_SNPs_passing_updated_BA90']) for k,v in summary.items()]).to_csv(out/'tables/cohort_and_marker_summary.tsv',sep='\t',index=False)
- readme='Figure 3 review package for Arnaud\n\n01 Main figure: red BA>=0.90 dots, unchanged Ho, full gene annotations and nucleotide focus panels. Bright blue/yellow.\n02 Supplement: identical layout with full BA scatter plots.\n03/05 All available reviewed individual genotypes, paginated, single-line names. BA=no references are display-only.\n04/06 Population frequencies from the reviewed comparison cohorts; Yb(v) retains East/West labels.\n07 Individuals actually contributing to main BA: Dennis carrier cohort; western Yb(v) homozygote cohort.\n08 Frequencies pooled by phenotype for those main cohorts.\n\nSupplement genotype palette: pale blue REF/REF, gold heterozygote, deep purple ALT/ALT; grey missing. Frequency midpoint need not mean every specimen is heterozygous.\nMain colours: Dennis blue=original associated allele/yellow=other; Yb(v) blue=ALT/yellow=REF. Two letters within a box are unphased heterozygotes. Consensus is a majority base per site, not a phased haplotype.\n\nBA uses >=80% callability in each phenotype class. Dennis: carrier rule, reviewed cohort. Yb(v): homozygote rule within West, holding allele orientation from the final eligible pooled cohort fixed, as in the geography diagnostic. Weak associations can reverse (BA<0.5). The separately exported best_within_cohort_BA is not silently substituted.\nOne biological specimen contributes once. Qualified calls across multiple accessions are united when concordant; conflicts are missing and exported. Genotypes are read from completed call sets; no calling or mixture fitting. Legacy Optix and newer call sets retain their documented calling histories. Optix quality: DP>=2, reported GQ>=20. Yb: existing GQ/PL quality engine, unchanged.\nExisting 24 Dennis/27 Yb focus marker identities are retained without reselection. Tables report updated BA and whether each still exceeds 0.90; red dots show all currently passing SNPs across the full region.\nFull spans: Optix 1,060,000-1,240,000; Yb 1,630,000-1,692,000. Ho: 10kb windows/2.5kb slide; same corrected focal calls and common denominator. Ivory annotation continues beyond the view.\n\nReviewed metadata snapshot and all membership/denominator tables are included. Numata and pardalinus are excluded from every output and calculation. Existing references excluded from BA may appear only in all-individual displays, labelled BA=no. No metadata-only specimen is fabricated as a sequenced individual.\n'
+ readme='Figure 3 review package for Arnaud\n\n01 Main figure: red BA>=0.90 dots, unchanged Ho, full gene annotations and nucleotide focus panels. Bright blue/yellow.\n02 Supplement: identical layout with full BA scatter plots.\n03/05 All available reviewed individual genotypes, paginated, single-line names. BA=no references are display-only.\n04/06 Population frequencies from the reviewed comparison cohorts; Yb(v) retains East/West labels.\n07 Individuals actually contributing to main BA: Dennis carrier cohort; western Yb(v) homozygote cohort.\n08 Frequencies pooled by phenotype for those main cohorts.\n\nSupplement genotype palette: pale blue REF/REF, gold heterozygote, deep purple ALT/ALT; grey missing. Frequency midpoint need not mean every specimen is heterozygous.\nMain colours: Dennis blue=original associated allele/yellow=other; Yb(v) blue=ALT/yellow=REF. Two letters within a box are unphased heterozygotes. Consensus is a majority base per site, not a phased haplotype.\n\nBA uses >=80% callability in each phenotype class. Dennis: carrier rule, reviewed cohort. Yb(v): homozygote rule within West, holding allele orientation from the final eligible pooled cohort fixed, as in the geography diagnostic. Weak associations can reverse (BA<0.5). The separately exported best_within_cohort_BA is not silently substituted.\nOne biological specimen contributes once. Qualified calls across multiple accessions are united when concordant; conflicts are missing and exported. Genotypes are read from completed call sets; no calling or mixture fitting. Legacy Optix and newer call sets retain their documented calling histories. Optix quality: DP>=2, reported GQ>=20. Yb: existing GQ/PL quality engine, unchanged.\nExisting 24 Dennis/27 Yb focus marker identities are retained without reselection. Tables report updated BA and whether each still exceeds 0.90; red dots show all currently passing SNPs across the full region.\nMain Yb lower consensus and example populations use the full final eligible comparison cohort, independently of western-only BA. Example selection restores the prior geography/race grouping with elevatus replacing linaresi. Cythera ssp/spp spelling variants are merged. Ho y-tick spacing is explicitly 0.05. Exact red-dot positions and first ivory exon relationships are exported in tables/Ybv_BA90_coordinate_audit.tsv.\nFull spans: Optix 1,060,000-1,240,000; Yb 1,630,000-1,692,000. Ho: 10kb windows/2.5kb slide; same corrected focal calls and common denominator. Ivory annotation continues beyond the view.\n\nReviewed metadata snapshot and all membership/denominator tables are included. Numata and pardalinus are excluded from every output and calculation. Existing references excluded from BA may appear only in all-individual displays, labelled BA=no. No metadata-only specimen is fabricated as a sequenced individual.\n'
  (out/'README.txt').write_text(readme.replace('excluded from every output and calculation','excluded from all plots and calculations (retained only in metadata/provenance)'))
  pdfs=sorted(out.glob('*.pdf'))
  if len(pdfs)!=8 or any(p.stat().st_size==0 for p in pdfs):raise RuntimeError('Expected eight non-empty PDFs')
