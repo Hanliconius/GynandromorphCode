@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Compare BA estimands using exactly the retained lower-panel Ybv calls."""
-import argparse,getpass,hashlib,importlib.util,json,shlex,shutil,subprocess,sys
+import argparse,getpass,hashlib,importlib.util,json,re,shlex,shutil,subprocess,sys
 from pathlib import Path
 DEFAULT=Path('/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Figure3_for_Arnaud')
 def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -41,7 +41,15 @@ def run(out):
  x=pd.read_csv(source/'data/Ybv/focus_ALT_dosages.tsv.gz',sep='\t',index_col=0)
  if len(f)!=27 or m.specimen_id.duplicated().any() or f.pos.duplicated().any():raise RuntimeError('Expected 27 unique focus sites and independent specimens')
  if list(map(int,x.columns))!=f.pos.astype(int).tolist() or set(x.index)!=set(m.specimen_id):raise RuntimeError('Matrix/membership/marker identity mismatch')
- if m.astype(str).agg(' | '.join,axis=1).str.contains('numata|pardalinus',case=False).any():raise RuntimeError('Excluded taxon in comparison')
+ # Avoid pandas string-array NA semantics: inspect scalar identity fields only.
+ identity=[c for c in ['taxon','population','specimen_name'] if c in m]
+ if not identity:raise RuntimeError('No taxon/population identity fields in membership')
+ if any(re.search(r'numata|pardalinus',str(v),re.I) for row in m[identity].itertuples(index=False,name=None) for v in row):
+  raise RuntimeError('Excluded taxon in comparison')
+ denied={'ERR1303880','ERR1303882','ERR1303884','ERR1303885','ERR260303','ERR260304'}
+ ids=[c for c in ['specimen_id','run_accessions','source_samples'] if c in m]
+ if any(set(re.findall(r'(?:ERR|SRR|DRR)\d+',str(v)))&denied for row in m[ids].itertuples(index=False,name=None) for v in row):
+  raise RuntimeError('Excluded accession in comparison')
  if not m.phenotype.isin([0,1]).all() or not m.geography_used_Fig3b.isin(['East','West']).all():raise RuntimeError('Unresolved phenotype/geography')
  matrix=x.loc[m.specimen_id].to_numpy(float)
  if not np.isin(matrix[np.isfinite(matrix)],[0,.5,1]).all():raise RuntimeError('Unexpected dosage')
