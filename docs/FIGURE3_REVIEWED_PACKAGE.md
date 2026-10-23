@@ -22,7 +22,7 @@ The stable output is `/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCall
 3. `03_Dennis_all_individuals.pdf`: all reviewed specimens with existing Optix focus calls, excluding global exclusions. Display-only specimens are labelled BA=no.
 4. `04_Dennis_race_frequencies.pdf`: final reviewed Dennis cohort pooled by the exact population and phenotype fields.
 5. `05_Ybv_all_individuals.pdf`: all reviewed specimens with existing Yb focus calls, including available references excluded from BA, labelled BA=no.
-6. `06_Ybv_race_frequencies.pdf`: final reviewed Yb comparison cohort, pooled by geography, exact population label and ventral phenotype.
+6. `06_Ybv_race_frequencies.pdf`: final reviewed Yb comparison cohort, pooled by geography, population label and ventral phenotype, merging the cythera ssp/spp spelling variants.
 7. `07_BA_selection_individuals.pdf`: specimens actually contributing to the main BA, separately for Dennis and western Yb(v).
 8. `08_Phenotype_frequencies.pdf`: phenotype-level frequencies for the main cohorts.
 
@@ -36,8 +36,15 @@ The individual plots are paginated and labels stay on one line. Supplement palet
 - Dennis uses the carrier rule over the final reviewed Dennis cohort. Yb(v) uses the homozygote rule within West. As in the geography sensitivity figure, allele orientation is determined from the final eligible pooled cohort and held fixed for the western score. The separately exported `best_within_cohort_BA` is not silently substituted.
 - Both require >=80% called within each tested phenotype class. Qualified Optix calls require DP>=2 and reported GQ>=20. Yb uses the unchanged GQ/PL quality engine. Existing legacy/new calling histories are retained; identical calling provenance is not claimed.
 - Keep the established 24 Dennis and 27 Yb focus SNP identities. Recalculate their BA, frequencies and class denominators without reselection. Export whether each still passes BA 0.90. Annotation dots show all newly passing SNPs across the full region, not only the lower focus markers.
-- Main Dennis consensus and example rows use the final Dennis cohort. Main Yb(v) consensus and examples use the same West cohort as its BA. Main colours retain the previous allele polarity: Dennis blue is the original Dennis-associated allele, yellow the other; Yb blue is ALT, yellow REF. Diploid genotypes use one row and unphased top/bottom allele boxes.
+- Main Dennis consensus and example rows use the final Dennis cohort. Main Yb(v) consensus and examples use the full final eligible comparison cohort (70 positive, 231 negative in the frozen snapshot), independently of western-only BA (29 positive, 19 negative). Restore the prior geography/race example selection, with elevatus replacing linaresi: positive examples are thelxinoe, cythera, besckei and vulcanus; negative examples are malleti, timareta nov. ECU, heurippa and elevatus. Main colours retain the previous allele polarity: Dennis blue is the original Dennis-associated allele, yellow the other; Yb blue is ALT, yellow REF. Diploid genotypes use one row and unphased top/bottom allele boxes.
 - Keep the existing corrected L/R calls and Ho estimator: 10-kb windows, 2.5-kb slide, common callable denominator, posterior 0.95 and 0.99.
+- Set explicit Ho y-ticks every 0.05. Window values are plotted at their midpoints, so the first point is approximately 1.065 Mb for Optix and 1.635 Mb for Yb, while axis origins remain 1.060 and 1.630 Mb.
 - Keep fixed spans: Optix NC_140406.1:1060000-1240000, Yb NC_140403.1:1630000-1692000. Verified cortex and partial ivory annotations are preserved.
 
 The package includes the metadata snapshot, BA tables, per-site frequency denominators, specimen membership, run-conflict audit, current focus-marker scores and consensus frequencies. The wide genotype matrices and frozen worker code remain in the run's `data` and `code` subdirectories but are omitted from the share ZIP.
+
+## Coordinate and label checks
+
+`tables/Ybv_BA90_coordinate_audit.tsv` records every Yb BA >=0.90 dot with its exact REF/ALT identity, whether it belongs to the 27 displayed markers, its offset from the nearest displayed marker, and whether it lies to the right of the Ybv interval or first mapped ivory exon. Dots retain exact genomic positions and are never snapped to a nearby focus marker. The interval is 1,658,079–1,659,072 and the first mapped ivory exon is 1,659,008–1,659,348.
+
+`tables/population_label_normalizations.tsv` records the cythera merge. The raw reviewed snapshot is preserved; its one `Heliconius melpomene ssp. cythera` population label is pooled with the other 13 cythera specimens. No inclusion flags, phenotypes, geography or calls change. Per-panel JSON records x limits, Ho tick spacing, first window midpoint, lower-panel labels and class counts.
