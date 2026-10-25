@@ -1,0 +1,36 @@
+{
+  "cohort": "eight_lower_panel_population_rows",
+  "source_directory": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Figure3_for_Arnaud",
+  "selection_source": "tables/main_example_membership.tsv",
+  "selection": "locus == Ybv; exact exported specimen IDs, each once; no additional specimens contributed by consensus rows",
+  "phenotypes": "Final reviewed membership phenotype, checked against exported row phenotype",
+  "expected_counts_in_current_snapshot": {
+    "positive": 63,
+    "negative": 107
+  },
+  "expected_positive_rows": [
+    "Heliconius timareta thelxinoe",
+    "Heliconius melpomene cythera",
+    "Heliconius besckei",
+    "Heliconius melpomene vulcanus"
+  ],
+  "expected_negative_rows": [
+    "Heliconius melpomene malleti",
+    "Heliconius timareta ssp. nov. ECU",
+    "Heliconius heurippa",
+    "Heliconius elevatus"
+  ],
+  "call_matrix": "data/Ybv/focus_ALT_dosages.tsv.gz",
+  "marker_definitions": "tables/Ybv_focus_markers_and_updated_BA.tsv",
+  "rules": [
+    "carrier",
+    "homozygote"
+  ],
+  "callability": ">=80% in each phenotype class",
+  "orientation": "Best allele direction within this restricted cohort, separately per rule; ties unscored",
+  "SNPs": 27,
+  "genotype_based_sample_selection": false,
+  "main_figure_changed": false,
+  "launch": "--submit --overwrite --cohort lower-panel",
+  "output": "Ybv_BA_rule_comparison/lower_panel"
+}
