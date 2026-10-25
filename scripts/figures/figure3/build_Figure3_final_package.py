@@ -78,15 +78,21 @@ def map_sources(meta,source_records):
  return mapping
 def prepare(a):
  meta=a.metadata;out=a.output;repo=Path(__file__).resolve().parents[3]
+ restriction=out/'Ybv_BA_rule_comparison/lower_panel'
+ restricted=getattr(a,'yb_cohort','west')=='lower-panel'
  paths=[meta,VCF,DF/'frozen_markers_and_BA.tsv',DEN/'Dennis_BA90_intervals_frequencies.tsv',
  BROAD/'complete.json',BROAD/'membership.tsv',BROAD/'SNPs.tsv',BROAD/'individual_ALT_dosages.tsv.gz',
  YF/'individual_ALT_dosages.tsv.gz',OLD,PARENT/'worker.py',PARENT/'Ybv_gene_features.json',HO/'worker.py',
  HO/'Ivory_Yb_exploratory_fixed_parameter_pairs.tsv.gz',RUN/'optix_consistent_v2/reciprocal_mixture/optix_reciprocal_L_R_genotype_pairs.tsv.gz',
   repo/'scripts/figures/figure3/compare_Ybv_geography_BA.py',YB_FULL,YB_ENGINE,GFF]
+ if restricted:paths += [restriction/n for n in ['complete.json','membership.tsv','selected_population_rows.tsv','Ybv_27_SNP_BA_comparison.tsv']]
  for p in paths:
   if not p.is_file():raise RuntimeError('Missing documented input: '+str(p))
  if json.loads((BROAD/'complete.json').read_text())['status']!='COMPLETE':raise RuntimeError('Yb calls incomplete')
  m=read_metadata(meta);selected(m,'Dennis');selected(m,'Ybv')
+ if restricted:
+  done=json.loads((restriction/'complete.json').read_text())
+  if done.get('status')!='COMPLETE' or done.get('cohort')!='lower-panel':raise RuntimeError('Completed exact lower-panel diagnostic required')
  if out.exists():
   if not a.overwrite:raise RuntimeError('Use --overwrite to replace this package in place')
   prior=json.loads((out/'run.json').read_text())
@@ -99,14 +105,17 @@ def prepare(a):
  # Only generated files belonging to this workflow are replaced.
  for p in [out/'complete.json',out/'Figure3_for_Arnaud.zip',*out.glob('*.pdf')]:p.unlink(missing_ok=True)
  for d in ['Dennis','Ybv']:(out/'data'/d).mkdir(exist_ok=True);(out/'data'/d/'complete.json').unlink(missing_ok=True)
+ if restricted:
+  for name in ['membership.tsv','selected_population_rows.tsv','Ybv_27_SNP_BA_comparison.tsv']:shutil.copy2(restriction/name,out/'code'/('restricted_'+name))
  shutil.copy2(meta,out/'reviewed_specimens.tsv');shutil.copy2(__file__,out/'code/worker.py')
  for src,dst in [(PARENT/'worker.py','panel_helper.py'),(HO/'worker.py','Ho_helper.py'),
   (PARENT/'Ybv_gene_features.json','Ybv_gene_features.json'),(repo/'scripts/figures/figure3/compare_Ybv_geography_BA.py','geography_helper.py'),(YB_ENGINE,'quality_engine.py')]:shutil.copy2(src,out/'code'/dst)
  save(out/'run.json',dict(workflow='Figure3_reviewed_package',metadata_sha256=sha(meta),
   metadata_source='Author-reviewed Google Sheet snapshot, 2026-10-22',metadata_url='https://docs.google.com/spreadsheets/d/1YcJjcnE48q_aJ1wGBIYLOudx0euTJTn9IMWDLGRES20/edit',
   input_hashes={str(p):sha(p) for p in paths},code_sha256=sha(__file__),no_new_calls=True,
-  spans=SPANS,focus_markers_retained={'Dennis':24,'Ybv':27},Ybv_BA='West only; homozygote rule; final pooled orientation held fixed as in geography diagnostic',
-  Ybv_lower_panel='All final eligible comparison specimens; prior geography/race examples with elevatus replacing linaresi',
+  spans=SPANS,focus_markers_retained={'Dennis':24,'Ybv':27},Ybv_cohort='lower-panel' if restricted else 'west',
+  Ybv_BA='Exact frozen lower-panel specimens; homozygote rule; allele direction selected within this cohort' if restricted else 'West only; homozygote rule; final pooled orientation held fixed as in geography diagnostic',
+  Ybv_lower_panel='Same exact specimens as main BA; eight recorded rows including elevatus and merged cythera' if restricted else 'All final eligible comparison specimens; geography/race examples with elevatus replacing linaresi',
   population_aliases={'Heliconius melpomene ssp. cythera':'Heliconius melpomene cythera'},
   Dennis_BA='Carrier rule; final reviewed cohort',duplicate_runs='Concordant union per specimen; conflicts missing',
   main_palette={'allele_1':YELLOW,'allele_2':BLUE},supplement_palette=SUPP))
@@ -120,11 +129,41 @@ def prepare(a):
   jobs[stage]=subprocess.check_output(args,text=True).strip().split(';')[0];save(out/'jobs.json',jobs)
   print(stage.upper()+'\t'+jobs[stage])
  print('OUTPUT\t'+str(out)+'\nMAIN_PDF\t'+str(out/'01_Figure3_main_BA_dots.pdf'))
+def restrict_membership(meta,path):
+ import pandas as pd
+ frozen=pd.read_csv(path,sep='\t',dtype=str,keep_default_na=False)
+ if frozen.specimen_id.duplicated().any() or not set(frozen.specimen_id)<=set(meta.specimen_id):raise RuntimeError('Restricted specimen identity mismatch')
+ selected=meta.set_index('specimen_id').loc[frozen.specimen_id].reset_index()
+ for c in ['phenotype','population','geography_used_Fig3b']:
+  a=selected[c].astype(str).to_numpy();b=frozen[c].astype(str).to_numpy()
+  if not (a==b).all():raise RuntimeError('Reviewed metadata differs from completed restricted diagnostic: '+c)
+ if not len(selected) or set(selected.phenotype)!={0,1}:raise RuntimeError('Both restricted phenotype classes required')
+ return selected
+
+def use_focus_calls(sites,matrix,focus,narrow,out):
+ """Use the same qualified focal-marker calls as the completed cohort diagnostic."""
+ import numpy as np,pandas as pd
+ lookup={key(r.chrom,r.pos,r.ref,r.alt):i for i,r in enumerate(sites.itertuples())};audit=[]
+ for j,r in enumerate(focus.itertuples()):
+  k=key(r.chrom,r.pos,r.ref,r.alt);i=lookup.get(k)
+  if i is None:
+   lookup[k]=len(sites);sites=pd.concat([sites,focus.iloc[[j]][['chrom','pos','ref','alt']]],ignore_index=True)
+   matrix=np.column_stack([matrix,narrow[:,j]]);status='retained_marker_added_from_existing_focus_cache';missing_diff=0
+  else:
+   a=matrix[:,i];b=narrow[:,j];both=np.isfinite(a)&np.isfinite(b)
+   if not np.allclose(a[both],b[both],atol=1e-12,rtol=0):raise RuntimeError('Broad/focus genotype disagreement at '+str(r.pos))
+   missing_diff=int((np.isfinite(a)!=np.isfinite(b)).sum());matrix[:,i]=b;status='concordant_calls_use_exact_focus_cache'
+  audit.append(dict(pos=r.pos,ref=r.ref,alt=r.alt,status=status,different_missingness=missing_diff))
+ pd.DataFrame(audit).to_csv(out/'tables/Ybv_focus_call_source_alignment.tsv',sep='\t',index=False)
+ return sites,matrix
+
 def statistics(out,locus):
  import numpy as np,pandas as pd
  folder=out/'data'/locus;cfg=json.loads((out/'run.json').read_text())
  if sha(out/'reviewed_specimens.tsv')!=cfg['metadata_sha256']:raise RuntimeError('Metadata snapshot changed')
  meta=selected(read_metadata(out/'reviewed_specimens.tsv'),locus).reset_index(drop=True)
+ restricted=locus=='Ybv' and cfg.get('Ybv_cohort')=='lower-panel'
+ if restricted:meta=restrict_membership(meta,out/'code/restricted_membership.tsv')
  for p,h in cfg['input_hashes'].items():
   if sha(p)!=h:raise RuntimeError('Input changed since submission: '+p)
  geo=load(out/'code/geography_helper.py','geo');conflicts=[]
@@ -176,19 +215,24 @@ def statistics(out,locus):
   matrix=np.asarray(rows);narrow=np.asarray(small);focal=old[['left_rosina_dosage','right_rosina_dosage']].to_numpy(float).T
   flip=old.rosina_base.eq(old.ref).to_numpy();focal[:,flip]=1-focal[:,flip]
  meta['source_samples']=['; '.join(mapping[i]) for i in range(len(meta))]
+ if restricted:sites,matrix=use_focus_calls(sites,matrix,focus,narrow,out)
  y=meta.phenotype.to_numpy(int);rule='carrier' if locus=='Dennis' else 'homozygote'
  geography=np.asarray(meta.geography_used_Fig3b) if locus=='Ybv' else np.array(['West']*len(meta))
  raw_scores,comparisons,orientation,_=geo.calculate(matrix,y,geography,rule)
  scores=sites.copy();scores['rule']=rule;scores['pooled_orientation']=orientation
- scores['balanced_accuracy']=comparisons['pooled'] if locus=='Dennis' else comparisons['West_only']
+ scores['balanced_accuracy']=comparisons['pooled'] if locus=='Dennis' or restricted else comparisons['West_only']
  scores['pooled_BA']=comparisons['pooled']
- regional=raw_scores['pooled' if locus=='Dennis' else 'West_only']
+ regional=raw_scores['pooled' if locus=='Dennis' or restricted else 'West_only']
  for k in ['n_called_0','n_called_1','rate_0','rate_1']:scores[k]=regional[k]
  scores['best_within_cohort_BA']=np.maximum(regional['ALT'],regional['REF'])
  scores['status']=np.where(np.isfinite(scores.balanced_accuracy),'scored','tie_or_insufficient_callability')
  focus=focus.merge(scores,on=['chrom','pos','ref','alt'],how='left',validate='one_to_one',suffixes=('_original',''))
  focus['passes_updated_BA90']=focus.balanced_accuracy.ge(.9)
- meta['used_in_main_BA']=True if locus=='Dennis' else meta.geography_used_Fig3b.eq('West')
+ if restricted:
+  expected=pd.read_csv(out/'code/restricted_Ybv_27_SNP_BA_comparison.tsv',sep='\t').set_index(['chrom','pos','ref','alt'])
+  values=expected.reindex(pd.MultiIndex.from_frame(focus[['chrom','pos','ref','alt']])).pooled_homozygote_BA.to_numpy(float)
+  if not np.allclose(values,focus.balanced_accuracy.to_numpy(float),equal_nan=True,atol=1e-10,rtol=0):raise RuntimeError('Restricted focus BA differs from completed diagnostic')
+ meta['used_in_main_BA']=True if locus=='Dennis' or restricted else meta.geography_used_Fig3b.eq('West')
  # All output matrices are independent specimens in reviewed-sheet order.
  meta.to_csv(folder/'membership.tsv',sep='\t',index=False);sites.to_csv(folder/'all_sites.tsv',sep='\t',index=False)
  pd.DataFrame(matrix,index=meta.specimen_id,columns=sites.pos).to_csv(folder/'all_ALT_dosages.tsv.gz',sep='\t')
@@ -201,7 +245,8 @@ def statistics(out,locus):
  save(folder/'complete.json',dict(status='COMPLETE',locus=locus,individuals=len(meta),main_BA_individuals=len(selection),phenotype_counts=counts,
   SNPs=len(sites),focus_SNPs=len(focus),focus_SNPs_passing_updated_BA90=int(focus.passes_updated_BA90.sum()),
   duplicated_run_groups=sum(len(mapping[i])>1 for i in mapping),conflicting_calls=sum(r['conflicting_sites'] for r in conflicts),
-  metadata_sha256=cfg['metadata_sha256'],rule=rule,orientation='Final eligible pooled orientation held fixed; Ybv evaluated within West',
+  metadata_sha256=cfg['metadata_sha256'],rule=rule,cohort='lower-panel' if restricted else 'reviewed' if locus=='Dennis' else 'west',
+  orientation='Best orientation within restricted cohort' if restricted else 'Final eligible pooled orientation held fixed; Ybv evaluated within West',
   calls_changed=False,new_SNP_selection=False))
  print('STATS\t'+locus+'\t'+json.dumps(counts)+'\nCOMPLETE\t'+str(folder/'complete.json'))
 
@@ -251,7 +296,8 @@ def all_individual_data(out,locus,focus):
   raise RuntimeError('All-individual display calls disagree with analysis focus cache: '+locus)
  selected_ids=set(pd.read_csv(folder/'membership.tsv',sep='\t').specimen_id)
  meta['included_comparison']=meta.specimen_id.isin(selected_ids)
- meta['used_in_main_BA']=meta.included_comparison & (True if locus=='Dennis' else meta.geography_used_Fig3b.eq('West'))
+ restricted=locus=='Ybv' and json.loads((out/'run.json').read_text()).get('Ybv_cohort')=='lower-panel'
+ meta['used_in_main_BA']=meta.included_comparison & (True if locus=='Dennis' or restricted else meta.geography_used_Fig3b.eq('West'))
  meta.to_csv(folder/'all_plot_membership.tsv',sep='\t',index=False)
  test.to_csv(folder/'all_plot_focus_ALT_dosages.tsv.gz',sep='\t')
 
@@ -266,18 +312,20 @@ def get_data(out,locus):
  focal=pd.read_csv(folder/'corrected_focal_ALT_dosages.tsv',sep='\t',index_col=0).to_numpy(float)
  scores=pd.read_csv(folder/'all_SNP_BA.tsv.gz',sep='\t')
  if any(blocked(r) for r in meta.to_dict('records')):raise RuntimeError('Excluded taxon in calculation')
- return dict(meta=meta,focus=focus,dos=dos,focal=focal,scores=scores,complete=done)
+ rows=None
+ if locus=='Ybv' and done.get('cohort')=='lower-panel':rows=pd.read_csv(out/'code/restricted_selected_population_rows.tsv',sep='\t',dtype=str,keep_default_na=False)
+ return dict(population_rows=rows,meta=meta,focus=focus,dos=dos,focal=focal,scores=scores,complete=done)
 def pool(x,min_rate=0):
  import numpy as np
  x=np.asarray(x,float);n=np.isfinite(x).sum(axis=0)
  return np.divide(np.nansum(x,axis=0),n,out=np.full(x.shape[1],np.nan),where=(n>0)&(n>=len(x)*min_rate)),n
 def short(s):return normal(s).replace('Heliconius ','H. ')
 def lower_cohort(data,locus):
- # BA is western-only for Yb; its lower comparison panel remains pooled.
+ # Restricted Yb metadata already contains exactly the frozen lower-panel cohort.
  m=data['meta']
  return m.loc[m.used_in_main_BA] if locus=='Dennis' else m
 def main_rows(data,locus):
- import numpy as np
+ import numpy as np,pandas as pd
  m=data['meta'];focus=data['focus'];dos=data['dos'].copy();focal=data['focal'].copy()
  if locus=='Dennis':
   original=np.asarray([yes(x) for x in focus.pattern_is_alt]);dos.iloc[:,:]=np.where(original,dos.to_numpy(float),1-dos.to_numpy(float));focal=np.where(original,focal,1-focal)
@@ -291,6 +339,10 @@ def main_rows(data,locus):
   cols=['population'] if locus=='Dennis' else ['geography_used_Fig3b','population']
   ranks=mm.groupby(cols,sort=True).size().sort_values(ascending=False,kind='stable')
   picks=list(ranks.index[:4])
+  if locus=='Ybv' and data.get('population_rows') is not None:
+   frozen=data['population_rows'];frozen=frozen.loc[pd.to_numeric(frozen.phenotype).eq(state)]
+   picks=list(frozen[['geography','population']].drop_duplicates().itertuples(index=False,name=None))
+   if len(picks)!=4:raise RuntimeError('Expected four frozen population rows per phenotype')
   if locus=='Ybv':
    for i,(geo,race) in enumerate(list(picks)):
     if not re.search(r'linaresi|linearesi',race,re.I):continue
@@ -304,6 +356,9 @@ def main_rows(data,locus):
    ss=mm.loc[take,'specimen_id'];v,_=pool(dos.loc[ss],.8 if locus=='Dennis' else 0)
    groups[state].append((short(population)+f' | {"D" if locus=="Dennis" else "v"}{state} | n={len(ss)}',v,'frequency'))
    member_rows.extend(dict(locus=locus,geography=geography,population=population,phenotype=state,specimen_id=s) for s in ss)
+ if locus=='Ybv' and data.get('population_rows') is not None:
+  ids=[r['specimen_id'] for r in member_rows]
+  if len(ids)!=len(set(ids)) or set(ids)!=set(selected.specimen_id):raise RuntimeError('Displayed Ybv rows do not exactly cover BA cohort')
  return dict(sites=focus.pos.to_numpy(),a=allele1,b=allele0,rows=groups[1]+[bread[1],('Left (corrected)',focal[0],'genotype'),('Right (corrected)',focal[1],'genotype'),bread[0]]+groups[0],examples=member_rows)
 def draw_main_letters(ax,data):
  import numpy as np
@@ -392,7 +447,7 @@ def main_figures(out,data,helper,features,native,windows):
   for i,locus in enumerate(['Dennis','Ybv']):
    d=data[locus];letters=main_rows(d,locus);base=.515 if i==0 else .035;left=.35;width=.62
    fig.text(.025,base+.46,'A  Optix / Dennis' if i==0 else 'B  Ivory / Yb(v)',fontsize=13,weight='bold')
-   cohort=d['complete']['phenotype_counts'];description=('Carrier BA' if locus=='Dennis' else 'Western homozygote BA')+f' | + n={cohort["1"]}, - n={cohort["0"]}'
+   cohort=d['complete']['phenotype_counts'];description=('Carrier BA' if locus=='Dennis' else ('Restricted-population homozygote BA' if d['complete'].get('cohort')=='lower-panel' else 'Western homozygote BA'))+f' | + n={cohort["1"]}, - n={cohort["0"]}'
    fig.text(left,base+.45,description,fontsize=7)
    if not dots:
     ba=fig.add_axes([left,base+.37,width,.075]);s=d['scores'];ba.scatter(s.pos,s.balanced_accuracy,s=6,c='#333333',alpha=.65,lw=0)
@@ -405,7 +460,7 @@ def main_figures(out,data,helper,features,native,windows):
    ann=fig.add_axes([left,base+(.225 if dots else .185),width,.085 if dots else .065]);annotation(ann,helper,features,native,locus,d['scores'] if dots else None)
    heat=fig.add_axes([left,base+.010,width,.19 if dots else .16]);draw_main_letters(heat,letters)
    for j,pos in enumerate(letters['sites']):fig.add_artist(ConnectionPatch(xyA=(int(pos),0),coordsA=ann.transData,xyB=(j,-.5),coordsB=heat.transData,color='#BFC3C7',lw=.35,alpha=.5,clip_on=False))
-   fig.text(left,base-.004,'Blue: original Dennis-associated allele; yellow: other allele' if locus=='Dennis' else 'Blue: ALT; yellow: REF. Pooled comparison panel; BA above uses West only.',fontsize=7)
+   fig.text(left,base-.004,'Blue: original Dennis-associated allele; yellow: other allele' if locus=='Dennis' else 'Blue: ALT; yellow: REF. Consensus and BA use the same restricted population rows.',fontsize=7)
    audit.append(dict(locus=locus,cohort=cohort,rows=[r[0] for r in letters['rows']],genes=[g['label'] for g in native if g['chrom']==SPANS[locus][0]],focus_SNPs=len(letters['sites']),xlim_bp=list(SPANS[locus][1:]),Ho_y_tick_step=.05,first_window_midpoint_bp=float(windows[(locus,.95)].mid.iloc[0]),lower_panel_counts={str(v):int(sum(lower_cohort(d,locus).phenotype.eq(v))) for v in [0,1]}))
    if dots:all_examples.extend(letters['examples'])
   fig.text(.025,.004,'Reviewed specimen metadata; one contribution per specimen. Red dots: updated BA >=0.90. Existing 24 Dennis / 27 Yb(v) focus SNP identities retained.\nHo: unchanged corrected calls, 10-kb windows / 2.5-kb slide, common callable denominator. No new calling or mixture fit.\nTwo-letter cells are unphased heterozygotes; = means a pooled 50:50 tie. Ivory continues beyond the fixed genomic view.',fontsize=6.5)
@@ -474,7 +529,7 @@ def supplements(out,data):
    m=d['meta'].loc[d['meta'].used_in_main_BA];rows=[]
    for state in [1,0]:
     ids=m.loc[m.phenotype.eq(state),'specimen_id'];values,n=pool(d['dos'].loc[ids],.8 if locus=='Dennis' else 0)
-    rows.append((('Dennis' if locus=='Dennis' else 'Western Yb(v)')+f' | phenotype {state} | n={len(ids)}',values,'frequency'))
+    rows.append((('Dennis' if locus=='Dennis' else ('Restricted Yb(v)' if d['complete'].get('cohort')=='lower-panel' else 'Western Yb(v)'))+f' | phenotype {state} | n={len(ids)}',values,'frequency'))
    rows=rows[:1]+[('Left (corrected)',d['focal'][0],'genotype'),('Right (corrected)',d['focal'][1],'genotype')]+rows[1:]
    heat_page(pdf,rows,d['focus'].pos,locus+' | frequencies pooled by phenotype',locus,frequency=True)
  pd.DataFrame(freq_exports).to_csv(out/'tables/race_frequencies_and_denominators.tsv.gz',sep='\t',index=False)
@@ -519,7 +574,7 @@ def render(out):
    for j,r in enumerate(d['focus'].itertuples()):consensus.append(dict(locus=locus,phenotype=state,pos=r.pos,ref=r.ref,alt=r.alt,n_total=len(ss),n_called=int(n[j]),ALT_frequency=values[j]))
  pd.DataFrame(consensus).to_csv(out/'tables/main_consensus_frequencies.tsv',sep='\t',index=False)
  pd.DataFrame([dict(locus=k,negative_n=v['phenotype_counts']['0'],positive_n=v['phenotype_counts']['1'],all_genoplot_individuals=all_counts[k],focus_SNPs=v['focus_SNPs'],focus_SNPs_passing_current_BA90=v['focus_SNPs_passing_updated_BA90']) for k,v in summary.items()]).to_csv(out/'tables/cohort_and_marker_summary.tsv',sep='\t',index=False)
- readme='Figure 3 review package for Arnaud\n\n01 Main figure: red BA>=0.90 dots, unchanged Ho, full gene annotations and nucleotide focus panels. Bright blue/yellow.\n02 Supplement: identical layout with full BA scatter plots.\n03/05 All available reviewed individual genotypes, paginated, single-line names. BA=no references are display-only.\n04/06 Population frequencies from the reviewed comparison cohorts; Yb(v) retains East/West labels.\n07 Individuals actually contributing to main BA: Dennis carrier cohort; western Yb(v) homozygote cohort.\n08 Frequencies pooled by phenotype for those main cohorts.\n\nSupplement genotype palette: pale blue REF/REF, gold heterozygote, deep purple ALT/ALT; grey missing. Frequency midpoint need not mean every specimen is heterozygous.\nMain colours: Dennis blue=original associated allele/yellow=other; Yb(v) blue=ALT/yellow=REF. Two letters within a box are unphased heterozygotes. Consensus is a majority base per site, not a phased haplotype.\n\nBA uses >=80% callability in each phenotype class. Dennis: carrier rule, reviewed cohort. Yb(v): homozygote rule within West, holding allele orientation from the final eligible pooled cohort fixed, as in the geography diagnostic. Weak associations can reverse (BA<0.5). The separately exported best_within_cohort_BA is not silently substituted.\nOne biological specimen contributes once. Qualified calls across multiple accessions are united when concordant; conflicts are missing and exported. Genotypes are read from completed call sets; no calling or mixture fitting. Legacy Optix and newer call sets retain their documented calling histories. Optix quality: DP>=2, reported GQ>=20. Yb: existing GQ/PL quality engine, unchanged.\nExisting 24 Dennis/27 Yb focus marker identities are retained without reselection. Tables report updated BA and whether each still exceeds 0.90; red dots show all currently passing SNPs across the full region.\nMain Yb lower consensus and example populations use the full final eligible comparison cohort, independently of western-only BA. Example selection restores the prior geography/race grouping with elevatus replacing linaresi. Cythera ssp/spp spelling variants are merged. Ho y-tick spacing is explicitly 0.05. Exact red-dot positions and first ivory exon relationships are exported in tables/Ybv_BA90_coordinate_audit.tsv.\nFull spans: Optix 1,060,000-1,240,000; Yb 1,630,000-1,692,000. Ho: 10kb windows/2.5kb slide; same corrected focal calls and common denominator. Ivory annotation continues beyond the view.\n\nReviewed metadata snapshot and all membership/denominator tables are included. Numata and pardalinus are excluded from every output and calculation. Existing references excluded from BA may appear only in all-individual displays, labelled BA=no. No metadata-only specimen is fabricated as a sequenced individual.\n'
+ readme='Figure 3 review package for Arnaud\n\n01 Main figure: red BA>=0.90 dots, unchanged Ho, full gene annotations and nucleotide focus panels. Bright blue/yellow.\n02 Supplement: identical layout with full BA scatter plots.\n03/05 All available reviewed individual genotypes, paginated, single-line names. BA=no references are display-only.\n04/06 Population frequencies from the reviewed comparison cohorts; Yb(v) retains East/West labels.\n07 Individuals actually contributing to main BA: Dennis carrier cohort; restricted Yb(v) homozygote cohort.\n08 Frequencies pooled by phenotype for those main cohorts.\n\nSupplement genotype palette: pale blue REF/REF, gold heterozygote, deep purple ALT/ALT; grey missing. Frequency midpoint need not mean every specimen is heterozygous.\nMain colours: Dennis blue=original associated allele/yellow=other; Yb(v) blue=ALT/yellow=REF. Two letters within a box are unphased heterozygotes. Consensus is a majority base per site, not a phased haplotype.\n\nBA uses >=80% callability in each phenotype class. Dennis: carrier rule, reviewed cohort. Yb(v): homozygote rule in the explicitly frozen restricted lower-panel cohort; allele direction is chosen within that cohort. Allele orientation and per-class denominators are recorded for every score.\nOne biological specimen contributes once. Qualified calls across multiple accessions are united when concordant; conflicts are missing and exported. Genotypes are read from completed call sets; no calling or mixture fitting. Legacy Optix and newer call sets retain their documented calling histories. Optix quality: DP>=2, reported GQ>=20. Yb: existing GQ/PL quality engine, unchanged.\nExisting 24 Dennis/27 Yb focus marker identities are retained without reselection. Tables report updated BA and whether each still exceeds 0.90; red dots show all currently passing SNPs across the full region.\nMain Yb lower consensus, example populations and main BA use the exact same frozen restricted membership. Example selection restores the prior geography/race grouping with elevatus replacing linaresi. Cythera ssp/spp spelling variants are merged. Ho y-tick spacing is explicitly 0.05. Exact red-dot positions and first ivory exon relationships are exported in tables/Ybv_BA90_coordinate_audit.tsv.\nFull spans: Optix 1,060,000-1,240,000; Yb 1,630,000-1,692,000. Ho: 10kb windows/2.5kb slide; same corrected focal calls and common denominator. Ivory annotation continues beyond the view.\n\nReviewed metadata snapshot and all membership/denominator tables are included. Numata and pardalinus are excluded from every output and calculation. Existing references excluded from BA may appear only in all-individual displays, labelled BA=no. No metadata-only specimen is fabricated as a sequenced individual.\n'
  (out/'README.txt').write_text(readme.replace('excluded from every output and calculation','excluded from all plots and calculations (retained only in metadata/provenance)'))
  pdfs=sorted(out.glob('*.pdf'))
  if len(pdfs)!=8 or any(p.stat().st_size==0 for p in pdfs):raise RuntimeError('Expected eight non-empty PDFs')
@@ -542,7 +597,7 @@ def render(out):
 def main():
  import os
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--metadata',type=Path,default=Path(__file__).resolve().parents[3]/'data/figure3_review/final_specimens.tsv')
- p.add_argument('--output',type=Path,default=ROOT/'analysis/Figure3_for_Arnaud');p.add_argument('--submit',action='store_true');p.add_argument('--overwrite',action='store_true');p.add_argument('--stage',choices=['stats','render']);a=p.parse_args()
+ p.add_argument('--yb-cohort',choices=['lower-panel','west'],default='lower-panel');p.add_argument('--output',type=Path,default=ROOT/'analysis/Figure3_for_Arnaud');p.add_argument('--submit',action='store_true');p.add_argument('--overwrite',action='store_true');p.add_argument('--stage',choices=['stats','render']);a=p.parse_args()
  if a.submit:prepare(a)
  elif a.stage=='stats':statistics(a.output,'Dennis' if int(os.environ['SLURM_ARRAY_TASK_ID'])==0 else 'Ybv')
  elif a.stage=='render':render(a.output)
