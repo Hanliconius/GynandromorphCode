@@ -10,7 +10,10 @@ def load(p):
 
 def prepare(a):
  source=a.source.resolve();out=source/'Ybv_BA_rule_comparison'
+ restricted=a.cohort=='lower-panel'
+ if restricted:out=out/'lower_panel'
  paths=[source/'complete.json',source/'data/Ybv/membership.tsv',source/'data/Ybv/focus_ALT_dosages.tsv.gz',source/'tables/Ybv_focus_markers_and_updated_BA.tsv',source/'code/geography_helper.py']
+ if restricted:paths.append(source/'tables/main_example_membership.tsv')
  for p in paths:
   if not p.is_file():raise RuntimeError('Missing completed input: '+str(p))
  if json.loads(paths[0].read_text()).get('status')!='COMPLETE':raise RuntimeError('Source package is not complete')
@@ -20,10 +23,12 @@ def prepare(a):
   jobs=json.loads((out/'jobs.json').read_text()) if (out/'jobs.json').exists() else {}
   active=set(subprocess.check_output(['squeue','-h','-u',getpass.getuser(),'-o','%A'],text=True).split())
   if active & set(jobs.values()):raise RuntimeError('Diagnostic job is still active')
- out.mkdir(exist_ok=True);(out/'logs').mkdir(exist_ok=True)
+ out.mkdir(parents=True,exist_ok=True);(out/'logs').mkdir(exist_ok=True)
  (out/'complete.json').unlink(missing_ok=True)
- shutil.copy2(__file__,out/'worker.py');shutil.copy2(paths[-1],out/'geography_helper.py')
- save(out/'run.json',dict(workflow='Ybv_focus_BA_rules',source=str(source),input_sha256={str(p):digest(p) for p in paths},script_sha256=digest(Path(__file__)),
+ shutil.copy2(__file__,out/'worker.py');shutil.copy2(source/'code/geography_helper.py',out/'geography_helper.py')
+ if restricted:shutil.copy2(source/'tables/main_example_membership.tsv',out/'population_rows_source.tsv')
+ save(out/'run.json',dict(workflow='Ybv_focus_BA_rules',source=str(source),cohort=a.cohort,
+  selection='Exact specimen IDs exported for the eight Ybv example-population rows; consensus rows do not add other specimens' if restricted else 'All eligible reviewed specimens',input_sha256={str(p):digest(p) for p in paths},script_sha256=digest(Path(__file__)),
   rule='Pooled best allele orientation per rule, held fixed for West; >=80% callability per phenotype class; pooled ties unscored',
   calls='Exact cached 27-SNP lower-panel matrix; no new calls, selection, metadata edits or main-figure changes'))
  job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:10:00','--cpus-per-task=1','--mem=4G','--job-name=Ybv_BArules',
@@ -51,13 +56,30 @@ def run(out):
  if any(set(re.findall(r'(?:ERR|SRR|DRR)\d+',str(v)))&denied for row in m[ids].itertuples(index=False,name=None) for v in row):
   raise RuntimeError('Excluded accession in comparison')
  if not m.phenotype.isin([0,1]).all() or not m.geography_used_Fig3b.isin(['East','West']).all():raise RuntimeError('Unresolved phenotype/geography')
+ restricted=cfg.get('cohort')=='lower-panel'
+ if restricted:
+  selected=pd.read_csv(out/'population_rows_source.tsv',sep='\t',dtype=str,keep_default_na=False)
+  selected=selected.loc[selected.locus.eq('Ybv')].copy()
+  if selected.empty or selected.specimen_id.duplicated().any():raise RuntimeError('Empty or duplicated lower-panel membership')
+  if set(selected.specimen_id)-set(m.specimen_id):raise RuntimeError('Lower-panel specimen absent from reviewed Ybv cohort')
+  joined=selected.merge(m[['specimen_id','phenotype']],on='specimen_id',validate='one_to_one',suffixes=('_plot','_reviewed'))
+  if not (pd.to_numeric(joined.phenotype_plot)==joined.phenotype_reviewed).all():raise RuntimeError('Lower-panel and reviewed phenotype disagree')
+  groupcols=['geography','population','phenotype']
+  groups=selected.groupby(groupcols,dropna=False).size().rename('n').reset_index()
+  if len(groups)!=8:raise RuntimeError('Expected the eight recorded Ybv population rows')
+  groups.to_csv(out/'population_counts.tsv',sep='\t',index=False)
+  membership=m.copy();membership['included_in_restricted_BA']=membership.specimen_id.isin(selected.specimen_id)
+  membership.to_csv(out/'cohort_selection_audit.tsv',sep='\t',index=False)
+  m=m.loc[membership.included_in_restricted_BA].copy()
+  if set(m.phenotype)!={0,1}:raise RuntimeError('Restricted set needs both phenotype classes')
+  selected.to_csv(out/'selected_population_rows.tsv',sep='\t',index=False)
  matrix=x.loc[m.specimen_id].to_numpy(float)
  if not np.isin(matrix[np.isfinite(matrix)],[0,.5,1]).all():raise RuntimeError('Unexpected dosage')
  y=m.phenotype.to_numpy(int);geo=m.geography_used_Fig3b.to_numpy();helper=load(out/'geography_helper.py')
  wide=f[['chrom','pos','ref','alt']].copy();records=[];summaries=[]
  for rule in ['carrier','homozygote']:
   raw,results,orientation,_=helper.calculate(matrix,y,geo,rule)
-  comparisons=['pooled'] if rule=='carrier' else ['pooled','West_only']
+  comparisons=['pooled'] if rule=='carrier' or restricted else ['pooled','West_only']
   for comparison in comparisons:
    name=('pooled_' if comparison=='pooled' else 'western_')+rule
    score=results[comparison];r=raw[comparison]
@@ -67,20 +89,28 @@ def run(out):
      orientation=orientation[j],n_total_positive=int(r['n_total_1']),n_total_negative=int(r['n_total_0']),n_called_positive=int(r['n_called_1'][j]),n_called_negative=int(r['n_called_0'][j]),
      callable_fraction_positive=float(r['rate_1'][j]),callable_fraction_negative=float(r['rate_0'][j]),
      ALT_predicts_positive_BA=None if not np.isfinite(r['ALT'][j]) else float(r['ALT'][j]),REF_predicts_positive_BA=None if not np.isfinite(r['REF'][j]) else float(r['REF'][j])))
-   summaries.append(dict(comparison=name,positive_n=int(r['n_total_1']),negative_n=int(r['n_total_0']),scoreable_SNPs=int(np.isfinite(score).sum()),BA_ge_0_90=int((np.isfinite(score)&(score>=.9)).sum())))
+   summaries.append(dict(cohort='eight_lower_panel_population_rows' if restricted else 'all_reviewed',comparison=name,positive_n=int(r['n_total_1']),negative_n=int(r['n_total_0']),scoreable_SNPs=int(np.isfinite(score).sum()),BA_ge_0_90=int((np.isfinite(score)&(score>=.9)).sum())))
  wide['previous_western_homozygote_BA']=f.balanced_accuracy.to_numpy(float)
- a=wide.western_homozygote_BA.to_numpy();b=wide.previous_western_homozygote_BA.to_numpy()
- wide['western_score_matches_previous']=np.isclose(a,b,equal_nan=True,atol=1e-10,rtol=0)
- wide['pooled_homozygote_minus_western']=wide.pooled_homozygote_BA-wide.western_homozygote_BA
+ if not restricted:
+  a=wide.western_homozygote_BA.to_numpy();b=wide.previous_western_homozygote_BA.to_numpy()
+  wide['western_score_matches_previous']=np.isclose(a,b,equal_nan=True,atol=1e-10,rtol=0)
+  wide['pooled_homozygote_minus_western']=wide.pooled_homozygote_BA-wide.western_homozygote_BA
  wide['pooled_carrier_minus_homozygote']=wide.pooled_carrier_BA-wide.pooled_homozygote_BA
  wide.to_csv(out/'Ybv_27_SNP_BA_comparison.tsv',sep='\t',index=False)
  pd.DataFrame(records).to_csv(out/'Ybv_BA_denominators_and_orientations.tsv',sep='\t',index=False)
  pd.DataFrame(summaries).to_csv(out/'summary.tsv',sep='\t',index=False)
  m.to_csv(out/'membership.tsv',sep='\t',index=False)
+ if restricted:
+  freqs=[]
+  for state in [1,0]:
+   vals=matrix[y==state];called=np.isfinite(vals).sum(axis=0)
+   af=np.divide(np.nansum(vals,axis=0),called,out=np.full(27,np.nan),where=called>0)
+   for j,site in enumerate(f.itertuples()):freqs.append(dict(pos=int(site.pos),ref=site.ref,alt=site.alt,phenotype=state,n_total=len(vals),n_called=int(called[j]),ALT_frequency=af[j]))
+  pd.DataFrame(freqs).to_csv(out/'restricted_consensus_frequencies.tsv',sep='\t',index=False)
  plot(out,wide,summaries)
- (out/'README.txt').write_text('All three analyses use the exact cached lower-panel 27-SNP genotypes and final reviewed specimen identities. Pooled means all eligible regions, not only the eight example rows. BA averages sensitivity and specificity, giving equal weight to the two phenotype classes. Each site requires >=80% callability in both classes. Carrier: at least one copy of the associated allele predicts v+. Homozygote: two copies predict v+. Missing genotypes are excluded, not treated as homozygous REF. For each rule, allele direction is chosen from pooled BA and held fixed within West; ties are unscored. Per-site class denominators and both allele orientations are exported. Prior western BA is included to detect differences between cached focus and broad-region calls. No main plots or scientific inputs are modified. High BA here is descriptive in-sample association, not an independent validation.\n')
- save(out/'complete.json',dict(status='COMPLETE',comparisons=summaries,SNPs=27,western_previous_score_mismatches=int((~wide.western_score_matches_previous).sum()),new_calls=False,main_figures_changed=False))
- print(pd.DataFrame(summaries).to_string(index=False));print('WESTERN_PREVIOUS_SCORE_MISMATCHES\t'+str(int((~wide.western_score_matches_previous).sum())))
+ (out/'README.txt').write_text(('RESTRICTED COHORT: exact specimens in the eight lower-panel Ybv population rows. Pooled below means pooled only within that restricted set. Existing full-cohort western scores are reference-only, not recomputed on a different subset.\n' if restricted else '')+'These analyses use the exact cached lower-panel 27-SNP genotypes and final reviewed specimen identities. Pooled means all regions in the explicitly recorded analysis cohort; see the restriction statement above when present. BA averages sensitivity and specificity, giving equal weight to the two phenotype classes. Each site requires >=80% callability in both classes. Carrier: at least one copy of the associated allele predicts v+. Homozygote: two copies predict v+. Missing genotypes are excluded, not treated as homozygous REF. For each rule, allele direction is chosen from pooled BA and held fixed within West; ties are unscored. Per-site class denominators and both allele orientations are exported. Prior western BA is included to detect differences between cached focus and broad-region calls. No main plots or scientific inputs are modified. High BA here is descriptive in-sample association, not an independent validation.\n')
+ save(out/'complete.json',dict(status='COMPLETE',comparisons=summaries,SNPs=27,western_previous_score_mismatches=None if restricted else int((~wide.western_score_matches_previous).sum()),cohort=cfg.get('cohort','reviewed'),new_calls=False,main_figures_changed=False))
+ print(pd.DataFrame(summaries).to_string(index=False));print('COHORT\t'+cfg.get('cohort','reviewed'))
  print('TABLE\t'+str(out/'Ybv_27_SNP_BA_comparison.tsv')+'\nPDF\t'+str(out/'Ybv_27_SNP_BA_comparison.pdf'))
 
 def plot(out,wide,summary):
@@ -88,21 +118,21 @@ def plot(out,wide,summary):
  matplotlib.use('Agg')
  import matplotlib.pyplot as plt
  from matplotlib.colors import Normalize
- cols=['pooled_carrier','pooled_homozygote','western_homozygote'];x=wide[[c+'_BA' for c in cols]].to_numpy(float)
+ cols=[r['comparison'] for r in summary];x=wide[[c+'_BA' for c in cols]].to_numpy(float)
  fig,ax=plt.subplots(figsize=(8,10));fig.subplots_adjust(left=.25,right=.88,bottom=.17,top=.86)
  cmap=plt.get_cmap('viridis').copy();cmap.set_bad('#DDDDDD');im=ax.imshow(np.ma.masked_invalid(x),cmap=cmap,norm=Normalize(0,1),aspect='auto')
- ax.set_xticks(range(3),['Pooled\ncarrier','Pooled\nhomozygote','Western\nhomozygote']);ax.xaxis.tick_top()
+ ax.set_xticks(range(len(cols)),[c.replace('_','\n') for c in cols]);ax.xaxis.tick_top()
  ax.set_yticks(range(len(wide)),[f'{r.pos:,} {r.ref}>{r.alt}' for r in wide.itertuples()],fontsize=8)
  for i in range(len(wide)):
-  for j in range(3):
+  for j in range(len(cols)):
    v=x[i,j];ax.text(j,i,'NA' if not np.isfinite(v) else f'{v:.3f}'+(' *' if v>=.9 else ''),ha='center',va='center',fontsize=8,color='black' if not np.isfinite(v) or v>.6 else 'white')
  fig.colorbar(im,ax=ax,fraction=.035,pad=.035,label='Balanced accuracy')
- fig.suptitle('Yb(v): the same 27 focus SNPs under three comparisons',fontsize=12)
+ fig.suptitle('Yb(v): '+('eight lower-panel populations' if summary[0].get('cohort')=='eight_lower_panel_population_rows' else 'all reviewed populations')+' | 27 focus SNPs',fontsize=12)
  fig.text(.06,.07,'* BA >=0.90. Grey = unscored (callability or pooled orientation tie).\n'+'; '.join(r['comparison']+f": v+ {r['positive_n']}, v- {r['negative_n']}" for r in summary)+'\nAllele orientation fixed from pooled score separately for each genotype rule.',fontsize=8,wrap=True)
  plt.rcParams['pdf.fonttype']=42;fig.savefig(out/'Ybv_27_SNP_BA_comparison.pdf');plt.close(fig)
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=DEFAULT);p.add_argument('--submit',action='store_true');p.add_argument('--overwrite',action='store_true');p.add_argument('--run',action='store_true');p.add_argument('--output',type=Path);a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=DEFAULT);p.add_argument('--cohort',choices=['reviewed','lower-panel'],default='reviewed');p.add_argument('--submit',action='store_true');p.add_argument('--overwrite',action='store_true');p.add_argument('--run',action='store_true');p.add_argument('--output',type=Path);a=p.parse_args()
  if a.submit:prepare(a)
  elif a.run and a.output:run(a.output)
  else:p.error('Use --submit or --run --output PATH')
