@@ -30,7 +30,10 @@
   "orientation": "Best allele direction within this restricted cohort, separately per rule; ties unscored",
   "SNPs": 27,
   "genotype_based_sample_selection": false,
-  "main_figure_changed": false,
+  "main_figure_changed": true,
   "launch": "--submit --overwrite --cohort lower-panel",
-  "output": "Ybv_BA_rule_comparison/lower_panel"
+  "output": "Ybv_BA_rule_comparison/lower_panel",
+  "main_figure_launch": "build_Figure3_final_package.py --submit --overwrite --yb-cohort lower-panel",
+  "main_rule": "homozygote",
+  "main_BA_scan": "Full 62-kb existing call matrix; exact focus calls validated against completed restricted diagnostic"
 }
