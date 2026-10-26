@@ -56,3 +56,9 @@ The current default is `--yb-cohort lower-panel`. It requires the completed rest
 The full 62-kb BA scan is recalculated from existing calls for these same specimens. At retained markers the exact diagnostic call cache is used; shared called genotypes must agree with the broad cache, and missingness differences or appended retained-marker records are audited. Each retained-marker BA must reproduce the completed restricted diagnostic before plotting. The main rule remains homozygote; carrier results remain in the sensitivity diagnostic. Both main red-dot and supplemental full-BA PDFs are rebuilt in place, together with the package supplements and ZIP. Existing calls, focal mixture estimates, Ho, fixed spans, Dennis cohort and marker identities are not changed.
 
 `--yb-cohort west` retains the earlier western-only sensitivity workflow, but is not the current main figure choice.
+
+## Final display order and ticks
+
+Ybv rows, top to bottom: malleti; nov. ECU; heurippa; elevatus; v− consensus; Left; Right; v+ consensus; cythera; vulcanus; thelxinoe; besckei. Only row order changes; frozen membership and BA values are preserved. Ho ticks explicitly share the five annotation-axis positions: Optix 1060000, 1105000, 1150000, 1195000, 1240000; Yb 1630000, 1645500, 1661000, 1676500, 1692000. The per-panel JSON records these exact coordinates.
+
+For a completed restricted package, use `--submit --overwrite --render-only` to regenerate the eight PDFs and ZIP from existing statistics. The redraw protects active jobs and frozen metadata and does not rerun statistics, calling or mixture fitting. It can also retry a failed render when both statistic stages remain complete.
