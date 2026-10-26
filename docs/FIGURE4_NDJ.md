@@ -137,3 +137,12 @@ A valid matching 10-kb cache ending at 3.1 Mb is extended by counting only
 hashes must match before prefix reuse; the audit records reused prefixes and
 newly counted intervals. Normalization and the earlier atypical-region guides
 are unchanged. The separately saved 03 plots also show the new 0-4.1 Mb extent.
+
+## Shorter smoothing span
+
+The current renderer uses a **100-kb full LOESS span (50 kb each side)** rather
+than the 200-kb span described for the first refinement above. It requires at
+least four usable 10-kb windows per local fit and breaks curves across gaps
+over 50 kb. Points, depth filters, normalization, mixing bands and the 0-4.1 Mb
+zoom are unchanged. Existing validated depth caches remain reusable; shortening
+LOESS alone requires no new counting. Use the same stack submission command.
