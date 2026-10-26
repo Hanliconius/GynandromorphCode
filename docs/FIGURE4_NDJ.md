@@ -164,3 +164,14 @@ This is descriptive segmentation, not an inference of integer copy number or a
 base-resolution breakpoint. The bracketing windows are recorded. Existing depth
 caches are reused; this styling/summary change does not require new sequence
 processing. Use the same --refresh-03-04 --stack --zoom-end 4100000 command.
+
+## Full chromosome-15 view and stronger points
+
+For the latest requested C-prime, use `--submit --overwrite --refresh-03-04
+--stack --full-chr15` (omit the numerical --zoom-end argument). The exact
+chromosome-15 length comes from the frozen reference configuration. Validated
+10-kb prefix coverage is reused and only the remainder is counted. The points
+now use alpha=0.85 rather than 0.35. The approved C and other protected 01/02 PDFs
+remain unchanged; the combined stack and separate 03 views cover the full
+chromosome. Segment fitting is performed over this displayed extent and its
+updated descriptive transition/levels are exported as before.
