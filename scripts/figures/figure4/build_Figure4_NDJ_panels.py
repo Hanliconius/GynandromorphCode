@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import shlex
 import shutil
 import subprocess
@@ -61,15 +62,133 @@ def submit(a):
                zoom_start=a.zoom_start, zoom_end=a.zoom_end,
                anomaly_start=200000, anomaly_end=2100000, mixing_max=a.mixing_max,
                project=str(ROOT), code_sha256=stamp(out/'worker.py')['sha256'])
+    if a.refresh_03_04:
+        previous = json.loads((out/'run.json').read_text())
+        for k in ['source','ratio','zoom_start','zoom_end','anomaly_start','anomaly_end','mixing_max','project']:
+            run[k] = previous[k]
+        run['refresh_03_04'] = True
+        run['protected_outputs'] = [stamp(p) for p in sorted(out.glob('0[12]_*.pdf'))]
+        if not run['protected_outputs']:
+            raise RuntimeError('No existing 01/02 outputs found to preserve')
+        if (out/'complete.json').exists():
+            shutil.copy2(out/'complete.json',out/'previous_complete.json')
+            (out/'complete.json').unlink()
     write_json(out/'run.json', run)
+    dependencies = []
+    if a.refresh_03_04:
+        # The frozen coverage cache is 100 kb; sub-window values cannot be inferred.
+        # Recount only the requested 3.1-Mb interval of the two existing source BAMs.
+        cfg = json.loads((Path(run['source'])/'config.json').read_text())
+        required = [Path(cfg[k]) for k in ['bam_left','bam_right','reference']]
+        required += [Path(run['source'])/'background.json']
+        for path in required:
+            if not path.is_file(): raise FileNotFoundError(path)
+        for side in ['left','right']:
+            bam=Path(cfg['bam_'+side])
+            if not any(p.is_file() for p in [Path(str(bam)+'.bai'),bam.with_suffix('.bai'),Path(str(bam)+'.csi')]):
+                raise FileNotFoundError('Missing BAM index: '+str(bam))
+        write_json(out/'refinement_reuse_plan.json',dict(
+            samples=['NDJ_left','NDJ_right'],source_config=stamp(Path(run['source'])/'config.json'),
+            action='recount_existing_alignment',reason='100-kb source windows cannot resolve 10-kb depth',
+            interval=[CHROM,run['zoom_start'],run['zoom_end']],window_bp=10000,
+            BAMs=[str(cfg['bam_left']),str(cfg['bam_right'])],downloads=0,alignments=0,calling=0))
+        depth_cmd=[sys.executable,str(out/'worker.py'),'--depth-worker','--output',str(out)]
+        depth_job=subprocess.check_output(['sbatch','--parsable','--job-name=NDJ_10kb',
+            '--partition=nano','--time=00:30:00','--cpus-per-task=1','--mem=4G','--array=0-1',
+            '--output='+str(logs/'depth.%A_%a.out'),'--error='+str(logs/'depth.%A_%a.err'),
+            '--wrap='+shlex.join(depth_cmd)],text=True).strip().split(';')[0]
+        dependencies=['--dependency=afterok:'+depth_job]
+        print('CHR15_DEPTH_ARRAY\t'+depth_job)
     cmd = [sys.executable, str(out/'worker.py'), '--run', '--output', str(out)]
     job = subprocess.check_output([
         'sbatch', '--parsable', '--job-name=NDJ_Fig4', '--partition=nano',
         '--time=00:30:00', '--cpus-per-task=1', '--mem=12G',
         '--output='+str(logs/'plot.%j.out'), '--error='+str(logs/'plot.%j.err'),
-        '--wrap='+shlex.join(cmd)], text=True).strip().split(';')[0]
-    write_json(out/'jobs.json', dict(render=job))
+        *dependencies, '--wrap='+shlex.join(cmd)], text=True).strip().split(';')[0]
+    write_json(out/'jobs.json', dict(render=job, **({'depth_array':depth_job} if a.refresh_03_04 else {})))
     print('JOB\t'+job+'\nOUTPUT\t'+str(out))
+
+
+def depth_worker(out):
+    import numpy as np
+    import pandas as pd
+    import pysam
+    run=json.loads((out/'run.json').read_text())
+    cfg=json.loads((Path(run['source'])/'config.json').read_text())
+    side=['left','right'][int(os.environ['SLURM_ARRAY_TASK_ID'])]
+    bam=Path(cfg['bam_'+side]); ref=Path(cfg['reference'])
+    def meta(p):
+        p=Path(p);st=p.stat()
+        return dict(path=str(p.resolve()),bytes=st.st_size,mtime_ns=st.st_mtime_ns)
+    signature=dict(bam=meta(bam),reference=meta(ref),chrom=CHROM,start=run['zoom_start'],
+        end=run['zoom_end'],window_bp=10000,baseq=cfg['baseq'],mapq=cfg['mapq'],exclude='0xF04',
+        mate_overlap_removed=True,samtools=cfg['samtools'])
+    table=out/f'chr15_10kb_{side}.tsv';done=out/f'chr15_10kb_{side}.complete.json'
+    if table.exists() and done.exists():
+        old=json.loads(done.read_text())
+        if old.get('signature')==signature and old.get('table')==stamp(table):
+            print('REUSED\t'+str(table));return
+    done.unlink(missing_ok=True)
+    start,end,width=run['zoom_start'],run['zoom_end'],10000
+    with pysam.FastaFile(str(ref)) as fa, pysam.AlignmentFile(str(bam),'rb') as b:
+        if b.get_reference_length(CHROM)!=fa.get_reference_length(CHROM):
+            raise RuntimeError('BAM/reference length mismatch')
+        seq=fa.fetch(CHROM,start,end).upper()
+    if len(seq)!=end-start:raise RuntimeError('Reference interval truncated')
+    n=(end-start+width-1)//width
+    totals=np.zeros(n,dtype=np.int64);covered=np.zeros(n,dtype=np.int64)
+    command=[cfg['samtools'],'depth','-aa','-s','-q',str(cfg['baseq']),'-Q',str(cfg['mapq']),
+        '-G','0xF04','-r',f'{CHROM}:{start+1}-{end}',str(bam)]
+    previous=start
+    with (out/f'chr15_10kb_{side}.stderr.log').open('w') as err:
+        proc=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=err,text=True)
+        try:
+            for line in proc.stdout:
+                chrom,pos,d=line.rstrip().split('\t');pos=int(pos);d=int(d)
+                if chrom!=CHROM or pos!=previous+1:raise RuntimeError('Non-consecutive depth output')
+                previous=pos;idx=(pos-start-1)//width;totals[idx]+=d;covered[idx]+=d>0
+            if proc.wait()!=0:raise RuntimeError('samtools depth failed')
+        except BaseException:
+            proc.kill();proc.wait();raise
+    if previous!=end:raise RuntimeError('Incomplete depth stream')
+    rows=[]
+    for i in range(n):
+        a=start+i*width;b=min(a+width,end);s=seq[a-start:b-start]
+        rows.append(dict(chrom=CHROM,start=a,end=b,depth=totals[i]/(b-a),
+            covered=covered[i]/(b-a),acgt_fraction=sum(s.count(x) for x in 'ACGT')/(b-a)))
+    temp=table.with_suffix('.partial.tsv');pd.DataFrame(rows).to_csv(temp,sep='\t',index=False);temp.replace(table)
+    write_json(done,dict(signature=signature,command=command,table=stamp(table)))
+    print('DEPTH_COMPLETE\t'+str(table))
+
+
+def dense_chr15(out,run,normalization):
+    import pandas as pd
+    from scipy.linalg import lstsq
+    import numpy as np
+    bg=json.loads((Path(run['source'])/'background.json').read_text())['depth_normalizers']
+    for side in ['left','right']:
+        done=json.loads((out/f'chr15_10kb_{side}.complete.json').read_text())
+        if done['table']!=stamp(out/f'chr15_10kb_{side}.tsv'):
+            raise RuntimeError('Dense coverage table changed after completion: '+side)
+    left=pd.read_csv(out/'chr15_10kb_left.tsv',sep='\t')
+    right=pd.read_csv(out/'chr15_10kb_right.tsv',sep='\t')
+    d=left.merge(right,on=['chrom','start','end'],suffixes=('_left','_right'),validate='one_to_one')
+    use=(d.covered_left.ge(.5)&d.covered_right.ge(.5)&d.acgt_fraction_left.ge(.9)&d.acgt_fraction_right.ge(.9))
+    d=d.loc[use].copy();d['mid']=(d.start+d.end)/2
+    for side in ['left','right']:
+        d[side]=d['depth_'+side]/bg[side]/normalization[side]
+        # Local linear LOESS, tricube kernel, fixed 200-kb full span, no gap bridging.
+        x=d.mid.to_numpy();y=d[side].to_numpy();smooth=np.full(len(d),np.nan)
+        for i,centre in enumerate(x):
+            dist=(x-centre)/100000;take=np.abs(dist)<1
+            if take.sum()<6:continue
+            weights=(1-np.abs(dist[take])**3)**3
+            design=np.column_stack([np.ones(take.sum()),dist[take]])
+            smooth[i]=lstsq(design*np.sqrt(weights[:,None]),y[take]*np.sqrt(weights))[0][0]
+        d[side+'_loess']=smooth
+    d['delta']=d.right-d.left
+    d.to_csv(out/'chr15_10kb_plotted.tsv',sep='\t',index=False)
+    return d
 
 
 def bools(s):
@@ -170,7 +289,7 @@ def expectations(ax, metric, bounds, mix, xmax):
     ax.axhline(base,color='#444444',lw=.6,zorder=2)
 
 
-def coverage(out, run, cfg, w, bounds, features, sizes):
+def coverage(out, run, cfg, w, bounds, features, sizes, dense=None):
     import matplotlib.pyplot as plt
     import numpy as np
     offset,ticks,labels = {},[],[]
@@ -182,12 +301,14 @@ def coverage(out, run, cfg, w, bounds, features, sizes):
         cursor += c['length']+300000
     w['genome_mb'] = (w.chrom.map(offset)+w.mid)/1e6
     for zoom in [False,True]:
+        if run.get('refresh_03_04') and not zoom:continue
         for metric in ['delta','relative']:
             fig = plt.figure(figsize=(10,10/run['ratio']))
-            ax = fig.add_axes([.075,.25,.91,.66])
+            ax = fig.add_axes([.075,.29,.91,.56] if zoom else [.075,.25,.91,.66])
             fig.text(.013,.98,"C'" if zoom else 'C',fontsize=13,fontweight='bold',va='top')
             if zoom:
                 data = w.loc[w.chrom.eq(CHROM) & w.end.gt(run['zoom_start']) & w.start.lt(run['zoom_end'])]
+                if dense is not None:data=dense
                 lo,hi = run['zoom_start']/1e6,run['zoom_end']/1e6
                 x = data.mid/1e6
                 ax.set_xlabel('Chromosome 15 position (Mb)',labelpad=3)
@@ -223,7 +344,12 @@ def coverage(out, run, cfg, w, bounds, features, sizes):
                             max(1.15,float(vals.max())+.08,bounds['delta'][1]+.05))
             else:
                 for side,col in [('left',BLUE),('right',ORANGE)]:
-                    ax.scatter(x,data[side],s=9 if zoom else 4,c=col,linewidths=0,alpha=.8,zorder=3,label=side.title())
+                    fine=zoom and dense is not None
+                    ax.scatter(x,data[side],s=4 if fine else (9 if zoom else 4),c=col,linewidths=0,
+                               alpha=.35 if fine else .8,zorder=3,label=side.title())
+                    if fine:
+                        for segment in np.split(np.arange(len(data)),np.flatnonzero(np.diff(x)>0.1)+1):
+                            ax.plot(x.iloc[segment],data[side+'_loess'].iloc[segment],c=col,lw=1.3,zorder=4)
                 vals = data[['left','right']].to_numpy()
                 ax.set_ylim(max(0,min(.35,float(vals.min())-.08)),max(1.65,float(vals.max())+.08,bounds['relative'][1]+.05))
                 ax.set_ylabel('Relative coverage\nDiploid background = 1')
@@ -231,7 +357,8 @@ def coverage(out, run, cfg, w, bounds, features, sizes):
             ax.set_xlim(lo,hi); clean(ax)
             fig.text(.075,.045,f'Blue-grey: central 95% autosomal background; grey: conditional 0-{run["mixing_max"]:.0%} mixing model.',fontsize=6.3)
             if zoom:
-                fig.text(.075,.005,'Dotted: earlier exploratory interval. *Mapped ivory exons; annotation is partial.',fontsize=6.1)
+                fig.text(.075,.085,'10-kb windows; 200-kb-span local linear LOESS.' if dense is not None else 'Cached source depth windows.',fontsize=6.1)
+                fig.text(.075,.012,'Dotted: earlier exploratory interval. *Mapped ivory exons; annotation is partial.',fontsize=6.1)
             save(fig,out/f'{"03" if zoom else "02"}_{suffix}_{metric}.pdf',sizes)
 
 
@@ -320,27 +447,34 @@ def af(out,run,cfg,sizes):
             counts=d['hex'];keep=counts>0
             compressed=common.informative_density_vmax(counts,centres[:,0],centres[:,1])
             vmax=float(np.sqrt(compressed*counts.max()))
-            fig=plt.figure(figsize=(5.3,5.3));ax=fig.add_axes([.275,.275,.60,.60])
-            top=fig.add_axes([.275,.885,.60,.065]);side=fig.add_axes([.120,.275,.065,.60]);cbax=fig.add_axes([.905,.405,.022,.34])
+            fig=plt.figure(figsize=(5.3,5.3));ax=fig.add_axes([.25,.29,.60,.60])
+            top=fig.add_axes([.25,.925,.60,.035]);side=fig.add_axes([.09,.29,.045,.60]);cbax=fig.add_axes([.89,.43,.02,.29])
             unit=np.array([[0,-.5],[.5,-.25],[.5,.25],[0,.5],[-.5,.25],[-.5,-.25]])
-            # Hex centre spacings sx,sy imply width sx and full height 4*sy/3.
-            verts=centres[keep,None,:]+unit[None,:,:]*[sx,4*sy/3]
+            # Voronoi metric dx^2+3dy^2: width sx, FULL height 2*sy/3.
+            # The earlier factor 4*sy/3 doubled the height and overlapped bins.
+            verts=centres[keep,None,:]+unit[None,:,:]*[sx,2*sy/3]
             coll=PolyCollection(verts,array=counts[keep].astype(float),cmap=cmap,
                                 norm=LogNorm(1,max(1.0001,vmax),clip=True),edgecolors='none')
             ax.add_collection(coll);ax.set(xlim=(-.025,1.025),ylim=(-.025,1.025),aspect='equal',
                 xlabel='Left ALT allele fraction',ylabel='Right ALT allele fraction')
             ticks=[0,.25,.5,.75,1];ax.set_xticks(ticks);ax.set_yticks(ticks);clean(ax)
+            ax.xaxis.label.set_size(8);ax.yaxis.label.set_size(8)
+            ax.tick_params(labelsize=7)
             ax.plot([0,1],[0,1],color='white',lw=.5,alpha=.45)
             x=(np.arange(50)+.5)/50
             aesthetic.marginal(top,d['lh'],x,(-.025,1.025))
             aesthetic.marginal(side,d['rh'],x,(-.025,1.025),vertical=True)
+            # Keep endpoint arrows, move their percentages into the footer.
+            for marginal_ax in [top,side]:
+                for txt in list(marginal_ax.texts):txt.remove()
             cb=fig.colorbar(coll,cax=cbax,extend='max');cb.set_label('Sites per hexagon',fontsize=7)
             cb.ax.tick_params(labelsize=6);cb.outline.set_linewidth(.5)
             title='Whole genome' if name=='genome' else 'Chromosome 15: 0.2-2.1 Mb'
-            fig.text(.275,.97,title,fontsize=9)
-            fig.text(.275,.22,f'{n:,} SNP records; AD depth >= {cfg["min_depth"]} on both sides',fontsize=7)
-            fig.text(.275,.14,'Observed counts; no mixing correction or fitted ploidy overlay.',fontsize=6.3)
-            fig.text(.275,.105,'Control-discovered SNP ascertainment retained.',fontsize=6.3)
+            fig.text(.25,.985,title,fontsize=9,va='top')
+            fig.text(.25,.19,f'{n:,} SNP records; AD depth >= {cfg["min_depth"]} on both sides',fontsize=7)
+            fig.text(.25,.15,f'AF=0 / 1 bins: Left {d["lh"][0]/n:.1%} / {d["lh"][-1]/n:.1%}; Right {d["rh"][0]/n:.1%} / {d["rh"][-1]/n:.1%}',fontsize=6.2)
+            fig.text(.25,.11,'Observed counts; no mixing correction or fitted ploidy overlay.',fontsize=6.3)
+            fig.text(.25,.075,'Control-discovered SNP ascertainment retained.',fontsize=6.3)
             pdf.savefig(fig);plt.close(fig)
             audit.append(dict(scope=name,SNP_records=n,display_vmax=vmax))
             pd.DataFrame(dict(left_centre=centres[:,0],right_centre=centres[:,1],count=counts)).to_csv(out/(name+'_AF_hexagons.tsv'),sep='\t',index=False)
@@ -363,9 +497,14 @@ def run_render(out):
         raise RuntimeError('Wrong ivory reference')
     decisions=[dict(biological_sample_id=s,interval='whole scan / chr15',reference=cfg['reference'],action='reuse_calls_and_coverage',selected_resource_id=str(Path(run['source'])/'windows.tsv'),evidence='completed NDJ scan; cached counts and depth',unresolved_questions='W not in source scan') for s in ['NDJ_left','NDJ_right']]
     pd.DataFrame(decisions).to_csv(out/'reuse_decisions.tsv',sep='\t',index=False)
-    sizes={};bars(out,cfg,w,sizes);coverage(out,run,cfg,w,bounds,features,sizes)
+    refresh=run.get('refresh_03_04',False)
+    prior=json.loads((out/'previous_complete.json').read_text()) if refresh else {}
+    sizes=dict(prior.get('PDFs',{}))
+    dense=dense_chr15(out,run,normalization) if refresh else None
+    if not refresh:bars(out,cfg,w,sizes)
+    coverage(out,run,cfg,w,bounds,features,sizes,dense)
     af_audit,count_inputs,palette=af(out,run,cfg,sizes)
-    w.to_csv(out/'coverage_windows_plotted.tsv.gz',sep='\t',index=False)
+    if not refresh:w.to_csv(out/'coverage_windows_plotted.tsv.gz',sep='\t',index=False)
     used=[stamp(Path(run['source'])/n) for n in ['config.json','COMPLETE.json','windows.tsv']]
     audit=dict(status='COMPLETE',specimen=['NDJ_left','NDJ_right'],source=run['source'],
         inputs=used,count_inputs=count_inputs,palette=palette,run=run,PDFs=sizes,
@@ -379,7 +518,12 @@ def run_render(out):
         model_interpretation='Conditional reciprocal 1n/3n versus 2n background, not independent evidence of ploidy; mixing is not estimated here',
         W='not assessed by source scan; not shown as zero',ivory=features,AF=af_audit,
         AF_aesthetic='Figure2H Luka-Bleute palette, vector hexagons, log density midpoint compression, neutral LOESS marginals; no unsupported control-GT colours or TN predictive rings',
-        downloads=0,alignments=0,calling=0,new_coverage=0)
+        downloads=0,alignments=0,calling=0,new_coverage=2 if refresh else 0,
+        chr15_refinement=dict(window_bp=10000,loess_full_span_bp=200000,source='same NDJ BAMs and samtools filters',
+            gap_rule='At least six usable windows within 100 kb of each estimate; no unsupported gap bridging') if refresh else None)
+    for old in run.get('protected_outputs',[]):
+        if stamp(Path(old['path']))!=old:raise RuntimeError('Protected 01/02 PDF changed: '+old['path'])
+    audit['protected_outputs_unchanged']=run.get('protected_outputs',[])
     write_json(out/'complete.json',audit)
     print('STATUS\tCOMPLETE')
     for name in sizes:print('PDF\t'+str(out/name))
@@ -391,12 +535,15 @@ def main():
     p.add_argument('--output',type=Path,default=OUTPUT)
     p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true')
     p.add_argument('--overwrite',action='store_true')
+    p.add_argument('--refresh-03-04',action='store_true',help='Recount chr15 at 10 kb; update only 03/04 and preserve 01/02 hashes')
+    p.add_argument('--depth-worker',action='store_true')
     p.add_argument('--ratio',type=float,choices=[4,5],default=4)
     p.add_argument('--zoom-start',type=int,default=0);p.add_argument('--zoom-end',type=int,default=3100000)
     p.add_argument('--mixing-max',type=float,default=.2)
     a=p.parse_args()
     if not 0<=a.mixing_max<.5:p.error('Mixing must lie in [0,0.5)')
     if a.submit:submit(a)
+    elif a.depth_worker:depth_worker(a.output.resolve())
     elif a.run:run_render(a.output.resolve())
     else:p.error('Choose --submit (Pegasus) or internal --run')
 
