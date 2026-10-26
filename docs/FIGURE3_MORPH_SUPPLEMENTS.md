@@ -119,3 +119,24 @@ Primary literature to address explicitly:
 This rendering workflow addresses transparent display and cohort accounting;
 it does not claim that the additional cross-population validation or causal
 experiments proposed above have been performed.
+
+## Population-label merging, phenotype ordering and relaxed Yb displays
+
+Standalone ssp., spp. and subsp. tokens are removed from population labels, with
+whitespace normalized. Matching labels are pooled from their original individual
+calls, recalculating frequencies and denominators; old pooled frequencies are
+not averaged. The original population label is retained in display membership.
+Different phenotype/morph or geography assignments remain separate. Quoted
+meriana and unquoted meriana, and nov. ECU labels, are not conflated.
+
+Rows now form a phenotype-present block followed by a phenotype-absent block,
+with complete morph calls grouped together and geographical distinctions
+retained. Optix BA093 and compact SNP selection are unchanged.
+
+Yb display versions are now BA >=0.80, >=0.85, >=0.90, plus compact. Its count
+sweep extends from 0.80 to 1.00 in 0.01 steps. Compact chooses the highest tested
+threshold retaining 20-80 SNPs if possible; otherwise the tested threshold
+retaining the largest nonzero set of at most 80 sites, or all strictest-score
+ties if no such threshold exists. Every passing site remains; this is a display
+threshold adjustment, not a change to main BA calculations, membership or scores.
+The obsolete Yb BA093 supplement derivatives are replaced by these versions.
