@@ -74,12 +74,15 @@ def submit(a):
         if (out/'complete.json').exists():
             shutil.copy2(out/'complete.json',out/'previous_complete.json')
             (out/'complete.json').unlink()
-    if a.full_chr15:
+    # Full chromosome is now the default, including targeted refreshes invoked
+    # with the earlier 4.1-Mb command. Never inherit an obsolete cropped extent.
+    if a.full_chr15 or a.refresh_03_04 or a.zoom_end is None:
         cfg=json.loads((Path(run['source'])/'config.json').read_text())
         matches=[c for c in cfg['chromosomes'] if c['contig']==CHROM]
         if len(matches)!=1:raise RuntimeError('Expected exactly one chromosome 15 entry')
         run['zoom_start']=0;run['zoom_end']=int(matches[0]['length'])
         run['full_chr15']=True
+        print(f'CHR15_EXTENT\t0-{run["zoom_end"]} bp (full reference chromosome)')
     run['stack_C_Cprime']=a.stack
     write_json(out/'run.json', run)
     dependencies = []
@@ -189,9 +192,12 @@ def dense_chr15(out,run,normalization):
         done=json.loads((out/f'chr15_10kb_{side}.complete.json').read_text())
         if done['table']!=stamp(out/f'chr15_10kb_{side}.tsv'):
             raise RuntimeError('Dense coverage table changed after completion: '+side)
+        if done['signature']['start']!=run['zoom_start'] or done['signature']['end']!=run['zoom_end']:
+            raise RuntimeError('Coverage cache does not span the requested full chromosome: '+side)
     left=pd.read_csv(out/'chr15_10kb_left.tsv',sep='\t')
     right=pd.read_csv(out/'chr15_10kb_right.tsv',sep='\t')
-    d=left.merge(right,on=['chrom','start','end'],suffixes=('_left','_right'),validate='one_to_one')
+    raw=left.merge(right,on=['chrom','start','end'],suffixes=('_left','_right'),validate='one_to_one')
+    d=raw.copy()
     use=(d.covered_left.ge(.5)&d.covered_right.ge(.5)&d.acgt_fraction_left.ge(.9)&d.acgt_fraction_right.ge(.9))
     d=d.loc[use].copy();d['mid']=(d.start+d.end)/2
     for side in ['left','right']:
@@ -203,7 +209,37 @@ def dense_chr15(out,run,normalization):
         d[side+'_segment_median']=np.where(d.mid<fit['split_bp'],fit['levels'][side][0],fit['levels'][side][1])
     write_json(out/'chr15_descriptive_segments.json',fit)
     d.to_csv(out/'chr15_10kb_plotted.tsv',sep='\t',index=False)
-    return d
+    display=aggregate_depth(raw,30000)
+    use=(display.covered_left.ge(.5)&display.covered_right.ge(.5)&display.acgt_fraction_left.ge(.9)&display.acgt_fraction_right.ge(.9))
+    display['usable_depth']=use
+    display['mid']=(display.start+display.end)/2
+    for side in ['left','right']:
+        display[side]=display['depth_'+side]/bg[side]/normalization[side]
+    display['delta']=display.right-display.left
+    display.to_csv(out/'chr15_30kb_averages.tsv',sep='\t',index=False)
+    display=display.loc[use].copy()
+    display.attrs['segment_fit']=fit
+    return display
+
+
+def aggregate_depth(raw,width):
+    """Base-weighted consecutive non-overlapping windows, including zero coverage."""
+    import pandas as pd
+    import numpy as np
+    rows=[]
+    for _,g in raw.groupby(raw.start//width,sort=True):
+        g=g.sort_values('start')
+        if np.any(g.start.to_numpy()[1:]!=g.end.to_numpy()[:-1]):
+            raise RuntimeError('Cannot average non-contiguous source windows')
+        if (g.start//width).nunique()!=1 or np.any((g.end-1)//width!=g.start//width):
+            raise RuntimeError('Source window crosses output bin edge')
+        weights=(g.end-g.start).to_numpy()
+        row=dict(chrom=g.chrom.iloc[0],start=int(g.start.min()),end=int(g.end.max()),source_windows=len(g))
+        for side in ['left','right']:
+            for field in ['depth','covered','acgt_fraction']:
+                row[field+'_'+side]=float(np.average(g[field+'_'+side],weights=weights))
+        rows.append(row)
+    return pd.DataFrame(rows)
 
 
 def fit_segments(d):
@@ -377,7 +413,7 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
                 ax.set_xlabel('Chromosome',labelpad=3)
                 suffix = 'genome'
             expectations(ax,metric,bounds,run['mixing_max'],hi-.005*(hi-lo))
-            point_slice=slice(None,None,3) if zoom and dense is not None else slice(None)
+            point_slice=slice(None)
             if metric == 'delta':
                 ax.scatter(x.iloc[point_slice],data.delta.iloc[point_slice],s=7 if zoom else 4,c='black',linewidths=0,zorder=3)
                 if not zoom:
@@ -405,7 +441,7 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
             ax.set_xlim(lo,hi); clean(ax)
             fig.text(.075,.045,f'Blue-grey: central 95% autosomal background; grey: conditional 0-{run["mixing_max"]:.0%} mixing model.',fontsize=6.3)
             if zoom:
-                note=('Every third 10-kb point shown; segment medians use all windows (black/grey).' if metric=='relative' else 'Every third 10-kb coverage point shown.') if dense is not None else 'Cached source depth windows.'
+                note=('30-kb mean coverage; segment fits use all usable 10-kb windows (black/grey).' if metric=='relative' else '30-kb mean coverage; no point thinning.') if dense is not None else 'Cached source depth windows.'
                 fig.text(.075,.085,note,fontsize=6.1)
                 fig.text(.075,.012,'Dotted: earlier exploratory interval. *Mapped ivory exons; annotation is partial.',fontsize=6.1)
             if not stacked:save(fig,out/f'{"03" if zoom else "02"}_{suffix}_{metric}.pdf',sizes)
@@ -574,9 +610,11 @@ def run_render(out):
         W='not assessed by source scan; not shown as zero',ivory=features,AF=af_audit,
         AF_aesthetic='Figure2H Luka-Bleute palette, vector hexagons, log density midpoint compression, neutral LOESS marginals; no unsupported control-GT colours or TN predictive rings',
         downloads=0,alignments=0,calling=0,new_coverage=2 if refresh else 0,
-        chr15_refinement=dict(window_bp=10000,source='same NDJ BAMs and samtools filters',
-            style='Purple Left/orange Right raw points; black/grey descriptive median segments',
-            display_stride=3,segment_fit_uses_all_usable_windows=True,
+        chr15_refinement=dict(source_window_bp=10000,display_window_bp=30000,source='same NDJ BAMs and samtools filters',
+            style='Purple Left/orange Right 30-kb mean depths; black/grey descriptive median segments',
+            display_start_bp=run['zoom_start'],display_end_bp=run['zoom_end'],
+            aggregation='Base-width-weighted means of consecutive non-overlapping raw 10-kb windows, before display QC; terminal partial bin weighted by its actual length',
+            display_stride=1,segment_fit_uses_all_usable_10kb_windows=True,
             segment_fit=dense.attrs['segment_fit']) if refresh else None)
     for old in run.get('protected_outputs',[]):
         if stamp(Path(old['path']))!=old:raise RuntimeError('Protected 01/02 PDF changed: '+old['path'])
