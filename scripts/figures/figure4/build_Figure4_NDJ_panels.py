@@ -59,13 +59,14 @@ def submit(a):
     for name, src in deps.items():
         shutil.copy2(src, out/name)
     run = dict(source=str(a.source.resolve()), output=str(out), ratio=a.ratio,
-               zoom_start=a.zoom_start, zoom_end=a.zoom_end,
+               zoom_start=a.zoom_start, zoom_end=a.zoom_end if a.zoom_end is not None else 3100000,
                anomaly_start=200000, anomaly_end=2100000, mixing_max=a.mixing_max,
                project=str(ROOT), code_sha256=stamp(out/'worker.py')['sha256'])
     if a.refresh_03_04:
         previous = json.loads((out/'run.json').read_text())
         for k in ['source','ratio','zoom_start','zoom_end','anomaly_start','anomaly_end','mixing_max','project']:
             run[k] = previous[k]
+        if a.zoom_end is not None:run['zoom_end']=a.zoom_end
         run['refresh_03_04'] = True
         run['protected_outputs'] = [stamp(p) for p in sorted(out.glob('0[12]_*.pdf'))]
         if not run['protected_outputs']:
@@ -73,6 +74,7 @@ def submit(a):
         if (out/'complete.json').exists():
             shutil.copy2(out/'complete.json',out/'previous_complete.json')
             (out/'complete.json').unlink()
+    run['stack_C_Cprime']=a.stack
     write_json(out/'run.json', run)
     dependencies = []
     if a.refresh_03_04:
@@ -124,12 +126,20 @@ def depth_worker(out):
         end=run['zoom_end'],window_bp=10000,baseq=cfg['baseq'],mapq=cfg['mapq'],exclude='0xF04',
         mate_overlap_removed=True,samtools=cfg['samtools'])
     table=out/f'chr15_10kb_{side}.tsv';done=out/f'chr15_10kb_{side}.complete.json'
+    prefix=None;prefix_audit=None
     if table.exists() and done.exists():
         old=json.loads(done.read_text())
         if old.get('signature')==signature and old.get('table')==stamp(table):
             print('REUSED\t'+str(table));return
+        oldsig=old.get('signature',{})
+        if (old.get('table')==stamp(table) and oldsig.get('end',0)<signature['end']
+            and oldsig.get('end',0)%10000==0
+            and {k:v for k,v in oldsig.items() if k!='end'}=={k:v for k,v in signature.items() if k!='end'}):
+            prefix=pd.read_csv(table,sep='\t');prefix_audit=old
+            signature_start=int(oldsig['end'])
     done.unlink(missing_ok=True)
     start,end,width=run['zoom_start'],run['zoom_end'],10000
+    if prefix is not None:start=signature_start
     with pysam.FastaFile(str(ref)) as fa, pysam.AlignmentFile(str(bam),'rb') as b:
         if b.get_reference_length(CHROM)!=fa.get_reference_length(CHROM):
             raise RuntimeError('BAM/reference length mismatch')
@@ -156,8 +166,12 @@ def depth_worker(out):
         a=start+i*width;b=min(a+width,end);s=seq[a-start:b-start]
         rows.append(dict(chrom=CHROM,start=a,end=b,depth=totals[i]/(b-a),
             covered=covered[i]/(b-a),acgt_fraction=sum(s.count(x) for x in 'ACGT')/(b-a)))
-    temp=table.with_suffix('.partial.tsv');pd.DataFrame(rows).to_csv(temp,sep='\t',index=False);temp.replace(table)
-    write_json(done,dict(signature=signature,command=command,table=stamp(table)))
+    data=pd.DataFrame(rows)
+    if prefix is not None:data=pd.concat([prefix,data],ignore_index=True)
+    if data.duplicated(['chrom','start','end']).any():raise RuntimeError('Overlapping cache extension')
+    temp=table.with_suffix('.partial.tsv');data.to_csv(temp,sep='\t',index=False);temp.replace(table)
+    write_json(done,dict(signature=signature,command=command,table=stamp(table),
+        reused_prefix=prefix_audit,new_interval=[start,end]))
     print('DEPTH_COMPLETE\t'+str(table))
 
 
@@ -289,7 +303,7 @@ def expectations(ax, metric, bounds, mix, xmax):
     ax.axhline(base,color='#444444',lw=.6,zorder=2)
 
 
-def coverage(out, run, cfg, w, bounds, features, sizes, dense=None):
+def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=False):
     import matplotlib.pyplot as plt
     import numpy as np
     offset,ticks,labels = {},[],[]
@@ -300,10 +314,14 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None):
         labels.append('Z' if str(c['label'])=='21' else str(c['label']))
         cursor += c['length']+300000
     w['genome_mb'] = (w.chrom.map(offset)+w.mid)/1e6
+    if stacked:
+        canvas=plt.figure(figsize=(10,20/run['ratio']))
+        panels=canvas.subfigures(2,1,hspace=0)
     for zoom in [False,True]:
-        if run.get('refresh_03_04') and not zoom:continue
+        if run.get('refresh_03_04') and not zoom and not stacked:continue
         for metric in ['delta','relative']:
-            fig = plt.figure(figsize=(10,10/run['ratio']))
+            if stacked and metric!=('relative' if zoom else 'delta'):continue
+            fig = panels[int(zoom)] if stacked else plt.figure(figsize=(10,10/run['ratio']))
             ax = fig.add_axes([.075,.29,.91,.56] if zoom else [.075,.25,.91,.66])
             fig.text(.013,.98,"C'" if zoom else 'C',fontsize=13,fontweight='bold',va='top')
             if zoom:
@@ -359,7 +377,8 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None):
             if zoom:
                 fig.text(.075,.085,'10-kb windows; 200-kb-span local linear LOESS.' if dense is not None else 'Cached source depth windows.',fontsize=6.1)
                 fig.text(.075,.012,'Dotted: earlier exploratory interval. *Mapped ivory exons; annotation is partial.',fontsize=6.1)
-            save(fig,out/f'{"03" if zoom else "02"}_{suffix}_{metric}.pdf',sizes)
+            if not stacked:save(fig,out/f'{"03" if zoom else "02"}_{suffix}_{metric}.pdf',sizes)
+    if stacked:save(canvas,out/'05_C_Cprime_stacked.pdf',sizes)
 
 
 def bars(out,cfg,w,sizes):
@@ -503,7 +522,12 @@ def run_render(out):
     dense=dense_chr15(out,run,normalization) if refresh else None
     if not refresh:bars(out,cfg,w,sizes)
     coverage(out,run,cfg,w,bounds,features,sizes,dense)
-    af_audit,count_inputs,palette=af(out,run,cfg,sizes)
+    if run.get('stack_C_Cprime'):
+        coverage(out,run,cfg,w,bounds,features,sizes,dense,stacked=True)
+    if refresh and run.get('stack_C_Cprime'):
+        af_audit,count_inputs,palette=prior['AF'],prior['count_inputs'],prior['palette']
+    else:
+        af_audit,count_inputs,palette=af(out,run,cfg,sizes)
     if not refresh:w.to_csv(out/'coverage_windows_plotted.tsv.gz',sep='\t',index=False)
     used=[stamp(Path(run['source'])/n) for n in ['config.json','COMPLETE.json','windows.tsv']]
     audit=dict(status='COMPLETE',specimen=['NDJ_left','NDJ_right'],source=run['source'],
@@ -537,8 +561,9 @@ def main():
     p.add_argument('--overwrite',action='store_true')
     p.add_argument('--refresh-03-04',action='store_true',help='Recount chr15 at 10 kb; update only 03/04 and preserve 01/02 hashes')
     p.add_argument('--depth-worker',action='store_true')
+    p.add_argument('--stack',action='store_true',help='Stack genome delta above chr15 relative coverage; keep existing AF PDF on targeted refresh')
     p.add_argument('--ratio',type=float,choices=[4,5],default=4)
-    p.add_argument('--zoom-start',type=int,default=0);p.add_argument('--zoom-end',type=int,default=3100000)
+    p.add_argument('--zoom-start',type=int,default=0);p.add_argument('--zoom-end',type=int,default=None)
     p.add_argument('--mixing-max',type=float,default=.2)
     a=p.parse_args()
     if not 0<=a.mixing_max<.5:p.error('Mixing must lie in [0,0.5)')
