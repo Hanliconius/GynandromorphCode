@@ -74,12 +74,18 @@ def submit(a):
         if (out/'complete.json').exists():
             shutil.copy2(out/'complete.json',out/'previous_complete.json')
             (out/'complete.json').unlink()
+    if a.full_chr15:
+        cfg=json.loads((Path(run['source'])/'config.json').read_text())
+        matches=[c for c in cfg['chromosomes'] if c['contig']==CHROM]
+        if len(matches)!=1:raise RuntimeError('Expected exactly one chromosome 15 entry')
+        run['zoom_start']=0;run['zoom_end']=int(matches[0]['length'])
+        run['full_chr15']=True
     run['stack_C_Cprime']=a.stack
     write_json(out/'run.json', run)
     dependencies = []
     if a.refresh_03_04:
         # The frozen coverage cache is 100 kb; sub-window values cannot be inferred.
-        # Recount only the requested 3.1-Mb interval of the two existing source BAMs.
+        # Reuse a validated cached prefix, counting only any newly requested extent.
         cfg = json.loads((Path(run['source'])/'config.json').read_text())
         required = [Path(cfg[k]) for k in ['bam_left','bam_right','reference']]
         required += [Path(run['source'])/'background.json']
@@ -386,7 +392,7 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
                 for side,col in point_colours:
                     fine=zoom and dense is not None
                     ax.scatter(x,data[side],s=4 if fine else (9 if zoom else 4),c=col,linewidths=0,
-                               alpha=.35 if fine else .8,zorder=3,label=side.title())
+                               alpha=.85 if fine else .8,zorder=3,label=side.title())
                     if fine:
                         fit=data.attrs['segment_fit'];level=fit['levels'][side]
                         for j,(a,b) in enumerate([(fit['start_bp'],fit['split_bp']),(fit['split_bp'],fit['end_bp'])]):
@@ -587,6 +593,7 @@ def main():
     p.add_argument('--refresh-03-04',action='store_true',help='Recount chr15 at 10 kb; update only 03/04 and preserve 01/02 hashes')
     p.add_argument('--depth-worker',action='store_true')
     p.add_argument('--stack',action='store_true',help='Stack genome delta above chr15 relative coverage; keep existing AF PDF on targeted refresh')
+    p.add_argument('--full-chr15',action='store_true',help='Display all of reference chromosome 15, resolving its exact length from the frozen source config')
     p.add_argument('--ratio',type=float,choices=[4,5],default=4)
     p.add_argument('--zoom-start',type=int,default=0);p.add_argument('--zoom-end',type=int,default=None)
     p.add_argument('--mixing-max',type=float,default=.2)
