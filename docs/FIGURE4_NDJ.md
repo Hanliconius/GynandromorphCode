@@ -146,3 +146,21 @@ least four usable 10-kb windows per local fit and breaks curves across gaps
 over 50 kb. Points, depth filters, normalization, mixing bands and the 0-4.1 Mb
 zoom are unchanged. Existing validated depth caches remain reusable; shortening
 LOESS alone requires no new counting. Use the same stack submission command.
+
+## Screenshot-style segment display (supersedes LOESS)
+
+The latest requested C-prime style replaces LOESS with 10-kb raw coverage points
+(purple Left, orange Right) and black/grey horizontal segment medians. Hemisphere
+identities are not exchanged to imitate which colour is high in the reference
+screenshot. C and the 0-4.1 Mb zoom extent are unchanged; the stack retains aligned
+plot areas. Mixing-model bands and mapped ivory annotation remain.
+
+A single shared transition is chosen by minimizing total absolute deviation
+across both side-specific coverage series, with separate median levels per side
+and segment. Each segment must span at least 500 kb and contain at least 20 usable
+windows. The fit and one-segment comparison loss are exported to
+`chr15_descriptive_segments.json`; plotted per-window levels are also exported.
+This is descriptive segmentation, not an inference of integer copy number or a
+base-resolution breakpoint. The bracketing windows are recorded. Existing depth
+caches are reused; this styling/summary change does not require new sequence
+processing. Use the same --refresh-03-04 --stack --zoom-end 4100000 command.
