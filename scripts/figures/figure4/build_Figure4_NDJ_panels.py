@@ -68,7 +68,8 @@ def submit(a):
             run[k] = previous[k]
         if a.zoom_end is not None:run['zoom_end']=a.zoom_end
         run['refresh_03_04'] = True
-        run['protected_outputs'] = [stamp(p) for p in sorted(out.glob('0[12]_*.pdf'))]
+        # This revision explicitly restyles C, so protect only unchanged B/AF.
+        run['protected_outputs'] = [stamp(p) for pattern in ['01_*.pdf','04_*.pdf'] for p in sorted(out.glob(pattern))]
         if not run['protected_outputs']:
             raise RuntimeError('No existing 01/02 outputs found to preserve')
         if (out/'complete.json').exists():
@@ -347,7 +348,7 @@ def save(fig, path, sizes):
     plt.close(fig)
 
 
-def expectations(ax, metric, bounds, mix, xmax):
+def expectations(ax, metric, bounds, mix, xmax, show_model=True):
     """Model ranges and empirical background are distinct in label and provenance."""
     if metric == 'delta':
         regions = [(1-2*mix,1,'L 1n / R 3n'),(-1,-1+2*mix,'L 3n / R 1n')]
@@ -355,7 +356,7 @@ def expectations(ax, metric, bounds, mix, xmax):
     else:
         regions = [(.5,.5+mix,'1n'),(1.5-mix,1.5,'3n')]
         base = 1
-    for low,high,label in regions:
+    for low,high,label in regions if show_model else []:
         ax.axhspan(low,high,facecolor='#D8D8D8',alpha=.55,zorder=1)
         ax.axhline(low,color='#999999',lw=.4,zorder=1)
         ax.axhline(high,color='#999999',lw=.4,zorder=1)
@@ -371,17 +372,17 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
     import numpy as np
     offset,ticks,labels = {},[],[]
     cursor = 0
+    gap=1000000
     for c in cfg['chromosomes']:
         offset[c['contig']] = cursor
         ticks.append((cursor+c['length']/2)/1e6)
         labels.append('Z' if str(c['label'])=='21' else str(c['label']))
-        cursor += c['length']+300000
+        cursor += c['length']+gap
     w['genome_mb'] = (w.chrom.map(offset)+w.mid)/1e6
     if stacked:
         canvas=plt.figure(figsize=(10,20/run['ratio']))
         panels=canvas.subfigures(2,1,hspace=0)
     for zoom in [False,True]:
-        if run.get('refresh_03_04') and not zoom and not stacked:continue
         for metric in ['delta','relative']:
             if stacked and metric!=('relative' if zoom else 'delta'):continue
             fig = panels[int(zoom)] if stacked else plt.figure(figsize=(10,10/run['ratio']))
@@ -404,15 +405,11 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
                 suffix = 'chr15'
             else:
                 data = w; x = w.genome_mb
-                lo,hi = 0,(cursor-300000)/1e6
-                for i,c in enumerate(cfg['chromosomes']):
-                    if i%2:
-                        ax.axvspan(offset[c['contig']]/1e6,(offset[c['contig']]+c['length'])/1e6,
-                                   color='#F0F0F0',zorder=-2)
+                lo,hi = 0,(cursor-gap)/1e6
                 ax.set_xticks(ticks,labels)
                 ax.set_xlabel('Chromosome',labelpad=3)
                 suffix = 'genome'
-            expectations(ax,metric,bounds,run['mixing_max'],hi-.005*(hi-lo))
+            expectations(ax,metric,bounds,run['mixing_max'],hi-.005*(hi-lo),show_model=not zoom)
             point_slice=slice(None)
             if metric == 'delta':
                 ax.scatter(x.iloc[point_slice],data.delta.iloc[point_slice],s=7 if zoom else 4,c='black',linewidths=0,zorder=3)
@@ -438,8 +435,14 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
                 ax.set_ylim(max(0,min(.35,float(vals.min())-.08)),max(1.65,float(vals.max())+.08,bounds['relative'][1]+.05))
                 ax.set_ylabel('Relative coverage\nDiploid background = 1')
                 ax.legend(frameon=False,loc='upper left',ncol=2,fontsize=6.5,handletextpad=.3)
+            if not zoom:
+                # Narrow genuine white separators also interrupt the band fills.
+                for c in cfg['chromosomes'][:-1]:
+                    end=(offset[c['contig']]+c['length'])/1e6
+                    ax.axvspan(end,end+gap/1e6,color='white',lw=0,zorder=7)
             ax.set_xlim(lo,hi); clean(ax)
-            fig.text(.075,.045,f'Blue-grey: central 95% autosomal background; grey: conditional 0-{run["mixing_max"]:.0%} mixing model.',fontsize=6.3)
+            caption='Blue-grey: central 95% autosomal background.' if zoom else f'Blue-grey: central 95% autosomal background; grey: conditional 0-{run["mixing_max"]:.0%} mixing model.'
+            fig.text(.075,.045,caption,fontsize=6.3)
             if zoom:
                 note=('30-kb mean coverage; segment fits use all usable 10-kb windows (black/grey).' if metric=='relative' else '30-kb mean coverage; no point thinning.') if dense is not None else 'Cached source depth windows.'
                 fig.text(.075,.085,note,fontsize=6.1)
@@ -600,6 +603,8 @@ def run_render(out):
     audit=dict(status='COMPLETE',specimen=['NDJ_left','NDJ_right'],source=run['source'],
         inputs=used,count_inputs=count_inputs,palette=palette,run=run,PDFs=sizes,
         coverage_window_bp=cfg['window'],source_filters={k:cfg.get(k) for k in ['mapq','baseq','min_depth','max_depth','filter','ascertainment']},
+        genome_display=dict(chromosome_gap_bp=1000000,alternating_background=False,mixing_bands=True),
+        chr15_display=dict(mixing_bands=False,empirical_background_band=True),
         coverage_normalization='Existing side-specific relative depth divided by its median in usable autosomal windows excluding chr15 and sex chromosomes',
         normalization_scalars=normalization,background_envelopes=bounds,
         background_interpretation='Empirical central 95% observed autosomal variation, not confidence interval or calibrated null',
