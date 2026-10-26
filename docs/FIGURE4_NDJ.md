@@ -122,3 +122,18 @@ full hex height is **2*sy/3**, not **4*sy/3**. The old latter factor overlapped
 neighbouring polygons. Marginal endpoint percentages move into a readable footer,
 labels and colourbar are given separate space, and counts/AF orientation are
 unchanged. Strong concentration in the AF-zero bins is not removed or recoded.
+
+## Aligned C/C-prime stack and extended context
+
+Use `--submit --overwrite --refresh-03-04 --stack --zoom-end 4100000`.
+`05_C_Cprime_stacked.pdf` is one vector page: approved whole-genome delta view
+above chr15 relative coverage with 10-kb points and 200-kb LOESS. Plot-area left
+and right edges are identical. Each component retains its fixed 4:1 outer panel
+shape; the combined page is 10 x 5 inches. Original 01/02 files stay checksum
+protected, and this stack refresh leaves the AF PDF untouched.
+
+A valid matching 10-kb cache ending at 3.1 Mb is extended by counting only
+3.1-4.1 Mb from each existing BAM. Source/filter signatures and previous table
+hashes must match before prefix reuse; the audit records reused prefixes and
+newly counted intervals. Normalization and the earlier atypical-region guides
+are unchanged. The separately saved 03 plots also show the new 0-4.1 Mb extent.
