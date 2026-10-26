@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Compact morph-frequency supplements from frozen reviewed Figure 3 calls."""
-import argparse,hashlib,importlib.util,json,shlex,shutil,subprocess,sys,zipfile
+import argparse,hashlib,importlib.util,json,re,shlex,shutil,subprocess,sys,zipfile
 from pathlib import Path
 ROOT=Path('/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling')
 SOURCE=ROOT/'analysis/Figure3_for_Arnaud'
 THRESHOLDS=[.90,.91,.92,.93,.94,.95,.96,.97,.98,.99,1.]
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def population_name(s):
+ return ' '.join(re.sub(r'\b(?:ssp|spp|subsp)\.?(?=\s|$)','',str(s),flags=re.I).split())
 def save(p,x):Path(p).write_text(json.dumps(x,indent=2,allow_nan=False)+'\n')
 def load(p,name):
  s=importlib.util.spec_from_file_location(name,p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
@@ -146,17 +148,27 @@ def locus(out):
  else:meta,display,conflicts=yb_display(helper,src,scores,selection,m)
  if any(helper.blocked(r) for r in meta.to_dict('records')):raise RuntimeError('Excluded taxon in display')
  scores['_index']=np.arange(len(scores));scores=scores.sort_values(keys)
- countrows=[dict(locus=name,threshold=t,passing_SNPs=int(scores.balanced_accuracy.ge(t).sum())) for t in THRESHOLDS]
+ thresholds=THRESHOLDS if name=='Dennis' else [round(.80+i*.01,2) for i in range(21)]
+ countrows=[dict(locus=name,threshold=t,passing_SNPs=int(scores.balanced_accuracy.ge(t).sum())) for t in thresholds]
  pd.DataFrame(countrows).to_csv(out/(name+'_threshold_counts.tsv'),sep='\t',index=False)
  viable=[r for r in countrows if 0<r['passing_SNPs']<=cfg['target_columns']]
  nonempty=[r for r in countrows if r['passing_SNPs']>0]
  if not nonempty:raise RuntimeError('No SNPs pass BA >= 0.90')
- compact=viable[0]['threshold'] if viable else nonempty[-1]['threshold']
+ if name=='Ybv':
+  informative=[r for r in viable if r['passing_SNPs']>=20]
+  compact=informative[-1]['threshold'] if informative else (viable[0]['threshold'] if viable else nonempty[-1]['threshold'])
+ else:compact=viable[0]['threshold'] if viable else nonempty[-1]['threshold']
+ meta['population_original']=meta.population
+ meta['population']=meta.population.map(population_name)
  membership=meta.copy();membership['used_in_main_BA']=membership.specimen_id.isin(selection.specimen_id)
  membership.to_csv(out/(name+'_display_membership.tsv'),sep='\t',index=False)
  pd.DataFrame(conflicts).to_csv(out/(name+'_source_conflicts.tsv'),sep='\t',index=False)
  results=[]
- for suffix,cut in [('BA093',.93),('compact',compact)]:
+ versions=[('BA093',.93),('compact',compact)] if name=='Dennis' else [('BA080',.80),('BA085',.85),('BA090',.90),('compact',compact)]
+ if name=='Ybv':
+  for obsolete in ['Ybv_BA093_morph_frequencies.pdf','Ybv_BA093_selected_SNPs.tsv','Ybv_BA093_frequencies.tsv.gz']:
+   (out/obsolete).unlink(missing_ok=True)
+ for suffix,cut in versions:
   sites=scores.loc[scores.balanced_accuracy.ge(cut)].copy();sites.to_csv(out/f'{name}_{suffix}_selected_SNPs.tsv',sep='\t',index=False)
   if sites.empty:
    (out/f'{name}_{suffix}_morph_frequencies.pdf').unlink(missing_ok=True)
@@ -168,7 +180,10 @@ def locus(out):
   cols=['population','morph','phenotype'] if name=='Dennis' else ['geography_used_Fig3b','population','morph','phenotype']
   # Matrix rows are aligned to the unmodified meta row order.
   meta=meta.reset_index(drop=True)
-  for group,g in meta.groupby(cols,sort=True,dropna=False):
+  groups=list(meta.groupby(cols,sort=False,dropna=False))
+  # Phenotype-present block first, then absent; preserve morph/geography distinctions.
+  groups.sort(key=lambda item:(-int(float(item[0][-1])),str(item[0][-2]),tuple(map(str,item[0][:-2]))))
+  for group,g in groups:
    x=values[g.index];n=np.isfinite(x).sum(axis=0)
    freq=np.divide(np.nansum(x,axis=0),n,out=np.full(len(sites),np.nan),where=n>0)
    rows.append(freq);geo='' if name=='Dennis' else str(group[0])+' | '
@@ -189,6 +204,8 @@ def locus(out):
   display_individuals=len(meta),BA_individuals=len(selection),versions=results,
   cap=False,selection='Every site passing declared BA threshold; pagination exhaustive at 80 columns/page',
   all_threshold_counts=countrows,compact_achieves_target=bool(viable),
+  population_normalization='Remove standalone ssp/spp/subsp tokens; merge only identical phenotype/morph/geography groups',
+  row_order='Phenotype present first, then absent; grouped by complete morph calls and geography',
   note='Main BA selection membership and score rule unchanged; broader Yb rows are display-only when outside that cohort'))
 
 def report(out):
