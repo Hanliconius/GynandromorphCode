@@ -21,6 +21,11 @@ def submit(a):
    p=a.source/'data'/locus/n
    if not p.is_file():raise FileNotFoundError(p)
  shutil.copy2(__file__,out/'worker.py');shutil.copy2(a.source/'code/worker.py',out/'figure3_helper.py')
+ repo=Path(__file__).resolve().parents[3]
+ shutil.copy2(repo/'docs/FIGURE3_MORPH_SUPPLEMENTS.md',out/'README_and_reviewer_checks.md')
+ maincfg=json.loads((a.source/'run.json').read_text())
+ if maincfg['metadata_sha256']!=sha(a.source/'reviewed_specimens.tsv'):raise RuntimeError('Main statistics metadata snapshot differs')
+ for locus_name in ['Dennis','Ybv']:(out/(locus_name+'_complete.json')).unlink(missing_ok=True)
  save(out/'run.json',dict(source=str(a.source),output=str(out),target_columns=80,
       metadata_sha256=sha(a.source/'reviewed_specimens.tsv'),worker_sha256=sha(out/'worker.py')))
  (out/'complete.json').unlink(missing_ok=True)
@@ -154,6 +159,8 @@ def locus(out):
  for suffix,cut in [('BA093',.93),('compact',compact)]:
   sites=scores.loc[scores.balanced_accuracy.ge(cut)].copy();sites.to_csv(out/f'{name}_{suffix}_selected_SNPs.tsv',sep='\t',index=False)
   if sites.empty:
+   (out/f'{name}_{suffix}_morph_frequencies.pdf').unlink(missing_ok=True)
+   (out/f'{name}_{suffix}_frequencies.tsv.gz').unlink(missing_ok=True)
    results.append(dict(version=suffix,threshold=cut,SNPs=0,PDF=None));continue
   values=display[:,sites['_index'].to_numpy(int)];rows=[];labels=[];exports=[]
   morph_traits=['B','D','R'] if name=='Dennis' else ['Yb_dorsal','Yb_ventral']
