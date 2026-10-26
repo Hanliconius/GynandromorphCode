@@ -194,3 +194,16 @@ at submission, checked against completed depth-cache signatures, and recorded in
 complete.json. A missing full-length cache is extended from the existing BAMs;
 a short cache cannot silently render a truncated chromosome. Point alpha remains
 0.85. C, AF, and the protected original 01/02 PDFs remain unchanged.
+
+## Latest panel-background revision
+
+C-prime no longer shows the conditional 1n/3n mixing bands or their labels; the
+empirical central-95% background envelope remains. C retains the mixing bands,
+but alternating chromosome-grey backgrounds are removed. Chromosome blocks are
+separated by narrow white gutters (1 Mb of artificial display spacing, not
+biological sequence), including breaks in the horizontal band fills.
+
+This request explicitly restyles C, so targeted refresh now updates the separate
+02 PDFs as well as 03 and the stack. B and AF PDFs remain checksum protected.
+Full chromosome 15, 30-kb averages, 85% point opacity and the all-10-kb-window
+segment fit are retained. Use the same full-chromosome submission command.
