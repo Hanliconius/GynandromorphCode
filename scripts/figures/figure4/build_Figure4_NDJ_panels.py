@@ -177,7 +177,6 @@ def depth_worker(out):
 
 def dense_chr15(out,run,normalization):
     import pandas as pd
-    from scipy.linalg import lstsq
     import numpy as np
     bg=json.loads((Path(run['source'])/'background.json').read_text())['depth_normalizers']
     for side in ['left','right']:
@@ -191,18 +190,40 @@ def dense_chr15(out,run,normalization):
     d=d.loc[use].copy();d['mid']=(d.start+d.end)/2
     for side in ['left','right']:
         d[side]=d['depth_'+side]/bg[side]/normalization[side]
-        # Local linear LOESS, tricube kernel, fixed 100-kb full span, no gap bridging.
-        x=d.mid.to_numpy();y=d[side].to_numpy();smooth=np.full(len(d),np.nan)
-        for i,centre in enumerate(x):
-            dist=(x-centre)/50000;take=np.abs(dist)<1
-            if take.sum()<4:continue
-            weights=(1-np.abs(dist[take])**3)**3
-            design=np.column_stack([np.ones(take.sum()),dist[take]])
-            smooth[i]=lstsq(design*np.sqrt(weights[:,None]),y[take]*np.sqrt(weights))[0][0]
-        d[side+'_loess']=smooth
     d['delta']=d.right-d.left
+    fit=fit_segments(d)
+    d.attrs['segment_fit']=fit
+    for side in ['left','right']:
+        d[side+'_segment_median']=np.where(d.mid<fit['split_bp'],fit['levels'][side][0],fit['levels'][side][1])
+    write_json(out/'chr15_descriptive_segments.json',fit)
     d.to_csv(out/'chr15_10kb_plotted.tsv',sep='\t',index=False)
     return d
+
+
+def fit_segments(d):
+    """One shared descriptive transition; robust median levels, no copy-number fit."""
+    import numpy as np
+    if not d.mid.is_monotonic_increasing:raise RuntimeError('Unsorted depth windows')
+    values=d[['left','right']].to_numpy(float)
+    null=float(np.abs(values-np.median(values,axis=0)).sum())
+    choices=[]
+    for i in range(20,len(d)-19):
+        if d.mid.iloc[i-1]-d.mid.iloc[0]<500000 or d.mid.iloc[-1]-d.mid.iloc[i]<500000:continue
+        a,b=values[:i],values[i:]
+        ma,mb=np.median(a,axis=0),np.median(b,axis=0)
+        loss=float(np.abs(a-ma).sum()+np.abs(b-mb).sum())
+        choices.append((loss,i,ma,mb))
+    if not choices:raise RuntimeError('Insufficient usable coverage for descriptive segments')
+    loss,i,a,b=min(choices,key=lambda item:item[0])
+    split=float((d.mid.iloc[i-1]+d.mid.iloc[i])/2)
+    return dict(method='Shared one-transition median segmentation; minimum total absolute deviation across both sides',
+        interpretation='Descriptive summary only; not a ploidy call, significance test, or base-resolution breakpoint',
+        split_bp=split,transition_bracket_bp=[int(d.start.iloc[i-1]),int(d.end.iloc[i])],
+        window_bp=10000,minimum_segment_span_bp=500000,minimum_usable_windows_per_segment=20,
+        levels={s:[float(a[j]),float(b[j])] for j,s in enumerate(['left','right'])},
+        absolute_loss=loss,one_segment_absolute_loss=null,
+        start_bp=int(d.start.iloc[0]),end_bp=int(d.end.iloc[-1]),
+        left_colour='#5A4FA3',right_colour='#E56B00')
 
 
 def bools(s):
@@ -361,13 +382,15 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
                 ax.set_ylim(min(-1.15,float(vals.min())-.08,bounds['delta'][0]-.05),
                             max(1.15,float(vals.max())+.08,bounds['delta'][1]+.05))
             else:
-                for side,col in [('left',BLUE),('right',ORANGE)]:
+                point_colours=[('left','#5A4FA3'),('right','#E56B00')] if zoom and dense is not None else [('left',BLUE),('right',ORANGE)]
+                for side,col in point_colours:
                     fine=zoom and dense is not None
                     ax.scatter(x,data[side],s=4 if fine else (9 if zoom else 4),c=col,linewidths=0,
                                alpha=.35 if fine else .8,zorder=3,label=side.title())
                     if fine:
-                        for segment in np.split(np.arange(len(data)),np.flatnonzero(np.diff(x)>0.05)+1):
-                            ax.plot(x.iloc[segment],data[side+'_loess'].iloc[segment],c=col,lw=1.3,zorder=4)
+                        fit=data.attrs['segment_fit'];level=fit['levels'][side]
+                        for j,(a,b) in enumerate([(fit['start_bp'],fit['split_bp']),(fit['split_bp'],fit['end_bp'])]):
+                            ax.hlines(level[j],a/1e6,b/1e6,colors='#222222' if side=='left' else '#666666',lw=1.5,zorder=5)
                 vals = data[['left','right']].to_numpy()
                 ax.set_ylim(max(0,min(.35,float(vals.min())-.08)),max(1.65,float(vals.max())+.08,bounds['relative'][1]+.05))
                 ax.set_ylabel('Relative coverage\nDiploid background = 1')
@@ -375,7 +398,8 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
             ax.set_xlim(lo,hi); clean(ax)
             fig.text(.075,.045,f'Blue-grey: central 95% autosomal background; grey: conditional 0-{run["mixing_max"]:.0%} mixing model.',fontsize=6.3)
             if zoom:
-                fig.text(.075,.085,'10-kb windows; 100-kb-span local linear LOESS.' if dense is not None else 'Cached source depth windows.',fontsize=6.1)
+                note=('10-kb windows; black/grey: fitted segment medians (descriptive).' if metric=='relative' else '10-kb coverage windows.') if dense is not None else 'Cached source depth windows.'
+                fig.text(.075,.085,note,fontsize=6.1)
                 fig.text(.075,.012,'Dotted: earlier exploratory interval. *Mapped ivory exons; annotation is partial.',fontsize=6.1)
             if not stacked:save(fig,out/f'{"03" if zoom else "02"}_{suffix}_{metric}.pdf',sizes)
     if stacked:save(canvas,out/'05_C_Cprime_stacked.pdf',sizes)
@@ -543,8 +567,9 @@ def run_render(out):
         W='not assessed by source scan; not shown as zero',ivory=features,AF=af_audit,
         AF_aesthetic='Figure2H Luka-Bleute palette, vector hexagons, log density midpoint compression, neutral LOESS marginals; no unsupported control-GT colours or TN predictive rings',
         downloads=0,alignments=0,calling=0,new_coverage=2 if refresh else 0,
-        chr15_refinement=dict(window_bp=10000,loess_full_span_bp=100000,source='same NDJ BAMs and samtools filters',
-            gap_rule='At least four usable windows within 50 kb of each estimate; no unsupported gap bridging') if refresh else None)
+        chr15_refinement=dict(window_bp=10000,source='same NDJ BAMs and samtools filters',
+            style='Purple Left/orange Right raw points; black/grey descriptive median segments',
+            segment_fit=dense.attrs['segment_fit']) if refresh else None)
     for old in run.get('protected_outputs',[]):
         if stamp(Path(old['path']))!=old:raise RuntimeError('Protected 01/02 PDF changed: '+old['path'])
     audit['protected_outputs_unchanged']=run.get('protected_outputs',[])
