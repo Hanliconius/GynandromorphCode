@@ -157,6 +157,28 @@ def use_focus_calls(sites,matrix,focus,narrow,out):
  pd.DataFrame(audit).to_csv(out/'tables/Ybv_focus_call_source_alignment.tsv',sep='\t',index=False)
  return sites,matrix
 
+def prepare_render_only(a):
+ out=a.output
+ if not a.overwrite:raise RuntimeError('Use --overwrite for an in-place redraw')
+ cfg=json.loads((out/'run.json').read_text())
+ if cfg.get('workflow')!='Figure3_reviewed_package' or cfg.get('Ybv_cohort')!='lower-panel':raise RuntimeError('Completed restricted Figure3 package required')
+ for locus in ['Dennis','Ybv']:
+  done=json.loads((out/'data'/locus/'complete.json').read_text())
+  if done.get('status')!='COMPLETE':raise RuntimeError('Statistics incomplete: '+locus)
+ if sha(out/'reviewed_specimens.tsv')!=cfg['metadata_sha256']:raise RuntimeError('Frozen metadata changed')
+ jobs=json.loads((out/'jobs.json').read_text())
+ active=set(subprocess.check_output(['squeue','-h','-u',getpass.getuser(),'-o','%A'],text=True).split())
+ if active&set(map(str,jobs.values())):raise RuntimeError('Package jobs still active')
+ shutil.copy2(__file__,out/'code/worker.py')
+ cfg['render_code_sha256']=sha(__file__);cfg['render_only']=True
+ save(out/'run.json',cfg)
+ (out/'complete.json').unlink(missing_ok=True)
+ job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--cpus-per-task=1','--mem=8G',
+  '--job-name=Fig3_render','--output='+str(out/'logs/render.%A_%a.out'),'--error='+str(out/'logs/render.%A_%a.err'),
+  '--wrap='+shlex.join([sys.executable,str(out/'code/worker.py'),'--stage','render','--output',str(out)])],text=True).strip().split(';')[0]
+ jobs['render']=job;save(out/'jobs.json',jobs)
+ print('RENDER\t'+job+'\nMAIN_PDF\t'+str(out/'01_Figure3_main_BA_dots.pdf'))
+
 def statistics(out,locus):
  import numpy as np,pandas as pd
  folder=out/'data'/locus;cfg=json.loads((out/'run.json').read_text())
@@ -359,7 +381,20 @@ def main_rows(data,locus):
  if locus=='Ybv' and data.get('population_rows') is not None:
   ids=[r['specimen_id'] for r in member_rows]
   if len(ids)!=len(set(ids)) or set(ids)!=set(selected.specimen_id):raise RuntimeError('Displayed Ybv rows do not exactly cover BA cohort')
- return dict(sites=focus.pos.to_numpy(),a=allele1,b=allele0,rows=groups[1]+[bread[1],('Left (corrected)',focal[0],'genotype'),('Right (corrected)',focal[1],'genotype'),bread[0]]+groups[0],examples=member_rows)
+ rows=groups[1]+[bread[1],('Left (corrected)',focal[0],'genotype'),('Right (corrected)',focal[1],'genotype'),bread[0]]+groups[0]
+ if locus=='Ybv' and data.get('population_rows') is not None:
+  def ordered(state,names):
+   result=[]
+   for name in names:
+    hits=[r for r in groups[state] if name in r[0].lower()]
+    if len(hits)!=1:raise RuntimeError('Expected exactly one displayed Ybv population row: '+name)
+    result.extend(hits)
+   if len(result)!=len(groups[state]):raise RuntimeError('Ybv row reordering omitted a population')
+   return result
+  negative=ordered(0,['malleti','nov. ecu','heurippa','elevatus'])
+  positive=ordered(1,['cythera','vulcanus','thelxinoe','besckei'])
+  rows=negative+[bread[0],('Left (corrected)',focal[0],'genotype'),('Right (corrected)',focal[1],'genotype'),bread[1]]+positive
+ return dict(sites=focus.pos.to_numpy(),a=allele1,b=allele0,rows=rows,examples=member_rows)
 def draw_main_letters(ax,data):
  import numpy as np
  from matplotlib.patches import Rectangle
@@ -456,12 +491,12 @@ def main_figures(out,data,helper,features,native,windows):
    for q,ls in [(.95,'-'),(.99,'--')]:
     w=windows[(locus,q)]
     for side,col in [('left','#1764AB'),('right','#D04B35')]:ho.plot(w.mid,w[side+'_Ho'],c=col,ls=ls,lw=1.25 if q==.95 else .8,label=side.title()+f' | P >= {q}')
-   ho.set_xlim(*SPANS[locus][1:]);ho.set_ylim(0,ylim);ho.set_yticks(np.round(np.arange(0,ylim+1e-8,.05),2));ho.set_ylabel('Heterozygous fraction\namong callable SNPs');ho.tick_params(axis='x',labelbottom=False);ho.legend(fontsize=7,ncol=2,loc='upper right');ho.spines[['top','right']].set_visible(False)
+   ho.set_xlim(*SPANS[locus][1:]);ho.set_xticks(np.linspace(*SPANS[locus][1:],5));ho.set_ylim(0,ylim);ho.set_yticks(np.round(np.arange(0,ylim+1e-8,.05),2));ho.set_ylabel('Heterozygous fraction\namong callable SNPs');ho.tick_params(axis='x',labelbottom=False);ho.legend(fontsize=7,ncol=2,loc='upper right');ho.spines[['top','right']].set_visible(False)
    ann=fig.add_axes([left,base+(.225 if dots else .185),width,.085 if dots else .065]);annotation(ann,helper,features,native,locus,d['scores'] if dots else None)
    heat=fig.add_axes([left,base+.010,width,.19 if dots else .16]);draw_main_letters(heat,letters)
    for j,pos in enumerate(letters['sites']):fig.add_artist(ConnectionPatch(xyA=(int(pos),0),coordsA=ann.transData,xyB=(j,-.5),coordsB=heat.transData,color='#BFC3C7',lw=.35,alpha=.5,clip_on=False))
    fig.text(left,base-.004,'Blue: original Dennis-associated allele; yellow: other allele' if locus=='Dennis' else 'Blue: ALT; yellow: REF. Consensus and BA use the same restricted population rows.',fontsize=7)
-   audit.append(dict(locus=locus,cohort=cohort,rows=[r[0] for r in letters['rows']],genes=[g['label'] for g in native if g['chrom']==SPANS[locus][0]],focus_SNPs=len(letters['sites']),xlim_bp=list(SPANS[locus][1:]),Ho_y_tick_step=.05,first_window_midpoint_bp=float(windows[(locus,.95)].mid.iloc[0]),lower_panel_counts={str(v):int(sum(lower_cohort(d,locus).phenotype.eq(v))) for v in [0,1]}))
+   audit.append(dict(locus=locus,cohort=cohort,rows=[r[0] for r in letters['rows']],genes=[g['label'] for g in native if g['chrom']==SPANS[locus][0]],focus_SNPs=len(letters['sites']),xlim_bp=list(SPANS[locus][1:]),x_ticks_bp=[int(x) for x in np.linspace(*SPANS[locus][1:],5)],Ho_y_tick_step=.05,first_window_midpoint_bp=float(windows[(locus,.95)].mid.iloc[0]),lower_panel_counts={str(v):int(sum(lower_cohort(d,locus).phenotype.eq(v))) for v in [0,1]}))
    if dots:all_examples.extend(letters['examples'])
   fig.text(.025,.004,'Reviewed specimen metadata; one contribution per specimen. Red dots: updated BA >=0.90. Existing 24 Dennis / 27 Yb(v) focus SNP identities retained.\nHo: unchanged corrected calls, 10-kb windows / 2.5-kb slide, common callable denominator. No new calling or mixture fit.\nTwo-letter cells are unphased heterozygotes; = means a pooled 50:50 tie. Ivory continues beyond the fixed genomic view.',fontsize=6.5)
   fig.savefig(out/filename);plt.close(fig);save(out/'tables'/filename.replace('.pdf','.json'),dict(panels=audit,Ho_ylim=[0,ylim]))
@@ -597,8 +632,9 @@ def render(out):
 def main():
  import os
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--metadata',type=Path,default=Path(__file__).resolve().parents[3]/'data/figure3_review/final_specimens.tsv')
- p.add_argument('--yb-cohort',choices=['lower-panel','west'],default='lower-panel');p.add_argument('--output',type=Path,default=ROOT/'analysis/Figure3_for_Arnaud');p.add_argument('--submit',action='store_true');p.add_argument('--overwrite',action='store_true');p.add_argument('--stage',choices=['stats','render']);a=p.parse_args()
- if a.submit:prepare(a)
+ p.add_argument('--render-only',action='store_true');p.add_argument('--yb-cohort',choices=['lower-panel','west'],default='lower-panel');p.add_argument('--output',type=Path,default=ROOT/'analysis/Figure3_for_Arnaud');p.add_argument('--submit',action='store_true');p.add_argument('--overwrite',action='store_true');p.add_argument('--stage',choices=['stats','render']);a=p.parse_args()
+ if a.submit and a.render_only:prepare_render_only(a)
+ elif a.submit:prepare(a)
  elif a.stage=='stats':statistics(a.output,'Dennis' if int(os.environ['SLURM_ARRAY_TASK_ID'])==0 else 'Ybv')
  elif a.stage=='render':render(a.output)
  else:p.error('Use --submit')
