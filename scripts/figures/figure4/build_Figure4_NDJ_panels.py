@@ -191,11 +191,11 @@ def dense_chr15(out,run,normalization):
     d=d.loc[use].copy();d['mid']=(d.start+d.end)/2
     for side in ['left','right']:
         d[side]=d['depth_'+side]/bg[side]/normalization[side]
-        # Local linear LOESS, tricube kernel, fixed 200-kb full span, no gap bridging.
+        # Local linear LOESS, tricube kernel, fixed 100-kb full span, no gap bridging.
         x=d.mid.to_numpy();y=d[side].to_numpy();smooth=np.full(len(d),np.nan)
         for i,centre in enumerate(x):
-            dist=(x-centre)/100000;take=np.abs(dist)<1
-            if take.sum()<6:continue
+            dist=(x-centre)/50000;take=np.abs(dist)<1
+            if take.sum()<4:continue
             weights=(1-np.abs(dist[take])**3)**3
             design=np.column_stack([np.ones(take.sum()),dist[take]])
             smooth[i]=lstsq(design*np.sqrt(weights[:,None]),y[take]*np.sqrt(weights))[0][0]
@@ -366,7 +366,7 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
                     ax.scatter(x,data[side],s=4 if fine else (9 if zoom else 4),c=col,linewidths=0,
                                alpha=.35 if fine else .8,zorder=3,label=side.title())
                     if fine:
-                        for segment in np.split(np.arange(len(data)),np.flatnonzero(np.diff(x)>0.1)+1):
+                        for segment in np.split(np.arange(len(data)),np.flatnonzero(np.diff(x)>0.05)+1):
                             ax.plot(x.iloc[segment],data[side+'_loess'].iloc[segment],c=col,lw=1.3,zorder=4)
                 vals = data[['left','right']].to_numpy()
                 ax.set_ylim(max(0,min(.35,float(vals.min())-.08)),max(1.65,float(vals.max())+.08,bounds['relative'][1]+.05))
@@ -375,7 +375,7 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
             ax.set_xlim(lo,hi); clean(ax)
             fig.text(.075,.045,f'Blue-grey: central 95% autosomal background; grey: conditional 0-{run["mixing_max"]:.0%} mixing model.',fontsize=6.3)
             if zoom:
-                fig.text(.075,.085,'10-kb windows; 200-kb-span local linear LOESS.' if dense is not None else 'Cached source depth windows.',fontsize=6.1)
+                fig.text(.075,.085,'10-kb windows; 100-kb-span local linear LOESS.' if dense is not None else 'Cached source depth windows.',fontsize=6.1)
                 fig.text(.075,.012,'Dotted: earlier exploratory interval. *Mapped ivory exons; annotation is partial.',fontsize=6.1)
             if not stacked:save(fig,out/f'{"03" if zoom else "02"}_{suffix}_{metric}.pdf',sizes)
     if stacked:save(canvas,out/'05_C_Cprime_stacked.pdf',sizes)
@@ -543,8 +543,8 @@ def run_render(out):
         W='not assessed by source scan; not shown as zero',ivory=features,AF=af_audit,
         AF_aesthetic='Figure2H Luka-Bleute palette, vector hexagons, log density midpoint compression, neutral LOESS marginals; no unsupported control-GT colours or TN predictive rings',
         downloads=0,alignments=0,calling=0,new_coverage=2 if refresh else 0,
-        chr15_refinement=dict(window_bp=10000,loess_full_span_bp=200000,source='same NDJ BAMs and samtools filters',
-            gap_rule='At least six usable windows within 100 kb of each estimate; no unsupported gap bridging') if refresh else None)
+        chr15_refinement=dict(window_bp=10000,loess_full_span_bp=100000,source='same NDJ BAMs and samtools filters',
+            gap_rule='At least four usable windows within 50 kb of each estimate; no unsupported gap bridging') if refresh else None)
     for old in run.get('protected_outputs',[]):
         if stamp(Path(old['path']))!=old:raise RuntimeError('Protected 01/02 PDF changed: '+old['path'])
     audit['protected_outputs_unchanged']=run.get('protected_outputs',[])
