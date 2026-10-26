@@ -377,8 +377,9 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
                 ax.set_xlabel('Chromosome',labelpad=3)
                 suffix = 'genome'
             expectations(ax,metric,bounds,run['mixing_max'],hi-.005*(hi-lo))
+            point_slice=slice(None,None,3) if zoom and dense is not None else slice(None)
             if metric == 'delta':
-                ax.scatter(x,data.delta,s=7 if zoom else 4,c='black',linewidths=0,zorder=3)
+                ax.scatter(x.iloc[point_slice],data.delta.iloc[point_slice],s=7 if zoom else 4,c='black',linewidths=0,zorder=3)
                 if not zoom:
                     selected = data.chrom.eq(CHROM) & data.mid.between(run['anomaly_start'],run['anomaly_end'])
                     ax.scatter(x.loc[selected],data.loc[selected,'delta'],s=7,c='#C92A2A',linewidths=0,zorder=4)
@@ -391,7 +392,7 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
                 point_colours=[('left','#5A4FA3'),('right','#E56B00')] if zoom and dense is not None else [('left',BLUE),('right',ORANGE)]
                 for side,col in point_colours:
                     fine=zoom and dense is not None
-                    ax.scatter(x,data[side],s=4 if fine else (9 if zoom else 4),c=col,linewidths=0,
+                    ax.scatter(x.iloc[point_slice],data[side].iloc[point_slice],s=4 if fine else (9 if zoom else 4),c=col,linewidths=0,
                                alpha=.85 if fine else .8,zorder=3,label=side.title())
                     if fine:
                         fit=data.attrs['segment_fit'];level=fit['levels'][side]
@@ -404,7 +405,7 @@ def coverage(out, run, cfg, w, bounds, features, sizes, dense=None, stacked=Fals
             ax.set_xlim(lo,hi); clean(ax)
             fig.text(.075,.045,f'Blue-grey: central 95% autosomal background; grey: conditional 0-{run["mixing_max"]:.0%} mixing model.',fontsize=6.3)
             if zoom:
-                note=('10-kb windows; black/grey: fitted segment medians (descriptive).' if metric=='relative' else '10-kb coverage windows.') if dense is not None else 'Cached source depth windows.'
+                note=('Every third 10-kb point shown; segment medians use all windows (black/grey).' if metric=='relative' else 'Every third 10-kb coverage point shown.') if dense is not None else 'Cached source depth windows.'
                 fig.text(.075,.085,note,fontsize=6.1)
                 fig.text(.075,.012,'Dotted: earlier exploratory interval. *Mapped ivory exons; annotation is partial.',fontsize=6.1)
             if not stacked:save(fig,out/f'{"03" if zoom else "02"}_{suffix}_{metric}.pdf',sizes)
@@ -575,6 +576,7 @@ def run_render(out):
         downloads=0,alignments=0,calling=0,new_coverage=2 if refresh else 0,
         chr15_refinement=dict(window_bp=10000,source='same NDJ BAMs and samtools filters',
             style='Purple Left/orange Right raw points; black/grey descriptive median segments',
+            display_stride=3,segment_fit_uses_all_usable_windows=True,
             segment_fit=dense.attrs['segment_fit']) if refresh else None)
     for old in run.get('protected_outputs',[]):
         if stamp(Path(old['path']))!=old:raise RuntimeError('Protected 01/02 PDF changed: '+old['path'])
