@@ -175,3 +175,22 @@ now use alpha=0.85 rather than 0.35. The approved C and other protected 01/02 PD
 remain unchanged; the combined stack and separate 03 views cover the full
 chromosome. Segment fitting is performed over this displayed extent and its
 updated descriptive transition/levels are exported as before.
+
+## Correction: reduced density means larger averaging windows, not thinning
+
+The every-third-point display was superseded: points now represent true 30-kb
+mean depth, reconstructed from consecutive raw 10-kb cached windows. Means are
+weighted by base count, include zero-coverage bases, and weight the terminal
+partial bin by its actual length. Display callability/ACGT criteria are applied
+to these aggregate windows. No every-third-point selection remains. Segment fits
+continue to use every usable original 10-kb window; their input data are not
+thinned or replaced by selected positions. `chr15_30kb_averages.tsv` records all
+aggregate bins and their usability status. The audit records both window sizes.
+
+Full reference chromosome 15 is now the default for all targeted refreshes,
+even if an older command still specifies --zoom-end 4100000. The chromosome's
+exact reference length is resolved from the frozen config, printed as CHR15_EXTENT
+at submission, checked against completed depth-cache signatures, and recorded in
+complete.json. A missing full-length cache is extended from the existing BAMs;
+a short cache cannot silently render a truncated chromosome. Point alpha remains
+0.85. C, AF, and the protected original 01/02 PDFs remain unchanged.
