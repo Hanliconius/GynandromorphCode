@@ -96,3 +96,29 @@ Ivory uses the existing mapped-exon annotation in
 `scripts/yb/Ybv_gene_features.json`, assembly GCF_056956725.1, NC_140403.1.
 The marker spans the mapped exon extent 1,659,008-1,741,475; the annotation is
 partial and is not represented as a complete gene model or a breakpoint.
+
+## Targeted 03/04 refinement (2026-10-26)
+
+Use `--submit --overwrite --refresh-03-04` with the same absolute script path.
+This preserves the existing run spans and parameters, records checksums for every
+01/02 PDF, and refuses to complete if those protected files change. It updates
+only 03 coverage PDFs and the 04 AF PDF, in place. The original completion audit
+is kept as `previous_complete.json`; the updated `complete.json` is written only
+after success.
+
+The cached source depth windows are 100 kb. Two independent nano array tasks
+recount the same displayed chromosome-15 interval at 10 kb from the source NDJ
+BAMs, using the original samtools depth base/map quality, excluded flags and mate
+overlap handling. Dense tables have source/filter signatures and verified cache
+reuse; no alignment, download or SNP calling occurs. Normalization remains the
+same background normalization used in the first render. The plot retains every
+usable 10-kb point and overlays local-linear tricube LOESS with a 200-kb full span
+(100-kb bandwidth each side), requiring six local windows. Curves are broken
+across gaps exceeding 100 kb. There are no confidence ribbons. Ivory and footer
+labels now fit within the fixed canvas.
+
+The AF correction changes rendering only: for the retained hex-bin assignment,
+full hex height is **2*sy/3**, not **4*sy/3**. The old latter factor overlapped
+neighbouring polygons. Marginal endpoint percentages move into a readable footer,
+labels and colourbar are given separate space, and counts/AF orientation are
+unchanged. Strong concentration in the AF-zero bins is not removed or recoded.
