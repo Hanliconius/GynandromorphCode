@@ -166,7 +166,7 @@ def draw(path, selected, all_scores, values, meta, helper, title, cutoff):
             ann.set_xlabel('Rosina chromosome 15 (Mb)')
             for j,r in enumerate(ss.itertuples()):
                 fig.add_artist(ConnectionPatch((r.pos,.1),(j,-.5),coordsA=ann.transData,
-                    coordsB=heat.transData,c='#BBBBBB',lw=.25,alpha=.5))
+                    coordsB=heat.transData,color='#BBBBBB',lw=.25,alpha=.5))
                 if r.original_marker:
                     heat.plot(j,-.5,marker='s',ms=2,c='#111111',clip_on=False)
             for region,bottom in [('West',.875),('East',.805)]:
