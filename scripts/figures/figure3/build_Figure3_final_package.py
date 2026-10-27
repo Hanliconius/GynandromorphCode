@@ -454,6 +454,7 @@ def western_cydno_pachinus_rows(data):
   for pos,ncalled,value in zip(map(int,matrix.columns),n,values):
    audit.append(dict(**cohort,pos=pos,n_called=int(ncalled),ALT_frequency=float(value) if np.isfinite(value) else ''))
  data['_western_cydno_audit']=audit
+ if not out:raise RuntimeError('No western cydno/pachinus groups passed the display callability rule')
  return out
 def draw_main_letters(ax,data):
  import numpy as np
@@ -709,7 +710,11 @@ def render(out):
  except ImportError:pass
  completed=dict(status='COMPLETE',PDFs=[str(p) for p in pdfs],pdf_pages=pdf_pages,cohorts=summary,
   all_individual_counts=all_counts,metadata_sha256=cfg['metadata_sha256'],new_calls=False,focal_calls_changed=False,
-  SNPs_reselected=False,main_palette=[YELLOW,BLUE],supplement_palette=SUPP,spans=SPANS)
+  SNPs_reselected=False,main_palette=[YELLOW,BLUE],supplement_palette=SUPP,spans=SPANS,
+  supplement_gynandromorph_rows='Corrected Left/Right states appended at the bottom of every supplemental genotype/frequency page',
+  Optix_trait_BA=pd.read_csv(out/'tables/Optix_B_D_R_BA_cohorts.tsv',sep='\t').to_dict('records'),
+  Ybv_western_cydno_pachinus_display_only_groups=int(pd.read_csv(out/'tables/Ybv_western_cydno_pachinus_display_only.tsv',sep='\t').taxon.nunique()),
+  Ybv_western_cydno_pachinus_in_BA=False)
  archive=out/'Figure3_for_Arnaud.zip.partial'
  with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED) as z:
   for p in [*pdfs,out/'README.txt',out/'reviewed_specimens.tsv',*sorted((out/'tables').glob('*'))]:
