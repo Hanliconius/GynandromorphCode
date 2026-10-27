@@ -78,7 +78,9 @@ def map_sources(meta,source_records):
  return mapping
 def prepare(a):
  meta=a.metadata;out=a.output;repo=Path(__file__).resolve().parents[3]
- restriction=out/'Ybv_BA_rule_comparison/lower_panel'
+ # Reuse the completed diagnostic from the existing review package; the new
+ # output directory is intentionally empty and must not be treated as an input.
+ restriction=ROOT/'analysis/Figure3_for_Arnaud/Ybv_BA_rule_comparison/lower_panel'
  restricted=getattr(a,'yb_cohort','west')=='lower-panel'
  paths=[meta,VCF,DF/'frozen_markers_and_BA.tsv',DEN/'Dennis_BA90_intervals_frequencies.tsv',
  BROAD/'complete.json',BROAD/'membership.tsv',BROAD/'SNPs.tsv',BROAD/'individual_ALT_dosages.tsv.gz',
