@@ -1,0 +1,74 @@
+{
+  "figure": "Science_trials_1_2_pubregions_cartoons.comparison.pdf",
+  "identified_from": "User screenshot image(20261027-193147).png; user dates the figure approximately September 9",
+  "historical_code_commit": "cbc9e087942d91776ecfa41ef3dfdd66c773051e",
+  "historical_code": [
+    {
+      "name": "158_plot_science_condensation_trials.R",
+      "path": "recovery/20261014T183358Z/source_1/scripts/158_plot_science_condensation_trials.R",
+      "ref": "cbc9e087942d91776ecfa41ef3dfdd66c773051e"
+    },
+    {
+      "name": "159_plot_science_trials_pubregions_cartoons.R",
+      "path": "recovery/20261014T183358Z/source_1/scripts/159_plot_science_trials_pubregions_cartoons.R",
+      "ref": "cbc9e087942d91776ecfa41ef3dfdd66c773051e"
+    },
+    {
+      "name": "115b_plot_D_R_Wallbank_fixed_dominant_adjusted_LR.R",
+      "path": "recovery/20261014T183358Z/source_1/scripts/115b_plot_D_R_Wallbank_fixed_dominant_adjusted_LR.R",
+      "ref": "cbc9e087942d91776ecfa41ef3dfdd66c773051e"
+    },
+    {
+      "name": "142_plot_B_western_postman_vs_western_Amazon_DR_adjusted_LR.R",
+      "path": "recovery/20261014T183358Z/source_1/scripts/142_plot_B_western_postman_vs_western_Amazon_DR_adjusted_LR.R",
+      "ref": "cbc9e087942d91776ecfa41ef3dfdd66c773051e"
+    }
+  ],
+  "original_pdf": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/figures/final_B_D_R_combined/science_condensation_trials_pubregions_cartoons/Science_trials_1_2_pubregions_cartoons.comparison.pdf",
+  "archived_score_tables": {
+    "B": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/B_western_postman_vs_western_Amazon_DR_reanalysis/checkpoints/B_western_BA_and_adjusted_LR.tsv",
+    "D": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/drop_problematic_reanalysis/checkpoints/longDennis_original502_allSNP_scores.filtered.WGS_vs_WGSplusCS.tsv",
+    "R": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/drop_problematic_reanalysis/checkpoints/longRay_original502_allSNP_scores.filtered.WGS_vs_WGSplusCS.tsv"
+  },
+  "archived_highlights": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/figures/final_B_D_R_combined/science_condensation_trials/Science_trials_high_correct_BDR_BAgt099_sites.tsv",
+  "archived_count_audit": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/figures/final_B_D_R_combined/science_condensation_trials/Science_trials_site_count_audit.tsv",
+  "filters": {
+    "analysis_cohort": "WGS_plus_CS",
+    "scheme": "DP2_GQ20",
+    "positions": [
+      1060000,
+      1240000
+    ],
+    "gray_cloud": "All finite original BA values; score_eligible is not a new display filter"
+  },
+  "display": {
+    "tracks": [
+      "B",
+      "D",
+      "R"
+    ],
+    "y_scale": [
+      0.5,
+      1
+    ],
+    "below_0_5": "Clamped to baseline exactly as Analysis158",
+    "dashed": 0.8,
+    "background": "#C8CED6",
+    "highlight_colors": {
+      "B": "#0072B2",
+      "D": "#E69F00",
+      "R": "#CC79A7"
+    }
+  },
+  "highlights": "Original historical focal-compatible genotype pattern AND BA strictly greater than 0.99. Reuse saved flags; never infer from the current focal calls or current displayed SNPs.",
+  "screenshot_count_checks": {
+    "B_focal_compatible": 367,
+    "DR_focal_compatible": 367,
+    "B_highlighted": 10,
+    "DR_highlighted_unique_positions": 45
+  },
+  "cohort_policy": "Historical cohorts and scores differ from the October reviewed genoplot cohorts. Keep that distinction explicit; no BA recalculation. Validate archived retained manifests exclude numata and pardalinus.",
+  "output": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/supp_genoplots_LR_cydno_historical_BDR_20261027",
+  "implementation": "scripts/figures/figure3/extend_final_supp_genoplots.py",
+  "evidence_status": "Generating archived code traced and implementation validated with synthetic tables; existing Pegasus inputs require preflight file/hash checks. New PDFs not yet generated or inspected."
+}
