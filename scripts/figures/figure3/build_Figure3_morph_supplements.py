@@ -27,13 +27,14 @@ def submit(a):
  shutil.copy2(repo/'docs/FIGURE3_MORPH_SUPPLEMENTS.md',out/'README_and_reviewer_checks.md')
  maincfg=json.loads((a.source/'run.json').read_text())
  if maincfg['metadata_sha256']!=sha(a.source/'reviewed_specimens.tsv'):raise RuntimeError('Main statistics metadata snapshot differs')
- for locus_name in ['Dennis','Ybv']:(out/(locus_name+'_complete.json')).unlink(missing_ok=True)
+ if a.optix_only and not (out/'Ybv_complete.json').is_file():raise RuntimeError('--optix-only requires an existing completed Yb supplement')
+ for locus_name in (['Dennis'] if a.optix_only else ['Dennis','Ybv']):(out/(locus_name+'_complete.json')).unlink(missing_ok=True)
  save(out/'run.json',dict(source=str(a.source),output=str(out),target_columns=80,
       metadata_sha256=sha(a.source/'reviewed_specimens.tsv'),worker_sha256=sha(out/'worker.py')))
  (out/'complete.json').unlink(missing_ok=True)
  worker=[sys.executable,str(out/'worker.py'),'--output',str(out),'--stage','locus']
  array=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=8G',
-  '--cpus-per-task=1','--array=0-1','--job-name=Fig3_morph','--output='+str(out/'logs/morph.%A_%a.out'),
+  '--cpus-per-task=1','--array='+('0' if a.optix_only else '0-1'),'--job-name=Fig3_morph','--output='+str(out/'logs/morph.%A_%a.out'),
   '--error='+str(out/'logs/morph.%A_%a.err'),'--wrap='+shlex.join(worker)],text=True).strip().split(';')[0]
  report=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:30:00','--mem=2G',
   '--job-name=Fig3_pack','--dependency=afterok:'+array,'--output='+str(out/'logs/report.%j.out'),
@@ -103,10 +104,11 @@ def render(path,sites,rows,labels,title,locus,threshold,n_pass,span,helper):
  from matplotlib.patches import ConnectionPatch,Rectangle
  cmap=LinearSegmentedColormap.from_list('previous_palette',helper.SUPP,N=257);cmap.set_bad('#C8C8C8')
  plt.rcParams.update({'font.family':'DejaVu Sans','font.size':8,'pdf.fonttype':42})
- # Pagination is exhaustive, not a cap or rank-thinned subset.
+ # Optix fits every passing SNP on one page by narrowing columns at fixed width.
+ columns_per_page=len(sites) if locus=='Dennis' else 80
  with PdfPages(path) as pdf:
-  for first in range(0,len(sites),80):
-   ss=sites.iloc[first:first+80];v=rows[:,first:first+80];nr=len(labels)
+  for first in range(0,len(sites),columns_per_page):
+   ss=sites.iloc[first:first+columns_per_page];v=rows[:,first:first+columns_per_page];nr=len(labels)
    fig=plt.figure(figsize=(17,max(6,3.3+.22*nr)))
    heat=fig.add_axes([.33,.17,.65,.62]);ann=fig.add_axes([.33,.87,.65,.055])
    heat.pcolormesh(np.arange(len(ss)+1)-.5,np.arange(nr+1)-.5,np.ma.masked_invalid(v),cmap=cmap,vmin=0,vmax=1,rasterized=False)
@@ -199,10 +201,10 @@ def locus(out):
   pdf=out/f'{name}_{suffix}_morph_frequencies.pdf'
   render(pdf,sites,np.asarray(rows),labels,'Optix / Dennis' if name=='Dennis' else 'Yb(v): geography and morph',name,cut,len(sites),helper.SPANS[name],helper)
   pd.DataFrame(exports).to_csv(out/f'{name}_{suffix}_frequencies.tsv.gz',sep='\t',index=False)
-  results.append(dict(version=suffix,threshold=cut,SNPs=len(sites),rows=len(rows),PDF=str(pdf)))
+  results.append(dict(version=suffix,threshold=cut,SNPs=len(sites),rows=len(rows),pages=1 if name=='Dennis' else (len(sites)+79)//80,PDF=str(pdf)))
  save(out/(name+'_complete.json'),dict(status='COMPLETE',locus=name,BA_source=str(folder),BA_cohort=done,
   display_individuals=len(meta),BA_individuals=len(selection),versions=results,
-  cap=False,selection='Every site passing declared BA threshold; pagination exhaustive at 80 columns/page',
+  cap=False,selection='Every site passing declared BA threshold; Optix single page with narrower SNP columns; Yb pagination exhaustive at 80 columns/page',
   all_threshold_counts=countrows,compact_achieves_target=bool(viable),
   population_normalization='Remove standalone ssp/spp/subsp tokens; merge only identical phenotype/morph/geography groups',
   row_order='Phenotype present first, then absent; grouped by complete morph calls and geography',
@@ -221,7 +223,8 @@ def report(out):
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE)
  p.add_argument('--output',type=Path,default=SOURCE/'final_morph_supplements');p.add_argument('--submit',action='store_true')
- p.add_argument('--overwrite',action='store_true');p.add_argument('--stage',choices=['locus','report']);a=p.parse_args()
+ p.add_argument('--overwrite',action='store_true');p.add_argument('--optix-only',action='store_true',help='Rerender only Optix and repack with existing Yb supplements')
+ p.add_argument('--stage',choices=['locus','report']);a=p.parse_args()
  if a.submit:submit(a)
  elif a.stage=='locus':locus(a.output)
  elif a.stage=='report':report(a.output)
