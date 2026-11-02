@@ -29,7 +29,7 @@ def prepare(a):
  a.output.mkdir(parents=True);(a.output/'logs').mkdir();(a.output/'tables').mkdir()
  shutil.copy2(__file__,a.output/'worker.py')
  save(a.output/'run.json',dict(source=str(a.source),cutoff=cutoff,low_cutoff=round(1-cutoff,12),hashes={str(p):sha(p) for p in paths},
-  selection='previous displayed SNPs union all current West/East fixed-direction BA >=t or <=1-t; no SNP cap',row_order=a.order,BA_recalculated=False,new_calls=False))
+  selection='previous displayed SNPs union all current West/East fixed-direction BA >=t or <=1-t; no SNP cap',row_order=a.order,simple_labels=a.simple_labels,BA_recalculated=False,new_calls=False))
  cmd=[sys.executable,str(a.output/'worker.py'),'--run','--output',str(a.output)]
  job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:15:00','--mem=8G','--cpus-per-task=1','--job-name=Ybv_BAtails',
   '--output='+str(a.output/'logs/plot.%j.out'),'--error='+str(a.output/'logs/plot.%j.err'),'--wrap='+shlex.join(cmd)],text=True).strip().split(';')[0]
@@ -66,6 +66,18 @@ def reorder_population_rows(rows,labels,exports,order):
   group=keys(i)[:3]
   if group!=last:blocks.append((j,j+1,str(first.loc[i].geography),group[0]));last=group
  return rows[idx],[labels[i] for i in idx],exported,blocks
+
+def simple_row_label(label,population):
+ """Display-only changes; do not merge the underlying population/morph groups."""
+ import re
+ pop=re.sub(r"\b(?:ssp|spp)\.?",' ',population,flags=re.I)
+ pop=re.sub(r'\s+',' ',pop).strip().lower()
+ keep_region=bool(re.search(r'\bmelpomene\s+melpomene\b',pop))
+ parts=[x.strip() for x in label.split(' | ')]
+ return ' | '.join(x for x in parts if not (
+  re.fullmatch(r'(?:[BDRdv][01?]\s*)+',x) or
+  (x in ['East','West'] and not keep_region)))
+
 
 def run(out):
  import numpy as np,pandas as pd,matplotlib
@@ -131,15 +143,26 @@ def run(out):
   style.remove_original_marker_squares(figure);style.add_phenotype_table(figure,'Ybv')
   for t in figure.texts:
    if 'West v+, West v−' in t.get_text():t.set_text(f'Rows: {cfg.get("row_order","geography-phenotype")}; no consensus rows. Previous SNPs retained plus BA >= {cut:g} or <= {low:g} in either region.\nBA points: blue=displayed SNP with regional BA >= {cut:g}; red=displayed SNP with regional BA <= {low:g}. Grey background=all scoreable SNPs, including retained intermediate scores. Same West-derived direction across regions, with labelled East fallback.\nHighlights refer to columns on this page, with chromosome/position/REF/ALT matched exactly. Missing BA is not zero. Colours do not encode REF/ALT or zygosity.\nExisting >=80% per-class callability gate and reviewed P cohorts retained. Genoplot remains 0=REF, 1=ALT; no allele flipping.\nNew L/R cells use existing qualified corrected calls only; unavailable calls remain grey. Descriptive association, not independent validation.')
+  if cfg.get('simple_labels',False):
+   # Phenotype boxes above were constructed from the original full labels.
+   heat=figure.axes[0];ticks=heat.get_yticklabels()
+   if len(ticks)!=len(labels)+2:raise RuntimeError('Unexpected heatmap row labels')
+   population=exports.groupby('row',sort=True).population.first().to_dict()
+   display=[simple_row_label(t.get_text(),population.get(i,'')) for i,t in enumerate(ticks)]
+   heat.set_yticks(heat.get_yticks(),labels=display)
+   from matplotlib.text import Text
+   for text in figure.findobj(match=Text):text.set_fontweight('normal')
+   if page==1:
+    pd.DataFrame(dict(row=range(len(labels)),original_label=labels,display_label=display[:len(labels)])).to_csv(out/'tables/row_label_audit.tsv',sep='\t',index=False)
   return original(self,figure,**kwargs)
  PdfPages.savefig=finish;pdf=out/'Ybv_all_populations_high_low_BA_genoplot.pdf'
  try:_,pages=renderer.draw(pdf,selected,all_scores,None,None,helper,'Yb(v): strong associations in both directions',cut)
  finally:PdfPages.savefig=original
- save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected),previous_SNPs=len(previous),added_SNPs=int((~selected.previously_displayed).sum()),low_tail_SNPs=int((selected.West_low_tail|selected.East_low_tail).sum()),high_cutoff=cut,low_cutoff=low,population_rows=len(rows),row_order=cfg.get('row_order','geography-phenotype'),BA_recalculated=False,new_variant_calls=False,new_mixture_fit=False,previous_corrected_LR_unchanged=True,LR_called_per_side=np.isfinite(lr).sum(axis=1).tolist()))
+ save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected),previous_SNPs=len(previous),added_SNPs=int((~selected.previously_displayed).sum()),low_tail_SNPs=int((selected.West_low_tail|selected.East_low_tail).sum()),high_cutoff=cut,low_cutoff=low,population_rows=len(rows),row_order=cfg.get('row_order','geography-phenotype'),simple_labels=cfg.get('simple_labels',False),BA_recalculated=False,new_variant_calls=False,new_mixture_fit=False,previous_corrected_LR_unchanged=True,LR_called_per_side=np.isfinite(lr).sum(axis=1).tolist()))
  print(f'PDF\t{pdf}\nSNPs\t{len(selected)}\nADDED\t{int((~selected.previously_displayed).sum())}\nSTATUS\tCOMPLETE')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography'],default='geography-phenotype');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography'],default='geography-phenotype');p.add_argument('--simple-labels',action='store_true',help='Hide row phenotype codes and geography except melpomene melpomene; use regular text');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
  if a.submit:prepare(a)
  elif a.run:run(a.output)
  else:p.error('Use --submit')
