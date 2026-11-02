@@ -14,7 +14,21 @@ def save(p,x):Path(p).write_text(json.dumps(x,indent=2,allow_nan=False)+'\n')
 def load(p,name):
  s=importlib.util.spec_from_file_location(name,p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 def prepare(a):
- if a.output.exists():raise RuntimeError('Preserving existing output: '+str(a.output))
+ if a.output.exists():
+  if not a.retry:raise RuntimeError('Output exists; use --retry for this failed run: '+str(a.output))
+  if (a.output/'complete.json').exists():raise RuntimeError('Refusing to replace a completed figure')
+  job=str(json.loads((a.output/'jobs.json').read_text())['plot'])
+  active=subprocess.run(['squeue','-h','-j',job,'-o','%T'],capture_output=True,text=True)
+  if active.returncode==0 and active.stdout.strip():raise RuntimeError('Previous job is still active: '+job)
+  account=subprocess.check_output(['sacct','-X','-n','-j',job,'--format=State','--parsable2'],text=True).strip()
+  states=[x.strip().split('|')[0].split()[0].rstrip('+') for x in account.splitlines() if x.strip()]
+  failed={'FAILED','CANCELLED','TIMEOUT','OUT_OF_MEMORY','NODE_FAIL','PREEMPTED','BOOT_FAIL','DEADLINE'}
+  if not states or any(x not in failed for x in states):raise RuntimeError('Cannot verify previous job failed: '+account)
+  prior_cfg=json.loads((a.output/'run.json').read_text())
+  for path,h in prior_cfg['hashes'].items():
+   if sha(path)!=h:raise RuntimeError('Original run input changed; preserve failed snapshot: '+path)
+  if sha(a.output/'reviewed_specimens.tsv')!=prior_cfg['metadata_sha256']:raise RuntimeError('Reviewed snapshot changed')
+
  repo=Path(__file__).resolve().parents[3]
  metadata=repo/'data/figure3_review/Ybv_reviewed_metadata_20261102.tsv'
  helper=load(YBV/'figure3_helper.py','frozen_helper')
@@ -28,7 +42,7 @@ def prepare(a):
  for p in paths:
   if not p.is_file():raise FileNotFoundError('Missing documented input: '+str(p))
  if json.loads((PRIOR/'complete.json').read_text()).get('status')!='COMPLETE':raise RuntimeError('All-populations source incomplete')
- a.output.mkdir(parents=True);(a.output/'logs').mkdir();(a.output/'tables').mkdir()
+ a.output.mkdir(parents=True,exist_ok=a.retry);(a.output/'logs').mkdir(exist_ok=a.retry);(a.output/'tables').mkdir(exist_ok=a.retry)
  shutil.copy2(__file__,a.output/'worker.py');shutil.copy2(metadata,a.output/'reviewed_specimens.tsv')
  save(a.output/'run.json',dict(hashes={str(p):sha(p) for p in paths},existing_VCFs=prior['existing_VCFs'],
   metadata_sha256=sha(metadata),metadata_source='Google Sheet 1YcJjcnE48q_aJ1wGBIYLOudx0euTJTn9IMWDLGRES20; Figure3ab_suppGenoPlots_allSamples; read 2026-11-02',
@@ -130,6 +144,35 @@ def sorted_rows(meta,values,sites,helper):
   for j,r in enumerate(sites.to_dict('records')):exports.append(dict(row=len(rows)-1,population=pop,geography=region,morph=morph,**{k:r[k] for k in KEYS},n_total=len(g),n_called=int(n[j]),ALT_frequency=float(freq[j]) if n[j] else None,specimen_ids=';'.join(g.specimen_id)))
  return np.asarray(rows).reshape((-1,len(sites))),labels,pd.DataFrame(exports),blocks
 
+def reconcile_inventory(broad,selected,helper,out):
+ """Union exact saved alleles with the full scan; never swap REF/ALT."""
+ import pandas as pd
+ def normal(table):
+  t=table.copy()
+  t['chrom']=t.chrom.map(helper.canon)
+  t['pos']=pd.to_numeric(t.pos,errors='raise').astype(int)
+  for c in ['ref','alt']:t[c]=t[c].astype(str).str.strip()
+  return t
+ broad,selected=normal(broad),normal(selected)
+ if selected.duplicated(KEYS).any():
+  selected.loc[selected.duplicated(KEYS,keep=False)].to_csv(out/'tables/duplicate_selected_exact_alleles.tsv',sep='\t',index=False)
+  raise RuntimeError('Saved display contains duplicate exact alleles; see duplicate_selected_exact_alleles.tsv')
+ if broad.empty or broad.duplicated(KEYS).any():raise RuntimeError('Empty/duplicate broad inventory')
+ known={tuple(r) for r in broad[KEYS].itertuples(index=False,name=None)}
+ audit=[]
+ for row in selected[KEYS].to_dict('records'):
+  key=tuple(row[c] for c in KEYS)
+  alternatives=broad.loc[broad.chrom.eq(row['chrom'])&broad.pos.eq(row['pos'])]
+  audit.append(dict(**row,in_broad_inventory=key in known,
+   action='reuse_broad_exact_allele' if key in known else 'add_saved_display_allele',
+   broad_alleles_at_position=';'.join(alternatives.ref+'/'+alternatives.alt)))
+ pd.DataFrame(audit).to_csv(out/'tables/selected_allele_inventory_audit.tsv',sep='\t',index=False)
+ # This is an inventory reconciliation, not new variant discovery. All entries
+ # were already in completed calls or in the saved displayed SNP table.
+ sites=pd.concat([broad[KEYS],selected[KEYS]],ignore_index=True).drop_duplicates(KEYS).sort_values(KEYS).reset_index(drop=True)
+ sites.to_csv(out/'tables/reconciled_exact_allele_inventory.tsv',sep='\t',index=False)
+ return sites,selected
+
 def run(out):
  import numpy as np,pandas as pd,matplotlib
  matplotlib.use('Agg')
@@ -139,9 +182,10 @@ def run(out):
   if sha(p)!=h:raise RuntimeError('Input changed after submission: '+p)
  if sha(out/'reviewed_specimens.tsv')!=cfg['metadata_sha256']:raise RuntimeError('Metadata snapshot changed')
  helper=load(YBV/'figure3_helper.py','frozen_helper');yb=load(YBV/'worker.py','frozen_renderer');style=load(PRIOR/'worker.py','previous_style');geo=load(YBV/'geography_helper.py','unchanged_BA_rule')
- sites=pd.read_csv(helper.BROAD/'SNPs.tsv',sep='\t');sites['chrom']=sites.chrom.map(helper.canon)
- sites=sites.loc[sites.chrom.eq(helper.SPANS['Ybv'][0])&sites.pos.between(*helper.SPANS['Ybv'][1:])].reset_index(drop=True)
- if sites.empty or sites.duplicated(KEYS).any():raise RuntimeError('Empty/duplicate full-span allele inventory')
+ broad=pd.read_csv(helper.BROAD/'SNPs.tsv',sep='\t');broad['chrom']=broad.chrom.map(helper.canon)
+ broad=broad.loc[broad.chrom.eq(helper.SPANS['Ybv'][0])&broad.pos.between(*helper.SPANS['Ybv'][1:])].reset_index(drop=True)
+ selected=pd.read_csv(YBV/'Ybv_geography_regional_union_sites.tsv',sep='\t')
+ sites,selected=reconcile_inventory(broad,selected,helper,out)
  # Reuse all existing qualified calls; this does not realign, recall variants or
  # refit focal mixture estimates. Updated reviewed metadata supplies grouping.
  meta,values=existing_calls(out,cfg,sites,helper)
@@ -157,10 +201,9 @@ def run(out):
  members['phenotype']=members.Yb_ventral.astype(int)
  regional=yb.regional_scores(sites,values[eligible],members,geo)
  regional['pos']=regional.pos.astype(int)
- selected=pd.read_csv(YBV/'Ybv_geography_regional_union_sites.tsv',sep='\t');selected['chrom']=selected.chrom.map(helper.canon)
  lookup={helper.key(r.chrom,r.pos,r.ref,r.alt):j for j,r in enumerate(sites.itertuples())}
  keys=[helper.key(r.chrom,r.pos,r.ref,r.alt) for r in selected.itertuples()]
- if len(keys)!=len(set(keys)) or any(k not in lookup for k in keys):raise RuntimeError('Selected exact alleles absent/duplicated in full matrix')
+ if len(keys)!=len(set(keys)) or any(k not in lookup for k in keys):raise RuntimeError('Reconciled exact-allele mapping failed; see selected_allele_inventory_audit.tsv')
  indices=[lookup[k] for k in keys]
  regional['original_marker']=[k in set(helper.key(r.chrom,r.pos,r.ref,r.alt) for r in selected.loc[selected.original_marker].itertuples()) for k in (helper.key(r.chrom,r.pos,r.ref,r.alt) for r in regional.itertuples())]
  # Keep the saved SNP columns; colour the regional BA tracks by exact membership.
@@ -204,11 +247,11 @@ def run(out):
  # Verify genotype preservation by exact site identity; all grouping derives
  # from the current reviewed metadata, never from the observed genotype pattern.
  save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected_new),population_rows=len(rows),displayed_specimens=int(np.isfinite(values[:,indices]).any(axis=1).sum()),BA_eligible_specimens=len(members),BA_eligible_with_no_calls=int(members.all_sites_missing.sum()),consensus_rows=0,BA_recalculated=True,SNP_selection_changed=False,corrected_focal_unchanged=True,metadata_sha256=cfg['metadata_sha256']))
- (out/'README.txt').write_text('Current reviewed Google Sheet snapshot supplies geography, phenotype codes and BA eligibility. Population display uses all eligible comparative specimens with qualified calls, irrespective of P; BA uses only P=true, known v phenotype and East/West geography. Global exclusions and focal separation remain enforced. Silvaniforms and Unresolved retain separate display blocks and do not enter East/West BA. Homozygote BA uses >=80% callability separately per phenotype class; both allele orientations are exported, West-best orientation is held fixed across regional tracks, with labelled East fallback. The full original SNP inventory is rescored; the regional-union genoplot SNP list is NOT reselected. Four pooled consensus rows removed. Corrected focal values copied exactly from the prior completed output. No downloads, alignment, variant calling or mixture refitting. Eligible specimens with no calls remain explicit in denominators and accounting.\n')
+ (out/'README.txt').write_text('Current reviewed Google Sheet snapshot supplies geography, phenotype codes and BA eligibility. Population display uses all eligible comparative specimens with qualified calls, irrespective of P; BA uses only P=true, known v phenotype and East/West geography. Global exclusions and focal separation remain enforced. Silvaniforms and Unresolved retain separate display blocks and do not enter East/West BA. Homozygote BA uses >=80% callability separately per phenotype class; both allele orientations are exported, West-best orientation is held fixed across regional tracks, with labelled East fallback. The full original SNP inventory plus exact saved display alleles is rescored; added inventory entries are audited without changing REF/ALT or genoplot columns; the regional-union genoplot SNP list is NOT reselected. Four pooled consensus rows removed. Corrected focal values copied exactly from the prior completed output. No downloads, alignment, variant calling or mixture refitting. Eligible specimens with no calls remain explicit in denominators and accounting.\n')
  print('PDF\t'+str(pdf)+'\nSTATUS\tCOMPLETE')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');p.add_argument('--output',type=Path,default=OUTPUT);a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--submit',action='store_true');p.add_argument('--retry',action='store_true');p.add_argument('--run',action='store_true');p.add_argument('--output',type=Path,default=OUTPUT);a=p.parse_args()
  if a.submit:prepare(a)
  elif a.run:run(a.output)
  else:p.error('Use --submit')
