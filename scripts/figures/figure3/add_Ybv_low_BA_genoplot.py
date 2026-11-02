@@ -50,7 +50,7 @@ def choose(scores,previous,cutoff):
 def reorder_population_rows(rows,labels,exports,order):
  """Change display order only; preserve every frequency and specimen group."""
  import re
- if order in ['final','final-v2']:
+ if order in ['final','final-v2','final-v3']:
   result=final_population_rows(rows,labels,exports,order)
   return result[:4]
  if order=='geography-phenotype':return rows,labels,exports,None
@@ -91,6 +91,10 @@ def final_population_rows(rows,labels,exports,order='final'):
  if order=='final-v2':
   populations=[x for x in lines if x!='SPACE']
   indices=[1,26,27,29,4,5,6,7,None]+list(range(8,26))+[None,2,3,28]
+  lines=['SPACE' if i is None else populations[i] for i in indices]
+ if order=='final-v3':
+  populations=[x for x in FINAL_ROW_ORDER.splitlines() if x!='SPACE']
+  indices=[0,4,5,6,7,1,26,27,29,2,3,None,8,9,10,11,12,13,15,16,17,18,19,22,23,24,25,20,21,14,28]
   lines=['SPACE' if i is None else populations[i] for i in indices]
  for line in lines:
   if line=='SPACE':
@@ -148,7 +152,7 @@ def run(out):
  rows,labels,exports,blocks=worker.sorted_rows(meta,values,selected,helper)
  rows,labels,exports,newblocks=reorder_population_rows(rows,labels,exports,cfg.get('row_order','geography-phenotype'))
  if newblocks is not None:blocks=newblocks
- if cfg.get('row_order') in ['final','final-v2']:
+ if cfg.get('row_order') in ['final','final-v2','final-v3']:
   original_rows,original_labels,original_exports,_=worker.sorted_rows(meta,values,selected,helper)
   *_,order_audit=final_population_rows(original_rows,original_labels,original_exports,cfg['row_order'])
   pd.DataFrame(order_audit).to_csv(out/'tables/final_population_order.tsv',sep='\t',index=False)
@@ -188,7 +192,7 @@ def run(out):
      Line2D([],[],marker='o',ls='none',color='#555555',alpha=.55,ms=3,label='All scoreable SNPs')]
     ax.legend(handles=handles,loc='lower left',bbox_to_anchor=(0,1.08),ncol=3,frameon=False,fontsize=6,handletextpad=.4,columnspacing=1,borderaxespad=0)
   style.remove_original_marker_squares(figure)
-  if cfg.get('row_order') in ['final','final-v2']:
+  if cfg.get('row_order') in ['final','final-v2','final-v3']:
    from matplotlib.patches import Rectangle
    heat=figure.axes[0]
    for i,label in enumerate(labels):
@@ -197,7 +201,7 @@ def run(out):
    style.phenotype_codes=lambda label,locus: old_codes(label,locus) if label.strip() else {t:None for t in ['d','v']}
   try:style.add_phenotype_table(figure,'Ybv')
   finally:
-   if cfg.get('row_order') in ['final','final-v2']:style.phenotype_codes=old_codes
+   if cfg.get('row_order') in ['final','final-v2','final-v3']:style.phenotype_codes=old_codes
   for t in figure.texts:
    if 'West v+, West v−' in t.get_text():t.set_text(f'Rows: {cfg.get("row_order","geography-phenotype")}; no consensus rows. Previous SNPs retained plus BA >= {cut:g} or <= {low:g} in either region.\nBA points: blue=displayed SNP with regional BA >= {cut:g}; red=displayed SNP with regional BA <= {low:g}. Grey background=all scoreable SNPs, including retained intermediate scores. Same West-derived direction across regions, with labelled East fallback.\nHighlights refer to columns on this page, with chromosome/position/REF/ALT matched exactly. Missing BA is not zero. Colours do not encode REF/ALT or zygosity.\nExisting >=80% per-class callability gate and reviewed P cohorts retained. Genoplot remains 0=REF, 1=ALT; no allele flipping.\nNew L/R cells use existing qualified corrected calls only; unavailable calls remain grey. Descriptive association, not independent validation.')
   if cfg.get('simple_labels',False):
@@ -219,7 +223,7 @@ def run(out):
  print(f'PDF\t{pdf}\nSNPs\t{len(selected)}\nADDED\t{int((~selected.previously_displayed).sum())}\nSTATUS\tCOMPLETE')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography','final','final-v2'],default='geography-phenotype');p.add_argument('--simple-labels',action='store_true',help='Hide row phenotype codes and geography except melpomene melpomene; use regular text');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography','final','final-v2','final-v3'],default='geography-phenotype');p.add_argument('--simple-labels',action='store_true',help='Hide row phenotype codes and geography except melpomene melpomene; use regular text');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
  if a.submit:prepare(a)
  elif a.run:run(a.output)
  else:p.error('Use --submit')
