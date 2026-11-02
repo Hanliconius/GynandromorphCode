@@ -30,7 +30,7 @@ def prepare(a):
   if sha(a.output/'reviewed_specimens.tsv')!=prior_cfg['metadata_sha256']:raise RuntimeError('Reviewed snapshot changed')
 
  repo=Path(__file__).resolve().parents[3]
- metadata=repo/'data/figure3_review/Ybv_reviewed_metadata_20261102.tsv'
+ metadata=a.metadata.resolve() if a.metadata else repo/'data/figure3_review/Ybv_reviewed_metadata_20261102.tsv'
  helper=load(YBV/'figure3_helper.py','frozen_helper')
  prior=json.loads((PRIOR/'run.json').read_text())
  paths=[metadata,PRIOR/'worker.py',PRIOR/'complete.json',PRIOR/'run.json',FOCAL,
@@ -251,7 +251,7 @@ def run(out):
  print('PDF\t'+str(pdf)+'\nSTATUS\tCOMPLETE')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--submit',action='store_true');p.add_argument('--retry',action='store_true');p.add_argument('--run',action='store_true');p.add_argument('--output',type=Path,default=OUTPUT);a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--submit',action='store_true');p.add_argument('--retry',action='store_true');p.add_argument('--run',action='store_true');p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--metadata',type=Path,help='Explicit reviewed TSV snapshot; otherwise use original frozen snapshot');a=p.parse_args()
  if a.submit:prepare(a)
  elif a.run:run(a.output)
  else:p.error('Use --submit')
