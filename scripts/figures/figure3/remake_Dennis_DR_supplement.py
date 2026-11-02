@@ -4,7 +4,7 @@ import argparse,hashlib,importlib.util,json,shlex,shutil,subprocess,sys
 from pathlib import Path
 ROOT=Path('/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis')
 SOURCE=ROOT/'supp_genoplots_LR_cydno_historical_BDR_20261027'
-OUTPUT=ROOT/'Dennis_BA093_LR_DR_clean_20261027'
+OUTPUT=ROOT/'Dennis_BA093_LR_DR_membership_20261102'
 KEYS=['chrom','pos','ref','alt']
 def load(path,name):
  s=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
@@ -33,6 +33,41 @@ def prepare(a):
   '--output='+str(a.output/'logs/plot.%j.out'),'--error='+str(a.output/'logs/plot.%j.err'),'--wrap='+shlex.join(cmd)],text=True).strip().split(';')[0]
  save(a.output/'jobs.json',dict(plot=job));print('JOB\t'+job+'\nOUTPUT\t'+str(a.output))
 
+def canonical_keys(table):
+ t=table[KEYS].copy()
+ t['chrom']=t.chrom.astype(str).replace({'Hmr18':'NC_140406.1','18':'NC_140406.1'})
+ t['pos']=t.pos.astype(int)
+ return list(t.itertuples(index=False,name=None))
+
+def match_displayed_sites(scores,sites,out):
+ """Link by chromosome, position AND both alleles; never match position alone."""
+ import pandas as pd
+ keys=canonical_keys(sites)
+ if len(set(keys))!=len(keys):raise RuntimeError('Duplicate selected allele identity')
+ if 'balanced_accuracy' not in sites:raise RuntimeError('Selected sites lack original selection BA')
+ if not sites.balanced_accuracy.ge(.93).all():raise RuntimeError('Saved selected site fails declared BA >=0.93')
+ selected=set(keys);scores=scores.copy()
+ scores['displayed_in_genoplot']=[k in selected for k in canonical_keys(scores)]
+ # A score can be absent from the archived table, so export every selected
+ # allele in both traits explicitly instead of silently treating absence as 0.
+ audits=[]
+ for trait in ['D','R']:
+  track=scores.loc[scores.trait.eq(trait)]
+  tk=canonical_keys(track)
+  if len(tk)!=len(set(tk)):raise RuntimeError('Duplicate archived exact allele: '+trait)
+  lookup=dict(zip(tk,track.balanced_accuracy))
+  for key,selection_BA in zip(keys,sites.balanced_accuracy):
+   audits.append(dict(trait=trait,**dict(zip(KEYS,key)),current_Dennis_selection_BA=float(selection_BA),
+    archived_BA=lookup.get(key),archived_score_available=key in lookup,displayed_in_genoplot=True))
+ pd.DataFrame(audits).to_csv(out/'displayed_SNP_archived_BA_audit.tsv',sep='\t',index=False)
+ scores.loc[scores.trait.isin(['D','R'])].to_csv(out/'all_archived_DR_scores_with_display_membership.tsv.gz',sep='\t',index=False)
+ summary={}
+ for trait,g in scores.loc[scores.trait.isin(['D','R'])].groupby('trait'):
+  summary[trait]=dict(archived_points=len(g),displayed_exact_alleles=int(g.displayed_in_genoplot.sum()),
+   old_highlights_not_displayed=int((g.historical_highlight & ~g.displayed_in_genoplot).sum()),
+   selected_without_archived_score=int(sum(r['trait']==trait and not r['archived_score_available'] for r in audits)))
+ return scores,summary
+
 def add_tracks(fig,scores):
  import numpy as np
  from matplotlib.patches import Rectangle
@@ -42,8 +77,9 @@ def add_tracks(fig,scores):
  for t in list(fig.texts):
   x,y=t.get_position()
   if y>.97:t.set_text('Optix');t.set_position((x,(newh-.22)/newh))
-  elif y>.94:t.set_text('176 SNPs · BA ≥ 0.93');t.set_position((x,(newh-.48)/newh))
+  elif y>.94:t.set_text('Genoplot: all 176 SNPs with updated Dennis BA ≥ 0.93');t.set_position((x,(newh-.48)/newh))
   else:t.set_position((x,y*h/newh))
+ fig.text(.33,(h+2.04)/newh,'Archived D/R BA · coloured = SNPs in genoplot · dashed = 0.8',fontsize=7)
  palette={'D':'#E69F00','R':'#CC79A7'}
  for trait,bottom in [('D',h+.80),('R',h-.05)]:
   s=scores.loc[scores.trait.eq(trait)];ax=fig.add_axes([.33,bottom/newh,.65,.62/newh])
@@ -51,8 +87,8 @@ def add_tracks(fig,scores):
   # One opaque image per dense background cloud, rather than thousands of
   # transparent editable point objects. Highlighted sites remain vector.
   ax.scatter(s.pos,y,s=2.2,c='#E2E6EA',lw=0,rasterized=True,clip_on=False)
-  selected=s.historical_highlight.to_numpy(bool)
-  ax.scatter(s.loc[selected,'pos'],y[selected],s=10,c=palette[trait],lw=0,clip_on=False)
+  selected=s.displayed_in_genoplot.to_numpy(bool)
+  ax.scatter(s.loc[selected,'pos'],y[selected],s=5,c=palette[trait],lw=0,clip_on=False)
   ax.axhline(.5,c='#AEB6BF',lw=.5);ax.axhline(.8,c='#666666',ls=(0,(2,2)),lw=.6)
   ax.set(xlim=(1060000,1240000),ylim=(.495,1.015),yticks=[.5,1.],xticks=[])
   ax.tick_params(axis='y',length=0,labelsize=6,pad=3)
@@ -108,7 +144,8 @@ def run(out):
  if scores.historical_highlight.dtype!=bool:
   scores['historical_highlight']=scores.historical_highlight.astype(str).str.lower().map({'true':True,'false':False})
   if scores.historical_highlight.isna().any():raise RuntimeError('Invalid highlight flag')
- path=out/'Dennis_BA093_LR_September_DR_BA.pdf';counts=[];original=PdfPages.savefig
+ scores,highlight_audit=match_displayed_sites(scores,sites,out)
+ path=out/'Dennis_BA093_LR_DR_genoplot_membership.pdf';counts=[];original=PdfPages.savefig
  def finish(self,figure=None,**kwargs):
   add_tracks(figure,scores);old.add_phenotype_table(figure,'Dennis')
   counts.append(simplify_objects(figure))
@@ -116,8 +153,8 @@ def run(out):
  PdfPages.savefig=finish
  try:morph.render(path,sites,np.vstack([rows,lr]),labels+['Left (corrected)','Right (corrected)'],'Optix','Dennis',.93,len(sites),helper.SPANS['Dennis'],helper)
  finally:PdfPages.savefig=original
- (out/'README.txt').write_text('Only the supplied BA093 Optix supplement is remade. Saved frequency rows, selected SNPs, corrected focal calls and September D/R scores/highlights are reused without recalculation. B BA track removed; B phenotype column and original lower genomic annotation retained. Long provenance notes remain here rather than above the figure. Dashed BA line=0.8; coloured points=historical focal-compatible BA>0.99, not independent validation. Gray BA point clouds are 600-dpi raster layers. Genotype cells, connectors, labels, phenotype boxes and highlighted SNPs remain vector. Connectors form one collection; axes clipping masks are disabled. Original files unchanged.\n')
- save(out/'complete.json',dict(status='COMPLETE',PDF=str(path),SNPs=len(sites),BA_tracks=['D','R'],BA_recalculated=False,genotypes_changed=False,connector_segments=counts,raster_layers='gray BA clouds only; 600dpi',source=str(src)))
+ (out/'README.txt').write_text('Only the supplied BA093 Optix supplement is remade. Saved frequency rows, selected SNPs, corrected focal calls and September D/R scores/highlights are reused without recalculation. B BA track removed; B phenotype column and original lower genomic annotation retained. Long provenance notes remain here rather than above the figure. Dashed BA line=0.8. Coloured points now identify exact alleles displayed in the genoplot, in each archived D/R track wherever an archived score exists. They do NOT identify the old BA>0.99/focal-compatible set or a highest-N ranking. All 176 genoplot SNPs passed updated Dennis BA>=0.93 with no cap. Archived D/R BA uses historical cohorts and must not be interpreted as the updated selection score. Audit tables give both scores and exact membership, including archived scores absent for selected alleles. No genotype/selection change. Gray BA point clouds are 600-dpi raster layers. Genotype cells, connectors, labels, phenotype boxes and highlighted SNPs remain vector. Connectors form one collection; axes clipping masks are disabled. Original files unchanged.\n')
+ save(out/'complete.json',dict(status='COMPLETE',PDF=str(path),SNPs=len(sites),BA_tracks=['D','R'],BA_recalculated=False,genotypes_changed=False,connector_segments=counts,raster_layers='gray BA clouds only; 600dpi',source=str(src),highlight_rule='exact genoplot allele membership; no historical focal-pattern gate',highlight_audit=highlight_audit))
  print('PDF\t'+str(path)+'\nSTATUS\tCOMPLETE')
 
 def main():
