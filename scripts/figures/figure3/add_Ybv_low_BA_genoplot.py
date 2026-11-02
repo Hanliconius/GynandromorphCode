@@ -100,9 +100,17 @@ def run(out):
    ax.scatter(ss.loc[lo,'pos'],b[lo],s=8,c='#B6404F',lw=0,zorder=4)
    ax.scatter(ss.loc[middle,'pos'],b[middle],s=6,facecolors='none',edgecolors='#1764AB',lw=.5,zorder=3)
    ax.axhline(low,c='#999999',ls='--',lw=.5)
+   if region=='West':
+    from matplotlib.lines import Line2D
+    handles=[
+     Line2D([],[],marker='o',ls='none',color='#1764AB',ms=4,label=f'Displayed SNP: BA >= {cut:g}'),
+     Line2D([],[],marker='o',ls='none',color='#B6404F',ms=4,label=f'Displayed SNP: BA <= {low:g}'),
+     Line2D([],[],marker='o',ls='none',markerfacecolor='none',markeredgecolor='#1764AB',ms=4,label='Retained SNP: intermediate BA'),
+     Line2D([],[],marker='o',ls='none',color='#555555',alpha=.55,ms=3,label='All scoreable SNPs')]
+    ax.legend(handles=handles,loc='lower left',bbox_to_anchor=(0,1.08),ncol=4,frameon=False,fontsize=6,handletextpad=.4,columnspacing=1,borderaxespad=0)
   style.remove_original_marker_squares(figure);style.add_phenotype_table(figure,'Ybv')
   for t in figure.texts:
-   if 'West v+, West v−' in t.get_text():t.set_text(f'Rows: reviewed geography then phenotype; no consensus rows. Previous SNPs retained plus BA >= {cut:g} or <= {low:g} in either region.\nBA: blue=high tail, red=low tail, hollow=previously displayed middle score. Missing scores are not zero. Same West-derived direction across regions, with labelled East fallback.\nExisting >=80% per-class callability gate and reviewed P cohorts retained. Genoplot remains 0=REF, 1=ALT; no allele flipping.\nNew L/R cells use existing qualified corrected calls only; unavailable calls remain grey. Descriptive association, not independent validation.')
+   if 'West v+, West v−' in t.get_text():t.set_text(f'Rows: reviewed geography then phenotype; no consensus rows. Previous SNPs retained plus BA >= {cut:g} or <= {low:g} in either region.\nBA points: blue=displayed SNP with regional BA >= {cut:g}; red=displayed SNP with regional BA <= {low:g}; hollow=retained intermediate score. Grey background=all scoreable SNPs. Same West-derived direction across regions, with labelled East fallback.\nHighlights refer to columns on this page, with chromosome/position/REF/ALT matched exactly. Missing BA is not zero. Colours do not encode REF/ALT or zygosity.\nExisting >=80% per-class callability gate and reviewed P cohorts retained. Genoplot remains 0=REF, 1=ALT; no allele flipping.\nNew L/R cells use existing qualified corrected calls only; unavailable calls remain grey. Descriptive association, not independent validation.')
   return original(self,figure,**kwargs)
  PdfPages.savefig=finish;pdf=out/'Ybv_all_populations_high_low_BA_genoplot.pdf'
  try:_,pages=renderer.draw(pdf,selected,all_scores,None,None,helper,'Yb(v): strong associations in both directions',cut)
