@@ -13,6 +13,7 @@ def load(p,name):
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def save(p,x):Path(p).write_text(json.dumps(x,indent=2,allow_nan=False)+'\n')
 def prepare(a):
+ if not 0<a.spacer_height<=1:raise ValueError('Spacer height must be >0 and <=1')
  if a.output.exists():raise RuntimeError('Preserving existing output: '+str(a.output))
  base=load(APPEND,'focal_inputs');h=load(YBV/'figure3_helper.py','style_inputs')
  paths=[a.source/n for n in ['complete.json','run.json','worker.py','reviewed_specimens.tsv','tables/all_populations_membership.tsv',
@@ -29,7 +30,7 @@ def prepare(a):
  a.output.mkdir(parents=True);(a.output/'logs').mkdir();(a.output/'tables').mkdir()
  shutil.copy2(__file__,a.output/'worker.py')
  save(a.output/'run.json',dict(source=str(a.source),cutoff=cutoff,low_cutoff=round(1-cutoff,12),hashes={str(p):sha(p) for p in paths},
-  selection='previous displayed SNPs union all current West/East fixed-direction BA >=t or <=1-t; no SNP cap',row_order=a.order,simple_labels=a.simple_labels,BA_recalculated=False,new_calls=False))
+  selection='previous displayed SNPs union all current West/East fixed-direction BA >=t or <=1-t; no SNP cap',row_order=a.order,simple_labels=a.simple_labels,spacer_height=a.spacer_height,focal_spacer=a.focal_spacer,BA_recalculated=False,new_calls=False))
  cmd=[sys.executable,str(a.output/'worker.py'),'--run','--output',str(a.output)]
  job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:15:00','--mem=8G','--cpus-per-task=1','--job-name=Ybv_BAtails',
   '--output='+str(a.output/'logs/plot.%j.out'),'--error='+str(a.output/'logs/plot.%j.err'),'--wrap='+shlex.join(cmd)],text=True).strip().split(';')[0]
@@ -126,6 +127,29 @@ def simple_row_label(label,population):
   (x in ['East','West'] and not keep_region)))
 
 
+
+def compress_spacers(figure,labels,width,spacer_height):
+ """Rebuild only row geometry; preserve cell values, labels and column geometry."""
+ import numpy as np
+ heat=figure.axes[0];nr=len(labels)
+ heights=np.asarray([spacer_height if not x.strip() else 1. for x in labels])
+ edges=np.r_[-.5,-.5+np.cumsum(heights)];centres=(edges[:-1]+edges[1:])/2
+ mesh=heat.collections[0];values=mesh.get_array().copy();cmap=mesh.cmap;norm=mesh.norm;mesh.remove()
+ heat.pcolormesh(np.arange(width+1)-.5,edges,values.reshape(nr,width),cmap=cmap,norm=norm)
+ heat.set_ylim(edges[-1],edges[0]);heat.set_yticks(centres,labels,fontsize=7)
+ for patch in heat.patches:
+  y0,y1=patch.get_y(),patch.get_y()+patch.get_height()
+  mapped=np.interp([y0,y1],np.arange(nr+1)-.5,edges)
+  patch.set_y(mapped[0]);patch.set_height(mapped[1]-mapped[0])
+ table=figure.axes[-1];table.set_ylim(heat.get_ylim())
+ for patch in table.patches:
+  oldcentre=patch.get_y()+patch.get_height()/2;i=int(round(oldcentre))
+  patch.set_y(centres[i]-patch.get_height()/2)
+ for text in table.texts:
+  if text.get_transform()==table.transData:
+   x,y=text.get_position();text.set_position((x,centres[int(round(y))]))
+ return centres,edges
+
 def run(out):
  import numpy as np,pandas as pd,matplotlib
  matplotlib.use('Agg')
@@ -170,6 +194,8 @@ def run(out):
    audit[j].update(Left_ALT_dosage=float(lr[0,j]) if np.isfinite(lr[0,j]) else None,Right_ALT_dosage=float(lr[1,j]) if np.isfinite(lr[1,j]) else None,source='unchanged_previous_display_corrected_call')
  pd.DataFrame(audit).to_csv(out/'tables/corrected_LR_calls.tsv',sep='\t',index=False)
  exports.to_csv(out/'tables/population_frequencies_and_membership.tsv.gz',sep='\t',index=False)
+ if cfg.get('focal_spacer',False):
+  rows=np.vstack([rows,np.full((1,len(selected)),np.nan)]);labels=labels+['']
  saved=np.vstack([rows,lr]),labels+['Left (corrected)','Right (corrected)'],exports,blocks
  renderer.grouped_rows=lambda *args:saved
  original=PdfPages.savefig;page=0
@@ -215,15 +241,21 @@ def run(out):
    for text in figure.findobj(match=Text):text.set_fontweight('normal')
    if page==1:
     pd.DataFrame(dict(row=range(len(labels)),original_label=labels,display_label=display[:len(labels)])).to_csv(out/'tables/row_label_audit.tsv',sep='\t',index=False)
+  if cfg.get('spacer_height',1.)!=1.:
+   current_labels=[t.get_text() for t in figure.axes[0].get_yticklabels()]
+   compress_spacers(figure,current_labels,len(ss),cfg['spacer_height'])
+   if cfg.get('simple_labels',False):
+    from matplotlib.text import Text
+    for text in figure.findobj(match=Text):text.set_fontweight('normal')
   return original(self,figure,**kwargs)
  PdfPages.savefig=finish;pdf=out/'Ybv_all_populations_high_low_BA_genoplot.pdf'
  try:_,pages=renderer.draw(pdf,selected,all_scores,None,None,helper,'Yb(v): strong associations in both directions',cut)
  finally:PdfPages.savefig=original
- save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected),previous_SNPs=len(previous),added_SNPs=int((~selected.previously_displayed).sum()),low_tail_SNPs=int((selected.West_low_tail|selected.East_low_tail).sum()),high_cutoff=cut,low_cutoff=low,population_rows=int(exports.row.nunique()),spacer_rows=sum(not x.strip() for x in labels),row_order=cfg.get('row_order','geography-phenotype'),simple_labels=cfg.get('simple_labels',False),BA_recalculated=False,new_variant_calls=False,new_mixture_fit=False,previous_corrected_LR_unchanged=True,LR_called_per_side=np.isfinite(lr).sum(axis=1).tolist()))
+ save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected),previous_SNPs=len(previous),added_SNPs=int((~selected.previously_displayed).sum()),low_tail_SNPs=int((selected.West_low_tail|selected.East_low_tail).sum()),high_cutoff=cut,low_cutoff=low,population_rows=int(exports.row.nunique()),spacer_rows=sum(not x.strip() for x in labels),spacer_height=cfg.get('spacer_height',1.),row_order=cfg.get('row_order','geography-phenotype'),simple_labels=cfg.get('simple_labels',False),BA_recalculated=False,new_variant_calls=False,new_mixture_fit=False,previous_corrected_LR_unchanged=True,LR_called_per_side=np.isfinite(lr).sum(axis=1).tolist()))
  print(f'PDF\t{pdf}\nSNPs\t{len(selected)}\nADDED\t{int((~selected.previously_displayed).sum())}\nSTATUS\tCOMPLETE')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography','final','final-v2','final-v3'],default='geography-phenotype');p.add_argument('--simple-labels',action='store_true',help='Hide row phenotype codes and geography except melpomene melpomene; use regular text');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography','final','final-v2','final-v3'],default='geography-phenotype');p.add_argument('--simple-labels',action='store_true',help='Hide row phenotype codes and geography except melpomene melpomene; use regular text');p.add_argument('--spacer-height',type=float,default=1.,help='Spacer height in standard row units');p.add_argument('--focal-spacer',action='store_true',help='Add a spacer above corrected Left/Right');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
  if a.submit:prepare(a)
  elif a.run:run(a.output)
  else:p.error('Use --submit')
