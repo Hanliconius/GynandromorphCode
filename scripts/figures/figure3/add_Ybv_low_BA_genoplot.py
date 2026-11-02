@@ -29,7 +29,7 @@ def prepare(a):
  a.output.mkdir(parents=True);(a.output/'logs').mkdir();(a.output/'tables').mkdir()
  shutil.copy2(__file__,a.output/'worker.py')
  save(a.output/'run.json',dict(source=str(a.source),cutoff=cutoff,low_cutoff=round(1-cutoff,12),hashes={str(p):sha(p) for p in paths},
-  selection='previous displayed SNPs union all current West/East fixed-direction BA >=t or <=1-t; no SNP cap',BA_recalculated=False,new_calls=False))
+  selection='previous displayed SNPs union all current West/East fixed-direction BA >=t or <=1-t; no SNP cap',row_order=a.order,BA_recalculated=False,new_calls=False))
  cmd=[sys.executable,str(a.output/'worker.py'),'--run','--output',str(a.output)]
  job=subprocess.check_output(['sbatch','--parsable','--partition=nano','--time=00:15:00','--mem=8G','--cpus-per-task=1','--job-name=Ybv_BAtails',
   '--output='+str(a.output/'logs/plot.%j.out'),'--error='+str(a.output/'logs/plot.%j.err'),'--wrap='+shlex.join(cmd)],text=True).strip().split(';')[0]
@@ -46,6 +46,26 @@ def choose(scores,previous,cutoff):
   s[region+'_tail']=np.where(s[region+'_high_tail'],'high',np.where(s[region+'_low_tail'],'low',np.where(b.notna(),'middle','unscored')))
  mask=s.previously_displayed|s.West_high_tail|s.West_low_tail|s.East_high_tail|s.East_low_tail
  return s.loc[mask].sort_values(KEYS).reset_index(drop=True),s
+
+def reorder_population_rows(rows,labels,exports,order):
+ """Change display order only; preserve every frequency and specimen group."""
+ import re
+ if order=='geography-phenotype':return rows,labels,exports,None
+ first=exports.groupby('row',sort=False).first()
+ if set(first.index)!=set(range(len(rows))):raise RuntimeError('Unexpected population row identifiers')
+ regions={'East':0,'West':1,'Silvaniforms':2,'Unresolved':3};states={'1':0,'0':1,'?':2}
+ def keys(i):
+  r=first.loc[i];m=re.search(r'v([01?])',str(r.morph));state=m.group(1) if m else '?'
+  return (states[state],regions.get(r.geography,3),str(r.geography),str(r.population),str(r.morph))
+ idx=sorted(range(len(rows)),key=keys)
+ mapping={old:new for new,old in enumerate(idx)}
+ exported=exports.copy();exported['row']=exported.row.map(mapping)
+ exported=exported.sort_values(['row']+KEYS,kind='stable').reset_index(drop=True)
+ blocks=[];last=None
+ for j,i in enumerate(idx):
+  group=keys(i)[:3]
+  if group!=last:blocks.append((j,j+1,str(first.loc[i].geography),group[0]));last=group
+ return rows[idx],[labels[i] for i in idx],exported,blocks
 
 def run(out):
  import numpy as np,pandas as pd,matplotlib
@@ -71,6 +91,8 @@ def run(out):
  indices=[lookup[tuple(r)] for r in selected[KEYS].itertuples(index=False,name=None)]
  values=matrix.to_numpy(float)[:,indices]
  rows,labels,exports,blocks=worker.sorted_rows(meta,values,selected,helper)
+ rows,labels,exports,newblocks=reorder_population_rows(rows,labels,exports,cfg.get('row_order','geography-phenotype'))
+ if newblocks is not None:blocks=newblocks
  lr,audit=focal_helper.focal(selected,'Ybv')
  # Preserve every previous corrected L/R cell, including explicit missingness.
  frozen=pd.read_csv(ROOT/'supp_genoplots_LR_cydno_historical_BDR_20261027/tables/corrected_LR_calls.tsv',sep='\t');frozen=frozen.loc[frozen.locus.eq('Ybv')]
@@ -98,28 +120,26 @@ def run(out):
    b=ss[region+'_fixed_direction_BA'];hi=b.ge(cut);lo=b.le(low);middle=b.notna()&~hi&~lo
    ax.scatter(ss.loc[hi,'pos'],b[hi],s=8,c='#1764AB',lw=0,zorder=4)
    ax.scatter(ss.loc[lo,'pos'],b[lo],s=8,c='#B6404F',lw=0,zorder=4)
-   ax.scatter(ss.loc[middle,'pos'],b[middle],s=6,facecolors='none',edgecolors='#1764AB',lw=.5,zorder=3)
    ax.axhline(low,c='#999999',ls='--',lw=.5)
    if region=='West':
     from matplotlib.lines import Line2D
     handles=[
      Line2D([],[],marker='o',ls='none',color='#1764AB',ms=4,label=f'Displayed SNP: BA >= {cut:g}'),
      Line2D([],[],marker='o',ls='none',color='#B6404F',ms=4,label=f'Displayed SNP: BA <= {low:g}'),
-     Line2D([],[],marker='o',ls='none',markerfacecolor='none',markeredgecolor='#1764AB',ms=4,label='Retained SNP: intermediate BA'),
      Line2D([],[],marker='o',ls='none',color='#555555',alpha=.55,ms=3,label='All scoreable SNPs')]
-    ax.legend(handles=handles,loc='lower left',bbox_to_anchor=(0,1.08),ncol=4,frameon=False,fontsize=6,handletextpad=.4,columnspacing=1,borderaxespad=0)
+    ax.legend(handles=handles,loc='lower left',bbox_to_anchor=(0,1.08),ncol=3,frameon=False,fontsize=6,handletextpad=.4,columnspacing=1,borderaxespad=0)
   style.remove_original_marker_squares(figure);style.add_phenotype_table(figure,'Ybv')
   for t in figure.texts:
-   if 'West v+, West v−' in t.get_text():t.set_text(f'Rows: reviewed geography then phenotype; no consensus rows. Previous SNPs retained plus BA >= {cut:g} or <= {low:g} in either region.\nBA points: blue=displayed SNP with regional BA >= {cut:g}; red=displayed SNP with regional BA <= {low:g}; hollow=retained intermediate score. Grey background=all scoreable SNPs. Same West-derived direction across regions, with labelled East fallback.\nHighlights refer to columns on this page, with chromosome/position/REF/ALT matched exactly. Missing BA is not zero. Colours do not encode REF/ALT or zygosity.\nExisting >=80% per-class callability gate and reviewed P cohorts retained. Genoplot remains 0=REF, 1=ALT; no allele flipping.\nNew L/R cells use existing qualified corrected calls only; unavailable calls remain grey. Descriptive association, not independent validation.')
+   if 'West v+, West v−' in t.get_text():t.set_text(f'Rows: {cfg.get("row_order","geography-phenotype")}; no consensus rows. Previous SNPs retained plus BA >= {cut:g} or <= {low:g} in either region.\nBA points: blue=displayed SNP with regional BA >= {cut:g}; red=displayed SNP with regional BA <= {low:g}. Grey background=all scoreable SNPs, including retained intermediate scores. Same West-derived direction across regions, with labelled East fallback.\nHighlights refer to columns on this page, with chromosome/position/REF/ALT matched exactly. Missing BA is not zero. Colours do not encode REF/ALT or zygosity.\nExisting >=80% per-class callability gate and reviewed P cohorts retained. Genoplot remains 0=REF, 1=ALT; no allele flipping.\nNew L/R cells use existing qualified corrected calls only; unavailable calls remain grey. Descriptive association, not independent validation.')
   return original(self,figure,**kwargs)
  PdfPages.savefig=finish;pdf=out/'Ybv_all_populations_high_low_BA_genoplot.pdf'
  try:_,pages=renderer.draw(pdf,selected,all_scores,None,None,helper,'Yb(v): strong associations in both directions',cut)
  finally:PdfPages.savefig=original
- save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected),previous_SNPs=len(previous),added_SNPs=int((~selected.previously_displayed).sum()),low_tail_SNPs=int((selected.West_low_tail|selected.East_low_tail).sum()),high_cutoff=cut,low_cutoff=low,population_rows=len(rows),BA_recalculated=False,new_variant_calls=False,new_mixture_fit=False,previous_corrected_LR_unchanged=True,LR_called_per_side=np.isfinite(lr).sum(axis=1).tolist()))
+ save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected),previous_SNPs=len(previous),added_SNPs=int((~selected.previously_displayed).sum()),low_tail_SNPs=int((selected.West_low_tail|selected.East_low_tail).sum()),high_cutoff=cut,low_cutoff=low,population_rows=len(rows),row_order=cfg.get('row_order','geography-phenotype'),BA_recalculated=False,new_variant_calls=False,new_mixture_fit=False,previous_corrected_LR_unchanged=True,LR_called_per_side=np.isfinite(lr).sum(axis=1).tolist()))
  print(f'PDF\t{pdf}\nSNPs\t{len(selected)}\nADDED\t{int((~selected.previously_displayed).sum())}\nSTATUS\tCOMPLETE')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography'],default='geography-phenotype');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
  if a.submit:prepare(a)
  elif a.run:run(a.output)
  else:p.error('Use --submit')
