@@ -50,6 +50,9 @@ def choose(scores,previous,cutoff):
 def reorder_population_rows(rows,labels,exports,order):
  """Change display order only; preserve every frequency and specimen group."""
  import re
+ if order=='final':
+  result=final_population_rows(rows,labels,exports)
+  return result[:4]
  if order=='geography-phenotype':return rows,labels,exports,None
  first=exports.groupby('row',sort=False).first()
  if set(first.index)!=set(range(len(rows))):raise RuntimeError('Unexpected population row identifiers')
@@ -66,6 +69,37 @@ def reorder_population_rows(rows,labels,exports,order):
   group=keys(i)[:3]
   if group!=last:blocks.append((j,j+1,str(first.loc[i].geography),group[0]));last=group
  return rows[idx],[labels[i] for i in idx],exported,blocks
+
+FINAL_ROW_ORDER = "East | H. besckei | d1 v1 | n=11\nEast | H. melpomene amaryllis | d1 v1 | n=30\nEast | H. melpomene burchelli | d1 v1 | n=3\nEast | H. melpomene nanna | d1 v1 | n=4\nEast | H. timareta thelxinoe | d1 v1 | n=30\nWest | H. cydno weymeri f. gustavi | d1 v1 | n=10\nWest | H. cydno weymeri f. weymeri | d1 v1 | n=10\nWest | H. pachinus | d1 v1 | n=9\nSPACE\nEast | H. elevatus | d0 v0 | n=14\nEast | H. heurippa | d0 v0 | n=20\nEast | H. melpomene ecuadorensis | d0 v0 | n=10\nEast | H. melpomene malleti | d0 v0 | n=48\nEast | H. melpomene melpomene | d0 v0 | n=9\nEast | H. melpomene meriana | d0 v0 | n=7\nEast | H. melpomene plesseni | d0 v0 | n=10\nEast | H. melpomene vicina | d0 v0 | n=3\nEast | H. melpomene xenoclea | d0 v0 | n=10\nEast | H. timareta florencia | d0 v0 | n=16\nEast | H. timareta linaresi | d0 v0 | n=19\nEast | H. timareta nov. ECU | d0 v0 | n=25\nEast | H. timareta timareta f. contigua | d0 v0 | n=11\nEast | H. timareta timareta f. timareta | d0 v0 | n=9\nEast | H. timareta 'vicina' | d0 v0 | n=6\nWest | H. cydno chioneus | d0 v0 | n=6\nWest | H. cydno cydnides | d0 v0 | n=10\nWest | H. cydno zelinde | d0 v0 | n=5\nSPACE\nWest | H. melpomene rosina | d1 v1 | n=7\nWest | H. melpomene cythera | d0 v1 | n=14\nWest | H. melpomene melpomene | d0 v0 | n=19\nWest | H. melpomene vulcanus | d0 v1 | n=8"
+
+def population_key(name):
+ import re
+ name=re.sub(r"\b(?:Heliconius|H|ssp|spp)\b\.?",' ',name,flags=re.I)
+ return ' '.join(re.findall(r"[a-z0-9]+",name.lower()))
+
+def final_population_rows(rows,labels,exports):
+ """Permute all population rows and insert two empty display rows; no pooling."""
+ import numpy as np
+ first=exports.groupby('row',sort=True).first()
+ lookup={}
+ for i,r in first.iterrows():
+  key=(r.geography,population_key(r.population),r.morph)
+  if key in lookup:raise RuntimeError('Ambiguous final-order population key: '+str(key))
+  lookup[key]=i
+ newrows=[];newlabels=[];mapping={};audit=[]
+ for line in FINAL_ROW_ORDER.splitlines():
+  if line=='SPACE':
+   newrows.append(np.full(rows.shape[1],np.nan));newlabels.append('');continue
+  region,pop,morph,count=line.split(' | ');key=(region,population_key(pop),morph)
+  if key not in lookup:raise RuntimeError('Requested final-order row absent: '+line)
+  i=lookup[key]
+  if i in mapping:raise RuntimeError('Population appears twice in final order')
+  j=len(newrows);mapping[i]=j;newrows.append(rows[i]);newlabels.append(labels[i])
+  audit.append(dict(row=j,original_row=int(i),population=first.loc[i,'population'],geography=region,morph=morph,
+   requested_n=int(count.split('=')[1]),actual_n=int(first.loc[i,'n_total'])))
+ if set(mapping)!=set(first.index):raise RuntimeError('Final ordering omitted available population rows: '+str(set(first.index)-set(mapping)))
+ exported=exports.copy();exported['row']=exported.row.map(mapping)
+ return np.asarray(newrows),newlabels,exported.sort_values(['row']+KEYS).reset_index(drop=True),[],audit
 
 def simple_row_label(label,population):
  """Display-only changes; do not merge the underlying population/morph groups."""
@@ -105,6 +139,10 @@ def run(out):
  rows,labels,exports,blocks=worker.sorted_rows(meta,values,selected,helper)
  rows,labels,exports,newblocks=reorder_population_rows(rows,labels,exports,cfg.get('row_order','geography-phenotype'))
  if newblocks is not None:blocks=newblocks
+ if cfg.get('row_order')=='final':
+  original_rows,original_labels,original_exports,_=worker.sorted_rows(meta,values,selected,helper)
+  *_,order_audit=final_population_rows(original_rows,original_labels,original_exports)
+  pd.DataFrame(order_audit).to_csv(out/'tables/final_population_order.tsv',sep='\t',index=False)
  lr,audit=focal_helper.focal(selected,'Ybv')
  # Preserve every previous corrected L/R cell, including explicit missingness.
  frozen=pd.read_csv(ROOT/'supp_genoplots_LR_cydno_historical_BDR_20261027/tables/corrected_LR_calls.tsv',sep='\t');frozen=frozen.loc[frozen.locus.eq('Ybv')]
@@ -140,7 +178,17 @@ def run(out):
      Line2D([],[],marker='o',ls='none',color='#B6404F',ms=4,label=f'Displayed SNP: BA <= {low:g}'),
      Line2D([],[],marker='o',ls='none',color='#555555',alpha=.55,ms=3,label='All scoreable SNPs')]
     ax.legend(handles=handles,loc='lower left',bbox_to_anchor=(0,1.08),ncol=3,frameon=False,fontsize=6,handletextpad=.4,columnspacing=1,borderaxespad=0)
-  style.remove_original_marker_squares(figure);style.add_phenotype_table(figure,'Ybv')
+  style.remove_original_marker_squares(figure)
+  if cfg.get('row_order')=='final':
+   from matplotlib.patches import Rectangle
+   heat=figure.axes[0]
+   for i,label in enumerate(labels):
+    if not label.strip():heat.add_patch(Rectangle((-.5,i-.5),len(ss),1,facecolor='white',edgecolor='none',zorder=5))
+   old_codes=style.phenotype_codes
+   style.phenotype_codes=lambda label,locus: old_codes(label,locus) if label.strip() else {t:None for t in ['d','v']}
+  try:style.add_phenotype_table(figure,'Ybv')
+  finally:
+   if cfg.get('row_order')=='final':style.phenotype_codes=old_codes
   for t in figure.texts:
    if 'West v+, West v−' in t.get_text():t.set_text(f'Rows: {cfg.get("row_order","geography-phenotype")}; no consensus rows. Previous SNPs retained plus BA >= {cut:g} or <= {low:g} in either region.\nBA points: blue=displayed SNP with regional BA >= {cut:g}; red=displayed SNP with regional BA <= {low:g}. Grey background=all scoreable SNPs, including retained intermediate scores. Same West-derived direction across regions, with labelled East fallback.\nHighlights refer to columns on this page, with chromosome/position/REF/ALT matched exactly. Missing BA is not zero. Colours do not encode REF/ALT or zygosity.\nExisting >=80% per-class callability gate and reviewed P cohorts retained. Genoplot remains 0=REF, 1=ALT; no allele flipping.\nNew L/R cells use existing qualified corrected calls only; unavailable calls remain grey. Descriptive association, not independent validation.')
   if cfg.get('simple_labels',False):
@@ -158,11 +206,11 @@ def run(out):
  PdfPages.savefig=finish;pdf=out/'Ybv_all_populations_high_low_BA_genoplot.pdf'
  try:_,pages=renderer.draw(pdf,selected,all_scores,None,None,helper,'Yb(v): strong associations in both directions',cut)
  finally:PdfPages.savefig=original
- save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected),previous_SNPs=len(previous),added_SNPs=int((~selected.previously_displayed).sum()),low_tail_SNPs=int((selected.West_low_tail|selected.East_low_tail).sum()),high_cutoff=cut,low_cutoff=low,population_rows=len(rows),row_order=cfg.get('row_order','geography-phenotype'),simple_labels=cfg.get('simple_labels',False),BA_recalculated=False,new_variant_calls=False,new_mixture_fit=False,previous_corrected_LR_unchanged=True,LR_called_per_side=np.isfinite(lr).sum(axis=1).tolist()))
+ save(out/'complete.json',dict(status='COMPLETE',PDF=str(pdf),pages=pages,SNPs=len(selected),previous_SNPs=len(previous),added_SNPs=int((~selected.previously_displayed).sum()),low_tail_SNPs=int((selected.West_low_tail|selected.East_low_tail).sum()),high_cutoff=cut,low_cutoff=low,population_rows=int(exports.row.nunique()),spacer_rows=sum(not x.strip() for x in labels),row_order=cfg.get('row_order','geography-phenotype'),simple_labels=cfg.get('simple_labels',False),BA_recalculated=False,new_variant_calls=False,new_mixture_fit=False,previous_corrected_LR_unchanged=True,LR_called_per_side=np.isfinite(lr).sum(axis=1).tolist()))
  print(f'PDF\t{pdf}\nSNPs\t{len(selected)}\nADDED\t{int((~selected.previously_displayed).sum())}\nSTATUS\tCOMPLETE')
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography'],default='geography-phenotype');p.add_argument('--simple-labels',action='store_true',help='Hide row phenotype codes and geography except melpomene melpomene; use regular text');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--source',type=Path,default=SOURCE);p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--cutoff',type=float);p.add_argument('--order',choices=['geography-phenotype','phenotype-geography','final'],default='geography-phenotype');p.add_argument('--simple-labels',action='store_true',help='Hide row phenotype codes and geography except melpomene melpomene; use regular text');p.add_argument('--submit',action='store_true');p.add_argument('--run',action='store_true');a=p.parse_args()
  if a.submit:prepare(a)
  elif a.run:run(a.output)
  else:p.error('Use --submit')
