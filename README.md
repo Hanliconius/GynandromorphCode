@@ -84,7 +84,7 @@ The later cutoff sweep therefore preferred L=6 for the diploid, pseudo-tetraploi
 
 This work extends the earlier public repository:
 
-Krista-Pipho/gynandromorph_2024
+[Krista-Pipho/gynandromorph_2024](https://github.com/Krista-Pipho/gynandromorph_2024)
 
 The provenance snapshot used here is commit:
 
