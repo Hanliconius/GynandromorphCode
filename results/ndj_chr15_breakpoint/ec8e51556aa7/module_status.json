@@ -1,0 +1,20 @@
+{
+  "sequence": "complete",
+  "annotations": "not_assessed",
+  "reads": [
+    {
+      "sample": "NDJ_left",
+      "primary": 19455,
+      "note": "Counts are alignments, not independent molecules; bins use alignment start"
+    },
+    {
+      "sample": "NDJ_right",
+      "primary": 31993,
+      "note": "Counts are alignments, not independent molecules; bins use alignment start"
+    }
+  ],
+  "long_homology": "not_assessed; optional homology_search.py",
+  "junction_microhomology": "not_assessed; requires assembled/read-supported alternate junction",
+  "replication_timing": "not_assessed; cannot infer from reference sequence",
+  "chromatin_Rloops": "not_assessed; motif and gene context are not measurements"
+}

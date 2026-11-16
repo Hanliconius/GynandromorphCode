@@ -1,0 +1,133 @@
+{
+  "status": "exploratory_context_complete",
+  "modules": {
+    "sequence": "complete",
+    "annotations": "not_assessed",
+    "reads": [
+      {
+        "sample": "NDJ_left",
+        "primary": 19455,
+        "note": "Counts are alignments, not independent molecules; bins use alignment start"
+      },
+      {
+        "sample": "NDJ_right",
+        "primary": 31993,
+        "note": "Counts are alignments, not independent molecules; bins use alignment start"
+      }
+    ],
+    "long_homology": "not_assessed; optional homology_search.py",
+    "junction_microhomology": "not_assessed; requires assembled/read-supported alternate junction",
+    "replication_timing": "not_assessed; cannot infer from reference sequence",
+    "chromatin_Rloops": "not_assessed; motif and gene context are not measurements"
+  },
+  "outputs": [
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/REPORT.md",
+      "bytes": 1153,
+      "mtime_ns": 1794864047799050175,
+      "sha256": "b8209ab5950b74c697312326bda98208e7e0139bcae7175bb5652a9b27b3de52"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/breakpoint_context.pdf",
+      "bytes": 29471,
+      "mtime_ns": 1794864047797297000,
+      "sha256": "84a4d920d8321a984e3728a1b8b2220d04b4a6735ae0063a924dccb59a2784ca"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/candidate_reads.tsv",
+      "bytes": 1166253,
+      "mtime_ns": 1794864040781700201,
+      "sha256": "a7f57ec3bcbdd4cef1cff563dc89af1d166919f6c6f46166d45fe029d3d09c9d"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/clip_clusters.tsv",
+      "bytes": 85648,
+      "mtime_ns": 1794864040793617000,
+      "sha256": "db476b40b6df11a4f2bfcf0acfca89326fba54c3043a49a4bf679b995da2608f"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/control_balance.tsv",
+      "bytes": 139,
+      "mtime_ns": 1794864040211638296,
+      "sha256": "87aa1c62c1aee5e770b9848c2c02391cdbb9c7d2400750010a64b550c5734127"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/feature_comparisons.tsv",
+      "bytes": 11437,
+      "mtime_ns": 1794864040211011000,
+      "sha256": "ab7e1bc021dd8b0c8d250c0c57277e6b3aaa15f2a808c7df4a3720fe320c1e4d"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/feature_distances.tsv",
+      "bytes": 704,
+      "mtime_ns": 1794864025944372471,
+      "sha256": "df352ec4dea3489132671d5355c6e7063b4affbb81f0d5e70525f50b51d6bb9d"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/feature_intervals.bed",
+      "bytes": 116983,
+      "mtime_ns": 1794864025947003000,
+      "sha256": "983f0790d2109cdae295eb2cbf10c7134ef4fc1e50764538feeba6cbf678fa0d"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/homology_queries.fa",
+      "bytes": 440140,
+      "mtime_ns": 1794864040796210000,
+      "sha256": "398ba22d5d720d0b7674db7622c888d7fcaf3ba1b2ca3a86098e9fcd1436fb11"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/local_1kb_features.tsv",
+      "bytes": 23445,
+      "mtime_ns": 1794864040227614000,
+      "sha256": "45913ba2d56954f0455d502f9120c6c9485b2c3431266dc388825844d944140a"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/module_status.json",
+      "bytes": 715,
+      "mtime_ns": 1794864047798146437,
+      "sha256": "22d6cd3e8ee633fe84bfd15020309120597d73a91f935c586a53ccf138d8a803"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/pad_0_controls.tsv",
+      "bytes": 285592,
+      "mtime_ns": 1794864030779658000,
+      "sha256": "7ae747d534bea28517397f3a46607e68a95f17336ab582b3916edfe5ce542ae6"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/pad_50000_controls.tsv",
+      "bytes": 509356,
+      "mtime_ns": 1794864040208886000,
+      "sha256": "3899053d39d737c1658dda8dbc2b7cc5cf03e726d6cb1820955d7850c9a888bc"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/pad_5000_controls.tsv",
+      "bytes": 472782,
+      "mtime_ns": 1794864033558159000,
+      "sha256": "0fd758a97a7a36d572146113c89486c984c900bc389df48bf172f215b9f44f52"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/read_evidence_1kb.tsv",
+      "bytes": 16858,
+      "mtime_ns": 1794864040743803000,
+      "sha256": "a40d7c1cb0aaa392d464ce855053f5e7b0c82d73624bc7cab5244a8b6fd07a67"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/resource_ledger_snapshot.json",
+      "bytes": 65,
+      "mtime_ns": 1794863977298174339,
+      "sha256": "48cee7dd8db7f39f1a9052192f844cf91aee55619b9c0dd679ea22c538602123"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/reuse_decisions.tsv",
+      "bytes": 1146,
+      "mtime_ns": 1794863977297193169,
+      "sha256": "7c5136467635c825803280e530704d17b2dfdbb65a3dcdde6707710fc96e2888"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/resource_manifest.tsv",
+      "bytes": 20500,
+      "mtime_ns": 1794864047820987000,
+      "sha256": "913aa22c9f1d06e55ee81ec09eba6aa927d2e49a28736d2dda50f98dd438c8f0"
+    }
+  ]
+}

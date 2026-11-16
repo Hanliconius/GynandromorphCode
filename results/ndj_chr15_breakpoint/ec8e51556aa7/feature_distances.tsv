@@ -1,0 +1,14 @@
+feature	distance_to_bracket_bp	nearest_start0	nearest_end0	status
+ambiguous	9891084	11961084	11961184	present_on_chr15
+softmask	0	2050108	2050129	present_on_chr15
+homopolymer8	0	2052275	2052283	present_on_chr15
+AT_run20	0	2052212	2052232	present_on_chr15
+purine_pyrimidine20	8827	2078827	2078851	present_on_chr15
+RY_alternating12_proxy	0	2051037	2051049	present_on_chr15
+telomere_TTAGG_3	291816	2361816	2361831	present_on_chr15
+G4_canonical	0	2051506	2051536	present_on_chr15
+tandem2_6	0	2052282	2052294	present_on_chr15
+direct10	0	2052287	2052385	present_on_chr15
+inverted10	0	2050200	2050258	present_on_chr15
+mirror10	0	2052569	2052591	present_on_chr15
+triplex_proxy	0	2054474	2054496	present_on_chr15

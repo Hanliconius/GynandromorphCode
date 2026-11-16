@@ -1,0 +1,137 @@
+{
+  "project": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling",
+  "assembly": "GCF_056956725.1",
+  "chrom": "NC_140403.1",
+  "length": 13500000,
+  "reference": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/genomewide_mixing_input/reference/GCF_056956725.1/GCF_056956725.1_ASM5695672v1_genomic.fna",
+  "start": 2050000,
+  "end": 2070000,
+  "origin": "Figure4 descriptive transition bracket; NOT a confidence interval or resolved junction",
+  "bams": {
+    "NDJ_left": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_control_comparison_v1/alignment/NDJ_left/NDJ_left.dedup.bam",
+    "NDJ_right": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_control_comparison_v1/alignment/NDJ_right/NDJ_right.dedup.bam"
+  },
+  "reuse": [
+    {
+      "biological_sample_id": "NDJ_left",
+      "interval": "NC_140403.1:2050000-2070000",
+      "reference": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/genomewide_mixing_input/reference/GCF_056956725.1/GCF_056956725.1_ASM5695672v1_genomic.fna",
+      "action": "recount_existing_alignment",
+      "selected_resource_id": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_control_comparison_v1/alignment/NDJ_left/NDJ_left.dedup.bam",
+      "rejected_resource_ids": "",
+      "evidence": "frozen source config + BAM index and chr15 length; RG=NDJ_left",
+      "unresolved_questions": "junction unresolved; BAM M5 checked in worker if available",
+      "reference_md5": "",
+      "read_group_samples": "NDJ_left"
+    },
+    {
+      "biological_sample_id": "NDJ_right",
+      "interval": "NC_140403.1:2050000-2070000",
+      "reference": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/genomewide_mixing_input/reference/GCF_056956725.1/GCF_056956725.1_ASM5695672v1_genomic.fna",
+      "action": "recount_existing_alignment",
+      "selected_resource_id": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_control_comparison_v1/alignment/NDJ_right/NDJ_right.dedup.bam",
+      "rejected_resource_ids": "",
+      "evidence": "frozen source config + BAM index and chr15 length; RG=NDJ_right",
+      "unresolved_questions": "junction unresolved; BAM M5 checked in worker if available",
+      "reference_md5": "",
+      "read_group_samples": "NDJ_right"
+    }
+  ],
+  "annotations": null,
+  "ledger": "missing; frozen source config and BAMs independently validated",
+  "inputs": [
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/config.json",
+      "bytes": 6238,
+      "mtime_ns": 1789867455111934000,
+      "sha256": "7a879c7a3ae8e24dd8014a1da828258c01b0a677603eb5a70b50ec174bacb757"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_LR_difference_scan_v1/run_20260920T012415Z/COMPLETE.json",
+      "bytes": 4931,
+      "mtime_ns": 1789867694069464000,
+      "sha256": "7d2d4b7c72c9111408883d9cfc27f74fbf8554259d5bc7db1eebcf2e613a56e4"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/genomewide_mixing_input/reference/GCF_056956725.1/GCF_056956725.1_ASM5695672v1_genomic.fna",
+      "bytes": 301809383,
+      "mtime_ns": 1789076510060253614
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/genomewide_mixing_input/reference/GCF_056956725.1/GCF_056956725.1_ASM5695672v1_genomic.fna.fai",
+      "bytes": 3812,
+      "mtime_ns": 1789076511115303388,
+      "sha256": "6c73928d1598282ea57b8106a7ee447ace0a9161c8b9d3aeee4d07ffcf0da010"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Figure4_NDJ_panels/chr15_descriptive_segments.json",
+      "bytes": 766,
+      "mtime_ns": 1793043298480450147,
+      "sha256": "f1c2afc5e2bb80ce0d2b030e3f7c9d37cc0d7bb5fdaac4986b4096a8dea9a3c5"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/Figure4_NDJ_panels/run.json",
+      "bytes": 1140,
+      "mtime_ns": 1793043203910651104,
+      "sha256": "721f8bbe608642dc336a8b0c40c6f185580695066fa930835ac8f22375f80f31"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_control_comparison_v1/alignment/NDJ_left/NDJ_left.dedup.bam",
+      "bytes": 3465779380,
+      "mtime_ns": 1789700272594077671
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_control_comparison_v1/alignment/NDJ_left/NDJ_left.dedup.bam.bai",
+      "bytes": 894568,
+      "mtime_ns": 1789700277269950815
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_control_comparison_v1/alignment/NDJ_right/NDJ_right.dedup.bam",
+      "bytes": 3108242909,
+      "mtime_ns": 1789700235656525340
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_control_comparison_v1/alignment/NDJ_right/NDJ_right.dedup.bam.bai",
+      "bytes": 892024,
+      "mtime_ns": 1789700239918488035
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandromorphCode_repo/manifests/known_analysis_sources.tsv",
+      "bytes": 3718,
+      "mtime_ns": 1794863965562743062,
+      "sha256": "f2fd9ceafab1fd0d4eb0e22ce73911c061ad5202c717aee4fb374e8f08f1770c"
+    }
+  ],
+  "controls": 999,
+  "seed": 150116,
+  "padding": [
+    0,
+    5000,
+    50000
+  ],
+  "min_controls": 100,
+  "gc_caliper": 0.03,
+  "valid_caliper": 0.02,
+  "mapq": 30,
+  "clip_min": 20,
+  "skip_reads": false,
+  "versions": {
+    "python": "3.12.14 | packaged by conda-forge | (main, Aug 21 2026, 22:48:28) [GCC 14.4.0]",
+    "pysam": "0.24.0"
+  },
+  "code": [
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/code/run_breakpoint.py",
+      "bytes": 27119,
+      "mtime_ns": 1794863965566383651,
+      "sha256": "5df00a2345aa51b4de491a329350f60615addb2c77f09dcc30fab6cccb5f8192"
+    },
+    {
+      "path": "/gpfs/automountdir/gpfs/scratch/martinlab/joe/GynandroCalling/analysis/NDJ_chr15_breakpoint_context_v1/ec8e51556aa7/code/sequence_features.py",
+      "bytes": 5352,
+      "mtime_ns": 1794863965568086000,
+      "sha256": "1e0497382bdc19de9cfd0435edeeb1f3980a04ff7c4b84f420994a1f1dc5fffe"
+    }
+  ],
+  "request_digest": "ec8e51556aa7"
+}
