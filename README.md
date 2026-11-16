@@ -1,5 +1,7 @@
 # GynandromorphCode
 
+[![DOI](https://zenodo.org/badge/1404873259.svg)](https://doi.org/10.5281/zenodo.24293051)
+
 Reproducibility repository for genomic analyses of a *Heliconius* gynandromorph, with emphasis on left/right tissue differences, reciprocal read mixing, founder-state models, chromosome-scale coverage, and k-mer-pair (Smudgeplot) diagnostics.
 
 This repository preserves both the final analysis path and the reasoning that led to it. Exploratory branches and failed parameterizations are documented when they changed how the final analysis was interpreted.
